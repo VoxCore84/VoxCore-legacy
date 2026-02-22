@@ -7,6 +7,8 @@
 -- * Re-assert Founder's Point template/addon wiring.
 
 SET @OGUID := 10001978;
+SET @OLD_SQL_SAFE_UPDATES := @@SQL_SAFE_UPDATES;
+SET SQL_SAFE_UPDATES = 0;
 
 -- Keep the Dornogal portal visible to everyone in Wizard's Sanctum.
 UPDATE `gameobject`
@@ -51,7 +53,7 @@ JOIN (
 WHERE base.`entry` = 620463;
 
 -- Ensure Founder's Point template exists with expected spell/display.
-INSERT INTO `gameobject_template`
+INSERT IGNORE INTO `gameobject_template`
 (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `size`,
  `Data0`, `Data1`, `Data2`, `Data3`, `Data4`, `Data5`, `Data6`, `Data7`, `Data8`, `Data9`,
  `Data10`, `Data11`, `Data12`, `Data13`, `Data14`, `Data15`, `Data16`, `Data17`, `Data18`,
@@ -61,18 +63,23 @@ INSERT INTO `gameobject_template`
 VALUES
 (543407, 22, 117089, 'Portal to Founder\'s Point', '', '', '', 1.299999952316284179,
  1235595, 0, 0, 1, 0, 23503, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
- 0, 0, 65299)
-ON DUPLICATE KEY UPDATE
-  `type` = VALUES(`type`),
-  `displayId` = VALUES(`displayId`),
-  `name` = VALUES(`name`),
-  `size` = VALUES(`size`),
-  `Data0` = VALUES(`Data0`),
-  `Data1` = VALUES(`Data1`),
-  `Data3` = VALUES(`Data3`),
-  `Data5` = VALUES(`Data5`),
-  `Data6` = VALUES(`Data6`),
-  `VerifiedBuild` = VALUES(`VerifiedBuild`);
+ 0, 0, 65299);
+
+UPDATE `gameobject_template`
+SET
+  `type` = 22,
+  `displayId` = 117089,
+  `name` = 'Portal to Founder\'s Point',
+  `size` = 1.299999952316284179,
+  `Data0` = 1235595,
+  `Data1` = 0,
+  `Data3` = 1,
+  `Data5` = 23503,
+  `Data6` = 1,
+  `RequiredLevel` = 0,
+  `ContentTuningId` = 0,
+  `VerifiedBuild` = 65299
+WHERE `entry` = 543407;
 
 -- Template addons for visuals/interaction.
 DELETE FROM `gameobject_template_addon`
@@ -168,3 +175,5 @@ SET `displayId` = CASE `entry`
   ELSE `displayId`
 END
 WHERE `entry` IN (620455,620458,620463,620464,620465,620467,620472,620473,620475,620476,620477,620479,543407);
+
+SET SQL_SAFE_UPDATES = @OLD_SQL_SAFE_UPDATES;
