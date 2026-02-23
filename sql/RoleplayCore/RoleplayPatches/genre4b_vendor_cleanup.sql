@@ -112,19 +112,29 @@ SET @ct_npcflag_col := (
   ORDER BY FIELD(COLUMN_NAME,'npcflag','npcFlag','npc_flag') LIMIT 1
 );
 
-/* Detect player condition source */
+/* Detect player condition source (prefer world schema, then hotfixes, then any schema) */
+SET @player_condition_schema := (
+  SELECT TABLE_SCHEMA FROM INFORMATION_SCHEMA.TABLES
+  WHERE TABLE_NAME IN ('player_condition','player_conditions')
+  ORDER BY
+    (TABLE_SCHEMA = DATABASE()) DESC,
+    (TABLE_SCHEMA = 'hotfixes') DESC,
+    FIELD(TABLE_NAME,'player_condition','player_conditions'),
+    TABLE_SCHEMA
+  LIMIT 1
+);
 SET @player_condition_table := (
   SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME IN ('player_condition','player_conditions')
+  WHERE TABLE_SCHEMA = @player_condition_schema AND TABLE_NAME IN ('player_condition','player_conditions')
   ORDER BY FIELD(TABLE_NAME,'player_condition','player_conditions') LIMIT 1
 );
 SET @player_condition_pk_col := (
   SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
-  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = @player_condition_table
+  WHERE TABLE_SCHEMA = @player_condition_schema AND TABLE_NAME = @player_condition_table
     AND COLUMN_NAME IN ('ID','Id','id')
   ORDER BY FIELD(COLUMN_NAME,'ID','Id','id') LIMIT 1
 );
-SET @has_player_condition := IF(@player_condition_table IS NOT NULL AND @player_condition_pk_col IS NOT NULL,1,0);
+SET @has_player_condition := IF(@player_condition_schema IS NOT NULL AND @player_condition_table IS NOT NULL AND @player_condition_pk_col IS NOT NULL,1,0);
 
 /* Detect item source in required order */
 SET @item_source_schema := NULL;
@@ -299,7 +309,7 @@ SET @sql := IF(@has_npc_vendor > 0 AND @npc_vendor_pc_col IS NOT NULL AND @has_p
   CONCAT(
     'INSERT IGNORE INTO `npc_vendor_backup_genre4b` SELECT v.* FROM `npc_vendor` v ',
     'WHERE v.`', REPLACE(@npc_vendor_pc_col,'`','``'), '` <> 0 ',
-    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@npc_vendor_pc_col,'`','``'), '`)'
+    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_schema,'`','``'), '`.`', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@npc_vendor_pc_col,'`','``'), '`)'
   ),
   'SELECT ''SKIP: npc_vendor PlayerCondition fix not applicable (missing column/table)'' AS note'
 );
@@ -310,7 +320,7 @@ SET @sql := IF(@has_npc_vendor > 0 AND @npc_vendor_pc_col IS NOT NULL AND @has_p
   CONCAT(
     'UPDATE `npc_vendor` v SET v.`', REPLACE(@npc_vendor_pc_col,'`','``'), '` = 0 ',
     'WHERE v.`', REPLACE(@npc_vendor_pc_col,'`','``'), '` <> 0 ',
-    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@npc_vendor_pc_col,'`','``'), '`)'
+    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_schema,'`','``'), '`.`', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@npc_vendor_pc_col,'`','``'), '`)'
   ),
   'SELECT ''SKIP: npc_vendor PlayerCondition fix not applicable (missing column/table)'' AS note'
 );
@@ -325,7 +335,7 @@ SET @sql := IF(@has_game_event_npc_vendor > 0 AND @ge_vendor_pc_col IS NOT NULL 
   CONCAT(
     'INSERT IGNORE INTO `game_event_npc_vendor_backup_genre4b` SELECT v.* FROM `game_event_npc_vendor` v ',
     'WHERE v.`', REPLACE(@ge_vendor_pc_col,'`','``'), '` <> 0 ',
-    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@ge_vendor_pc_col,'`','``'), '`)'
+    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_schema,'`','``'), '`.`', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@ge_vendor_pc_col,'`','``'), '`)'
   ),
   'SELECT ''SKIP: game_event_npc_vendor PlayerCondition fix not applicable (missing column/table)'' AS note'
 );
@@ -336,7 +346,7 @@ SET @sql := IF(@has_game_event_npc_vendor > 0 AND @ge_vendor_pc_col IS NOT NULL 
   CONCAT(
     'UPDATE `game_event_npc_vendor` v SET v.`', REPLACE(@ge_vendor_pc_col,'`','``'), '` = 0 ',
     'WHERE v.`', REPLACE(@ge_vendor_pc_col,'`','``'), '` <> 0 ',
-    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@ge_vendor_pc_col,'`','``'), '`)'
+    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_schema,'`','``'), '`.`', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@ge_vendor_pc_col,'`','``'), '`)'
   ),
   'SELECT ''SKIP: game_event_npc_vendor PlayerCondition fix not applicable (missing column/table)'' AS note'
 );
@@ -467,7 +477,7 @@ SET @sql := IF(@has_npc_vendor > 0 AND @npc_vendor_pc_col IS NOT NULL AND @has_p
   CONCAT(
     'SELECT ''verify_invalid_playercondition_npc_vendor'' AS check_name, COUNT(*) AS remaining_count FROM `npc_vendor` v ',
     'WHERE v.`', REPLACE(@npc_vendor_pc_col,'`','``'), '` <> 0 ',
-    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@npc_vendor_pc_col,'`','``'), '`)'
+    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_schema,'`','``'), '`.`', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@npc_vendor_pc_col,'`','``'), '`)'
   ),
   'SELECT ''verify_invalid_playercondition_npc_vendor'' AS check_name, NULL AS remaining_count, ''SKIP: missing columns/table'' AS note'
 );
@@ -477,7 +487,7 @@ SET @sql := IF(@has_game_event_npc_vendor > 0 AND @ge_vendor_pc_col IS NOT NULL 
   CONCAT(
     'SELECT ''verify_invalid_playercondition_game_event_npc_vendor'' AS check_name, COUNT(*) AS remaining_count FROM `game_event_npc_vendor` v ',
     'WHERE v.`', REPLACE(@ge_vendor_pc_col,'`','``'), '` <> 0 ',
-    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@ge_vendor_pc_col,'`','``'), '`)'
+    'AND NOT EXISTS (SELECT 1 FROM `', REPLACE(@player_condition_schema,'`','``'), '`.`', REPLACE(@player_condition_table,'`','``'), '` pc WHERE pc.`', REPLACE(@player_condition_pk_col,'`','``'), '` = v.`', REPLACE(@ge_vendor_pc_col,'`','``'), '`)'
   ),
   'SELECT ''verify_invalid_playercondition_game_event_npc_vendor'' AS check_name, NULL AS remaining_count, ''SKIP: missing columns/table'' AS note'
 );
