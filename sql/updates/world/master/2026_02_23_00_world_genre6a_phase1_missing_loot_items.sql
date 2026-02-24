@@ -26,7 +26,7 @@
 USE `world`;
 SELECT DATABASE() AS active_database;
 
-SET @APPLY_FIX := 0;
+SET @APPLY_FIX := 1;
 
 /* ── Session snapshot ────────────────────────────────────────────── */
 SET @OLD_SQL_SAFE_UPDATES   := COALESCE(@@SQL_SAFE_UPDATES, 1);
