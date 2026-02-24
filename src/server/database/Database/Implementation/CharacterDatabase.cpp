@@ -806,6 +806,16 @@ void CharacterDatabaseConnection::DoPrepareStatements()
     PrepareStatement(CHAR_SEL_CHARACTER_BANK_TAB_SETTINGS, "SELECT tabId, name, icon, description, depositFlags FROM character_bank_tab_settings WHERE characterGuid = ?", CONNECTION_ASYNC);
     PrepareStatement(CHAR_DEL_CHARACTER_BANK_TAB_SETTINGS, "DELETE FROM character_bank_tab_settings WHERE characterGuid = ?", CONNECTION_ASYNC);
     PrepareStatement(CHAR_INS_CHARACTER_BANK_TAB_SETTINGS, "INSERT INTO character_bank_tab_settings (characterGuid, tabId, name, icon, description, depositFlags) VALUES (?, ?, ?, ?, ?, ?)", CONNECTION_ASYNC);
+
+    // Perks Program
+    PrepareStatement(CHAR_SEL_ACCOUNT_PERKS_CURRENCY, "SELECT tenderBalance, tenderEarnedThisMonth, lastMonthlyGrant FROM account_perks_currency WHERE battlenetAccountId = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_UPD_ACCOUNT_PERKS_CURRENCY, "INSERT INTO account_perks_currency (battlenetAccountId, tenderBalance, tenderEarnedThisMonth, lastMonthlyGrant) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE tenderBalance = VALUES(tenderBalance), tenderEarnedThisMonth = VALUES(tenderEarnedThisMonth), lastMonthlyGrant = VALUES(lastMonthlyGrant)", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_SEL_ACCOUNT_PERKS_HISTORY, "SELECT perksItemId, purchaseTimestamp, costPaid FROM account_perks_program_history WHERE battlenetAccountId = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_INS_ACCOUNT_PERKS_HISTORY, "INSERT INTO account_perks_program_history (battlenetAccountId, perksItemId, purchaseTimestamp, costPaid) VALUES (?, ?, ?, ?)", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_SEL_ACCOUNT_PERKS_FROZEN, "SELECT perksItemId, frozenMonth, frozenYear FROM account_perks_program_frozen WHERE battlenetAccountId = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_INS_ACCOUNT_PERKS_FROZEN, "REPLACE INTO account_perks_program_frozen (battlenetAccountId, perksItemId, frozenMonth, frozenYear) VALUES (?, ?, ?, ?)", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_DEL_ACCOUNT_PERKS_FROZEN, "DELETE FROM account_perks_program_frozen WHERE battlenetAccountId = ?", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_SEL_PERKS_VENDOR_ITEMS_CURRENT, "SELECT id, perksItemId, mountID, battlePetSpeciesID, transmogSetID, itemModifiedAppearanceID, transmogIllusionID, toyID, warbandSceneID, cost, originalCost, flags FROM account_perks_vendor_item WHERE availableMonth = ? AND availableYear = ? ORDER BY id", CONNECTION_ASYNC);
 }
 
 CharacterDatabaseConnection::CharacterDatabaseConnection(MySQLConnectionInfo& connInfo, ConnectionFlags connectionFlags) : MySQLConnection(connInfo, connectionFlags)

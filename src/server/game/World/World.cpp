@@ -79,6 +79,7 @@
 #include "ObjectMgr.h"
 #include "OutdoorPvPMgr.h"
 #include "PetitionMgr.h"
+#include "PerksProgram.h"
 #include "Player.h"
 #include "PlayerDump.h"
 #include "PoolMgr.h"
@@ -1388,6 +1389,9 @@ bool World::SetInitialWorldSettings()
 
     TC_LOG_INFO("server.loading", "Loading Roleplay tables...");
     sRoleplay->LoadAllTables();
+
+    TC_LOG_INFO("server.loading", "Loading Perks Program vendor rotation...");
+    sPerksProgramMgr->LoadVendorItems();
 
     TC_LOG_INFO("server.loading", "Loading SpellInfo store...");
     sSpellMgr->LoadSpellInfoStore();

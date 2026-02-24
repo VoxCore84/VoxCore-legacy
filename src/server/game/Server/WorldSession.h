@@ -546,6 +546,7 @@ namespace WorldPackets
         class FactionSelect;
         class ConversationLineStarted;
         class RequestLatestSplashScreen;
+        class PerksProgramReqestPendingRewards;
         class QueryCountdownTimer;
         class SetCurrencyFlags;
         class AccountNotificationAcknowledge;
@@ -657,6 +658,13 @@ namespace WorldPackets
         class QueryPetition;
         class SignPetition;
         class TurnInPetition;
+    }
+
+    namespace PerksProgram
+    {
+        class PerksProgramStatusRequest;
+        class PerksProgramRequestPurchase;
+        class PerksProgramSetFrozenVendorItem;
     }
 
     namespace Query
@@ -1929,6 +1937,10 @@ class TC_GAME_API WorldSession
         void SendAzeriteRespecNPC(ObjectGuid npc);
 
         void HandleRequestLatestSplashScreen(WorldPackets::Misc::RequestLatestSplashScreen& requestLatestSplashScreen);
+        void HandlePerksProgramStatusRequest(WorldPackets::PerksProgram::PerksProgramStatusRequest& packet);
+        void HandlePerksProgramRequestPurchase(WorldPackets::PerksProgram::PerksProgramRequestPurchase& packet);
+        void HandlePerksProgramSetFrozenVendorItem(WorldPackets::PerksProgram::PerksProgramSetFrozenVendorItem& packet);
+        void HandlePerksProgramRequestPendingRewards(WorldPackets::Misc::PerksProgramReqestPendingRewards& packet);
 
         void HandleSocialContractRequest(WorldPackets::Social::SocialContractRequest& socialContractRequest);
 
