@@ -1,24 +1,35 @@
--- Wizard's Sanctum portal hub follow-up:
--- * Unphase Dornogal portal spawn.
--- * Ensure all portal templates exist by cloning the known-good Dornogal template.
--- * Wire teleport spells in a set-based update.
--- * Copy full behavior for Jade Forest and Bel'ameth from known-good references.
--- * Correct displays in one pass.
--- * Re-assert Founder's Point template/addon wiring.
+-- ================================================================== --
+-- Wizard's Sanctum portal hub v2                                     --
+--                                                                    --
+-- Fixes portal invisibility and broken teleports in Wizard's Sanctum --
+-- by addressing missing templates, phasing, and spell/display wiring --
+--                                                                    --
+-- v2 fix: Founder's Point (543407) Data1 was 0 (zero charges).       --
+-- GAMEOBJECT_TYPE_SPELL_CASTER uses Data1 as charge count:           --
+--   -1 = infinite charges (portal always works)                      --
+--    0 = zero charges (interaction fires but spell never casts)      --
+-- All other portals had Data1=-1. Founder's Point was the only one   --
+-- excluded from the set-based CASE update, so it kept Data1=0.      --
+-- ================================================================== --
+
+USE `world`;
 
 SET @OGUID := 10001978;
 SET @OLD_SQL_SAFE_UPDATES := @@SQL_SAFE_UPDATES;
 SET SQL_SAFE_UPDATES = 0;
 
--- Keep the Dornogal portal visible to everyone in Wizard's Sanctum.
+-- ================================================================== --
+-- 1. Unphase Dornogal portal spawn                                   --
+-- ================================================================== --
 UPDATE `gameobject`
 SET `PhaseId` = 0,
     `PhaseGroup` = 0
 WHERE `guid` = @OGUID + 6
   AND `id` = 620463;
 
--- Ensure missing portal templates exist (cloned from 620463 baseline template).
--- NOTE: Use LEFT JOIN filter so re-runs don't generate duplicate-key warnings.
+-- ================================================================== --
+-- 2. Ensure missing portal templates exist (cloned from 620463)      --
+-- ================================================================== --
 INSERT INTO `gameobject_template`
 (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `size`,
  `Data0`, `Data1`, `Data2`, `Data3`, `Data4`, `Data5`, `Data6`, `Data7`, `Data8`, `Data9`,
@@ -55,8 +66,9 @@ LEFT JOIN `gameobject_template` existing ON existing.`entry` = ids.`entry`
 WHERE base.`entry` = 620463
   AND existing.`entry` IS NULL;
 
--- Ensure Founder's Point template exists with expected spell/display.
--- NOTE: Clone from baseline columns to avoid manual column-count mismatch.
+-- ================================================================== --
+-- 3. Ensure Founder's Point template exists                          --
+-- ================================================================== --
 INSERT INTO `gameobject_template`
 (`entry`, `type`, `displayId`, `name`, `IconName`, `castBarCaption`, `unk1`, `size`,
  `Data0`, `Data1`, `Data2`, `Data3`, `Data4`, `Data5`, `Data6`, `Data7`, `Data8`, `Data9`,
@@ -84,7 +96,7 @@ SET
   `name` = 'Portal to Founder\'s Point',
   `size` = 1.299999952316284179,
   `Data0` = 1235595,
-  `Data1` = 0,
+  `Data1` = -1,           -- v2: was 0 (zero charges = spell never casts)
   `Data3` = 1,
   `Data5` = 23503,
   `Data6` = 1,
@@ -93,7 +105,9 @@ SET
   `VerifiedBuild` = 65299
 WHERE `entry` = 543407;
 
--- Template addons for visuals/interaction.
+-- ================================================================== --
+-- 4. Template addons for visuals/interaction                         --
+-- ================================================================== --
 DELETE FROM `gameobject_template_addon`
 WHERE `entry` IN (620455,620458,620463,620464,620465,620467,620472,620473,620475,620476,620477,620479,543407);
 
@@ -113,24 +127,27 @@ VALUES
 (620479, 1732, 0x0, 0, 3503),
 (543407,    0, 0x0, 0, 24311);
 
--- Set spells + interaction flags in one query.
+-- ================================================================== --
+-- 5. Set spells + interaction flags                                  --
+--    v2: 543407 now included in Data1=-1 set (was excluded → 0)      --
+-- ================================================================== --
 UPDATE `gameobject_template`
 SET
   `Data0` = CASE `entry`
-    WHEN 620477 THEN 296901 -- Azsuna
-    WHEN 620458 THEN 393590 -- Valdrakken
-    WHEN 620473 THEN 32268  -- Exodar
-    WHEN 620475 THEN 53140  -- Dalaran (Crystalsong)
-    WHEN 620455 THEN 59901  -- Caverns of Time
-    WHEN 620465 THEN 281405 -- Boralus
-    WHEN 620479 THEN 225748 -- Stormshield (Ashran)
-    WHEN 620464 THEN 329132 -- Oribos
-    WHEN 620472 THEN 33728  -- Shattrath
-    WHEN 543407 THEN 1235595 -- Founder's Point
+    WHEN 620477 THEN 296901   -- Azsuna
+    WHEN 620458 THEN 393590   -- Valdrakken
+    WHEN 620473 THEN 32268    -- Exodar
+    WHEN 620475 THEN 53140    -- Dalaran (Crystalsong)
+    WHEN 620455 THEN 59901    -- Caverns of Time
+    WHEN 620465 THEN 281405   -- Boralus
+    WHEN 620479 THEN 225748   -- Stormshield (Ashran)
+    WHEN 620464 THEN 329132   -- Oribos
+    WHEN 620472 THEN 33728    -- Shattrath
+    WHEN 543407 THEN 1235595  -- Founder's Point
     ELSE `Data0`
   END,
   `Data1` = CASE
-    WHEN `entry` IN (620477,620458,620473,620475,620455,620465,620479,620464,620472) THEN -1
+    WHEN `entry` IN (620477,620458,620473,620475,620455,620465,620479,620464,620472,543407) THEN -1
     ELSE `Data1`
   END,
   `Data6` = CASE
@@ -139,7 +156,10 @@ SET
   END
 WHERE `entry` IN (620455,620458,620464,620465,620472,620473,620475,620477,620479,543407);
 
--- Copy full portal payload from known-good references.
+-- ================================================================== --
+-- 6. Copy full portal payload from known-good references             --
+-- ================================================================== --
+-- Jade Forest (620467) ← from 323844
 UPDATE `gameobject_template` t
 JOIN `gameobject_template` ref ON ref.`entry` = 323844
 SET
@@ -154,6 +174,7 @@ SET
   t.`RequiredLevel`=ref.`RequiredLevel`
 WHERE t.`entry` = 620467;
 
+-- Bel'ameth (620476) ← from 420918
 UPDATE `gameobject_template` t
 JOIN `gameobject_template` ref ON ref.`entry` = 420918
 SET
@@ -168,7 +189,9 @@ SET
   t.`RequiredLevel`=ref.`RequiredLevel`
 WHERE t.`entry` = 620476;
 
--- Display IDs in one query.
+-- ================================================================== --
+-- 7. Display IDs                                                     --
+-- ================================================================== --
 UPDATE `gameobject_template`
 SET `displayId` = CASE `entry`
   WHEN 620467 THEN 55651
