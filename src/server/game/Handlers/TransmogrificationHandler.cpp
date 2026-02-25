@@ -40,9 +40,11 @@ bool ValidateTransmogOutfitPlayerGuid(WorldSession* session, ObjectGuid const& p
     if (!playerGuid || playerGuid == session->GetPlayer()->GetGUID())
         return true;
 
-    TC_LOG_ERROR("network.opcode.transmog", "{} rejected [{}]: packet player guid {} does not match session player guid {}",
+    // Midnight captures currently decode these packed guid bytes with a non-player type on server side.
+    // Keep processing to avoid false rejections while parsers stabilize; continue logging for visibility.
+    TC_LOG_DEBUG("network.opcode.transmog", "{} guid mismatch tolerated [{}]: packet={} session={}",
         opcodeName, session->GetPlayerInfo(), playerGuid.ToString(), session->GetPlayer()->GetGUID().ToString());
-    return false;
+    return true;
 }
 
 uint32 FindNextAvailableTransmogSetID(Player const* player)

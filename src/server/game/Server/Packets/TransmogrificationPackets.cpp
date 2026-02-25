@@ -296,18 +296,27 @@ void TransmogOutfitUpdateSlots::Read()
             return;
         }
 
-        // UPDATE_SLOTS has optional trailing alignment bytes between packed guid and slot entries.
-        std::size_t bytesBeforeSlots = bytesRemainingAfterGuid - expectedSlotBytes;
-        for (std::size_t i = 0; i < bytesBeforeSlots; ++i)
-            _worldPacket.read_skip<uint8>();
+        std::size_t extraBytes = bytesRemainingAfterGuid - expectedSlotBytes;
+
+        // Observed payloads can carry one alignment byte before slot entries.
+        std::size_t bytesBeforeSlots = 0;
+        if (extraBytes > 0 && _worldPacket.rpos() < _worldPacket.size())
+        {
+            uint8 maybeAlignment = *(_worldPacket.data() + _worldPacket.rpos());
+            if (maybeAlignment == 0x00 || maybeAlignment == 0x80 || maybeAlignment == 0xC0)
+            {
+                _worldPacket.read_skip<uint8>();
+                bytesBeforeSlots = 1;
+            }
+        }
 
         Slots.resize(slotCount);
 
         Set.Type = EquipmentSetInfo::TRANSMOG;
         Set.IgnoreMask = 0;
 
-        TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS diag: setId={} slotCount={} playerGuid={} rposAfterGuid={} bytesBeforeSlots={}",
-            Set.SetID, slotCount, PlayerGuid.ToString(), rposAfterGuid, bytesBeforeSlots);
+        TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS diag: setId={} slotCount={} playerGuid={} rposAfterGuid={} extraBytes={} bytesBeforeSlots={}",
+            Set.SetID, slotCount, PlayerGuid.ToString(), rposAfterGuid, extraBytes, bytesBeforeSlots);
 
         for (TransmogOutfitSlotEntry& slot : Slots)
         {
