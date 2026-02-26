@@ -256,6 +256,23 @@ void CompanionMgr::SummonSquad(Player* player)
         summon->SetFaction(player->GetFaction());
         summon->SetImmuneToPC(true);
 
+        // Scale health based on player's max HP and role
+        float healthPct = 0.5f;
+        switch (role)
+        {
+            case Companion::ROLE_TANK:   healthPct = 1.0f;  break;
+            case Companion::ROLE_MELEE:  healthPct = 0.6f;  break;
+            case Companion::ROLE_RANGED: healthPct = 0.5f;  break;
+            case Companion::ROLE_CASTER: healthPct = 0.5f;  break;
+            case Companion::ROLE_HEALER: healthPct = 0.5f;  break;
+            default: break;
+        }
+        uint64 scaledHealth = uint64(player->GetMaxHealth() * healthPct);
+        if (scaledHealth < 1)
+            scaledHealth = 1;
+        summon->SetMaxHealth(scaledHealth);
+        summon->SetFullHealth();
+
         // Start following if enabled
         if (state->control.following)
             summon->GetMotionMaster()->MoveFollow(player, offset.dist, ChaseAngle(offset.angle + float(M_PI)));
