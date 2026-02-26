@@ -12142,11 +12142,44 @@ void Player::SetVisibleItemSlot(uint8 slot, Item* pItem)
     auto itemField = m_values.ModifyValue(&Player::m_playerData).ModifyValue(&UF::PlayerData::VisibleItems, slot);
     if (pItem)
     {
-        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemID), pItem->GetVisibleEntry(this));
-        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::SecondaryItemModifiedAppearanceID), pItem->GetVisibleSecondaryModifiedAppearanceId(this));
-        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemAppearanceModID), pItem->GetVisibleAppearanceModId(this));
-        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemVisual), pItem->GetVisibleItemVisual(this));
-        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemModifiedAppearanceID), pItem->GetVisibleModifiedAppearanceId(this));
+        // --- Compute all values first for logging ---
+        uint32 transmogAppearance = pItem->GetModifier(AppearanceModifierSlotBySpec[GetActiveTalentGroup()]);
+        if (!transmogAppearance)
+            transmogAppearance = pItem->GetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_ALL_SPECS);
+
+        uint32 illusionEnchant = pItem->GetModifier(IllusionModifierSlotBySpec[GetActiveTalentGroup()]);
+        if (!illusionEnchant)
+            illusionEnchant = pItem->GetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_ALL_SPECS);
+
+        uint8 displayType = 0;
+        if (uint32 modAppearId = pItem->GetVisibleModifiedAppearanceId(this))
+            if (ItemModifiedAppearanceEntry const* modAppear = sItemModifiedAppearanceStore.LookupEntry(modAppearId))
+                if (ItemAppearanceEntry const* appear = sItemAppearanceStore.LookupEntry(modAppear->ItemAppearanceID))
+                    displayType = uint8(appear->DisplayType);
+
+        int32 visibleItemID = pItem->GetVisibleEntry(this);
+        int32 secondaryIMA = pItem->GetVisibleSecondaryModifiedAppearanceId(this);
+        uint16 appearModID = pItem->GetVisibleAppearanceModId(this);
+        uint16 itemVisual = pItem->GetVisibleItemVisual(this);
+        uint32 modifiedAppearID = pItem->GetVisibleModifiedAppearanceId(this);
+
+        TC_LOG_DEBUG("entities.player.items",
+            "SetVisibleItemSlot: Player={} Slot={} BaseEntry={} VisItemID={} IMAID={} AppearModID={} DisplayType={} HasTmog={} HasIllusion={} ItemVisual={} SecondaryIMA={}",
+            GetName(), slot, pItem->GetEntry(), visibleItemID, modifiedAppearID,
+            appearModID, displayType, transmogAppearance != 0, illusionEnchant != 0,
+            itemVisual, secondaryIMA);
+
+        // --- Stock TC fields (always set) ---
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemID), visibleItemID);
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::SecondaryItemModifiedAppearanceID), secondaryIMA);
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemAppearanceModID), appearModID);
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemVisual), itemVisual);
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemModifiedAppearanceID), modifiedAppearID);
+
+        // --- Custom fields (12.x rendering hints) ---
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::HasTransmog), transmogAppearance != 0);
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::HasIllusion), illusionEnchant != 0);
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::Field_18), displayType);
     }
     else
     {
@@ -12155,6 +12188,9 @@ void Player::SetVisibleItemSlot(uint8 slot, Item* pItem)
         SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemAppearanceModID), 0);
         SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemVisual), 0);
         SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::ItemModifiedAppearanceID), 0);
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::HasTransmog), false);
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::HasIllusion), false);
+        SetUpdateFieldValue(itemField.ModifyValue(&UF::VisibleItem::Field_18), 0);
     }
 }
 

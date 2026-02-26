@@ -26,6 +26,7 @@
 #include "Player.h"
 #include "SpellMgr.h"
 #include "TransmogrificationPackets.h"
+#include "TransmogrificationUtils.h"
 
 
 namespace
@@ -581,6 +582,10 @@ void WorldSession::HandleTransmogOutfitUpdateSlots(WorldPackets::Transmogrificat
         return;
 
     GetPlayer()->SetEquipmentSet(updatedSet);
+
+    // Apply the outfit appearances to equipped items (charges gold)
+    if (!ApplyTransmogOutfitToPlayer(GetPlayer(), updatedSet))
+        return;
 
     WorldPackets::Transmogrification::TransmogOutfitSlotsUpdated response;
     response.SetID = updatedSet.SetID;
