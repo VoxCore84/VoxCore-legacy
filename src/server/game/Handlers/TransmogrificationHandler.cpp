@@ -96,6 +96,27 @@ bool ValidateTransmogOutfitSet(WorldSession* session, EquipmentSetInfo::Equipmen
             set.IgnoreMask |= (1 << i);
     }
 
+    if (set.SecondaryShoulderApparanceID)
+    {
+        if (!sItemModifiedAppearanceStore.LookupEntry(set.SecondaryShoulderApparanceID))
+        {
+            TC_LOG_ERROR("network.opcode.transmog", "Transmog outfit rejected [{}]: invalid secondary shoulder appearance {}",
+                session->GetPlayerInfo(), set.SecondaryShoulderApparanceID);
+            return false;
+        }
+
+        if (!session->GetCollectionMgr()->HasItemAppearance(set.SecondaryShoulderApparanceID).first)
+        {
+            TC_LOG_ERROR("network.opcode.transmog", "Transmog outfit rejected [{}]: uncollected secondary shoulder appearance {}",
+                session->GetPlayerInfo(), set.SecondaryShoulderApparanceID);
+            return false;
+        }
+
+        set.SecondaryShoulderSlot = 2;
+    }
+    else
+        set.SecondaryShoulderSlot = 0;
+
     set.IgnoreMask &= 0x7FFFF;
 
     auto validateIllusion = [session](uint32 enchantId) -> bool

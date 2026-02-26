@@ -67,10 +67,6 @@ std::string BuildDiagnosticReadTrace(char const* opcodeName, WorldPacket const& 
     return trace.str();
 }
 
-
-
-uint8 constexpr TRANSMOG_SECONDARY_SHOULDER_SLOT = EQUIPMENT_SLOT_END + 1;
-
 uint8 TransmogOutfitSlotToEquipSlot(uint8 transmogSlot)
 {
     switch (transmogSlot)

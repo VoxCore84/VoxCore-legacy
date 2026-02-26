@@ -27,6 +27,8 @@ namespace WorldPackets
 {
     namespace Transmogrification
     {
+        constexpr uint8 TRANSMOG_SECONDARY_SHOULDER_SLOT = EQUIPMENT_SLOT_END + 1;
+
         struct TransmogrifyItem
         {
             int32 ItemModifiedAppearanceID = 0;
