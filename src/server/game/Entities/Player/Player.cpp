@@ -12160,11 +12160,9 @@ void Player::SetVisibleItemSlot(uint8 slot, Item* pItem)
         uint16 itemVisual = pItem->GetVisibleItemVisual(this);
         uint32 modifiedAppearID = pItem->GetVisibleModifiedAppearanceId(this);
 
-        // When transmog is active, ItemID must be the BASE equipped item (for skeleton
-        // attachment points), not the transmog source. The transmog visual comes from
-        // ItemModifiedAppearanceID. When HasTransmog is set, the client uses IMAID for
-        // the visual model and ItemID for the bone/slot attachment.
-        int32 visibleItemID = transmogAppearance ? int32(pItem->GetEntry()) : pItem->GetVisibleEntry(this);
+        // Stock TC behavior: ItemID = transmog source's item entry (via GetVisibleEntry).
+        // The client uses ItemID for both visual model and skeleton attachment.
+        int32 visibleItemID = pItem->GetVisibleEntry(this);
 
         TC_LOG_DEBUG("entities.player.items",
             "SetVisibleItemSlot: Player={} Slot={} BaseEntry={} VisItemID={} IMAID={} AppearModID={} DisplayType={} HasTmog={} HasIllusion={} ItemVisual={} SecondaryIMA={}",
@@ -18058,24 +18056,26 @@ void Player::_SyncTransmogOutfitsToActivePlayerData()
             sitSetter.ModifyValue(&UF::TransmogOutfitSituationInfo::EquipmentSetID).SetValue(sit.EquipmentSetID);
         }
 
-        // Map server EQUIPMENT_SLOT indices to client TransmogOutfitSlot indices (0-14)
+        // Map server EQUIPMENT_SLOT indices to 12.x client TransmogOutfitSlot indices (1-based)
+        // Client uses 1-based indices: 1=Head, 2=Shoulder, 3=SecShoulder, 4=Back, 5=Chest,
+        // 6=new slot (skipped), 7=Tabard, 8=Body, 9=Wrists, etc.
         struct TransmogSlotMapping { int8 transmogSlot; uint8 equipSlot; };
         static constexpr TransmogSlotMapping slotMap[] = {
-            {  0,  0 }, // Head            -> EQUIPMENT_SLOT_HEAD
-            {  1,  2 }, // ShoulderRight   -> EQUIPMENT_SLOT_SHOULDERS
-            {  2,  2 }, // ShoulderLeft    -> EQUIPMENT_SLOT_SHOULDERS (same source)
-            {  3, 14 }, // Back            -> EQUIPMENT_SLOT_BACK
-            {  4,  4 }, // Chest           -> EQUIPMENT_SLOT_CHEST
-            {  5, 18 }, // Tabard          -> EQUIPMENT_SLOT_TABARD
-            {  6,  3 }, // Body (Shirt)    -> EQUIPMENT_SLOT_BODY
-            {  7,  8 }, // Wrist           -> EQUIPMENT_SLOT_WRISTS
-            {  8,  9 }, // Hand            -> EQUIPMENT_SLOT_HANDS
-            {  9,  5 }, // Waist           -> EQUIPMENT_SLOT_WAIST
-            { 10,  6 }, // Legs            -> EQUIPMENT_SLOT_LEGS
-            { 11,  7 }, // Feet            -> EQUIPMENT_SLOT_FEET
-            { 12, 15 }, // WeaponMainHand  -> EQUIPMENT_SLOT_MAINHAND
-            { 13, 16 }, // WeaponOffHand   -> EQUIPMENT_SLOT_OFFHAND
-            { 14, 17 }, // WeaponRanged    -> EQUIPMENT_SLOT_RANGED
+            {  1,  0 }, // Head            -> EQUIPMENT_SLOT_HEAD
+            {  2,  2 }, // ShoulderRight   -> EQUIPMENT_SLOT_SHOULDERS
+            {  3,  2 }, // ShoulderLeft    -> EQUIPMENT_SLOT_SHOULDERS (secondary)
+            {  4, 14 }, // Back            -> EQUIPMENT_SLOT_BACK
+            {  5,  4 }, // Chest           -> EQUIPMENT_SLOT_CHEST
+            {  7, 18 }, // Tabard          -> EQUIPMENT_SLOT_TABARD
+            {  8,  3 }, // Body (Shirt)    -> EQUIPMENT_SLOT_BODY
+            {  9,  8 }, // Wrist           -> EQUIPMENT_SLOT_WRISTS
+            { 10,  9 }, // Hand            -> EQUIPMENT_SLOT_HANDS
+            { 11,  5 }, // Waist           -> EQUIPMENT_SLOT_WAIST
+            { 12,  6 }, // Legs            -> EQUIPMENT_SLOT_LEGS
+            { 13,  7 }, // Feet            -> EQUIPMENT_SLOT_FEET
+            { 14, 15 }, // WeaponMainHand  -> EQUIPMENT_SLOT_MAINHAND
+            { 15, 16 }, // WeaponOffHand   -> EQUIPMENT_SLOT_OFFHAND
+            { 16, 17 }, // WeaponRanged    -> EQUIPMENT_SLOT_RANGED
         };
 
         for (auto const& mapping : slotMap)
