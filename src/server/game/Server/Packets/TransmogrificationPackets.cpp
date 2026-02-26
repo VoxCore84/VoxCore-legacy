@@ -224,11 +224,18 @@ void TransmogOutfitNew::Read()
 
                 if (equipSlot == TRANSMOG_SECONDARY_SHOULDER_SLOT)
                 {
-                    Set.SecondaryShoulderApparanceID = int32(appearanceID);
-                    Set.SecondaryShoulderSlot = 2;
+                    if (appearanceID && !Set.SecondaryShoulderApparanceID)
+                    {
+                        Set.SecondaryShoulderApparanceID = int32(appearanceID);
+                        Set.SecondaryShoulderSlot = 2;
+                    }
                 }
                 else if (equipSlot < EQUIPMENT_SLOT_END)
-                    Set.Appearances[equipSlot] = int32(appearanceID);
+                {
+                    // First non-zero IMAID wins — protect against multi-iteration clobbering
+                    if (appearanceID && !Set.Appearances[equipSlot])
+                        Set.Appearances[equipSlot] = int32(appearanceID);
+                }
             }
         }
 
@@ -423,16 +430,34 @@ void TransmogOutfitUpdateSlots::Read()
             uint8 equipSlot = TransmogOutfitSlotToEquipSlot(transmogSlot);
             if (equipSlot == TRANSMOG_SECONDARY_SHOULDER_SLOT)
             {
-                Set.SecondaryShoulderApparanceID = int32(slot.AppearanceID);
-                Set.SecondaryShoulderSlot = 2;
+                // Only accept the first non-zero value (multi-iteration packets repeat slots)
+                if (slot.AppearanceID && !Set.SecondaryShoulderApparanceID)
+                {
+                    Set.SecondaryShoulderApparanceID = int32(slot.AppearanceID);
+                    Set.SecondaryShoulderSlot = 2;
+                }
             }
             else if (equipSlot < EQUIPMENT_SLOT_END)
-                Set.Appearances[equipSlot] = int32(slot.AppearanceID);
+            {
+                // Multi-iteration packets (slotCount > 15) send the same 15 slots multiple times.
+                // Only accept the first non-zero IMAID per slot to prevent later iterations
+                // from clobbering valid weapon appearances with armor IMAIDs.
+                if (slot.AppearanceID && !Set.Appearances[equipSlot])
+                    Set.Appearances[equipSlot] = int32(slot.AppearanceID);
+            }
 
-            if (i < 3)
-                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: raw={} appear={} flags={} transmogSlot={} equipSlot={}",
-                    i, ByteArrayToHexStr(std::span<uint8 const>(slot.RawBytes, 16)), slot.AppearanceID, slot.Flags, transmogSlot, equipSlot);
+            if (i < 3 || (slotCount > 15 && i % 15 < 3))
+                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: raw={} appear={} flags={} transmogSlot={} equipSlot={} accepted={}",
+                    i, ByteArrayToHexStr(std::span<uint8 const>(slot.RawBytes, 16)), slot.AppearanceID, slot.Flags, transmogSlot, equipSlot,
+                    (equipSlot == TRANSMOG_SECONDARY_SHOULDER_SLOT) ? (slot.AppearanceID && Set.SecondaryShoulderApparanceID == int32(slot.AppearanceID))
+                    : (equipSlot < EQUIPMENT_SLOT_END && Set.Appearances[equipSlot] == int32(slot.AppearanceID)));
         }
+
+        if (slotCount > 15)
+            TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS multi-iteration: {} entries = {} iterations of 15. "
+                "Final weapons: MH={} OH={} Ranged={}",
+                slotCount, slotCount / 15, Set.Appearances[EQUIPMENT_SLOT_MAINHAND],
+                Set.Appearances[EQUIPMENT_SLOT_OFFHAND], Set.Appearances[EQUIPMENT_SLOT_RANGED]);
 
         for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)
             if (!Set.Appearances[slot])
