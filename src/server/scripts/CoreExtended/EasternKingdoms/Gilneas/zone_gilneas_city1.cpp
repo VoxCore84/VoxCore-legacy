@@ -1254,22 +1254,22 @@ public:
         ObjectGuid m_citizenGUID;
         ObjectGuid m_worgenGUID;
 
-        bool OnGossipHello(Player* player, GameObject* go) override
+        bool OnGossipHello(Player* player) override
         {
-            if (!player || !go)
+            if (!player || !me)
                 return false;
 
             switch (urand(0, 1))
             {
             case 0:
             {
-                SummonOnlyCitizen(player, go);
+                SummonOnlyCitizen(player, me);
                 player->KilledMonsterCredit(NPC_GILNEAS_EVACUATION_FACING_MARKER_35830);
                 break;
             }
             case 1:
             {
-                SummonCitizenAndWorgen(player, go);
+                SummonCitizenAndWorgen(player, me);
                 player->KilledMonsterCredit(NPC_GILNEAS_EVACUATION_FACING_MARKER_35830);
                 break;
             }

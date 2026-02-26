@@ -14401,10 +14401,12 @@ void Player::OnGossipSelect(WorldObject* source, int32 gossipOptionId, uint32 me
             PlayerTalkClass->SendCloseGossip();
             SendRuneforgeLegendaryCraftingOpenNpc(source->GetGUID(), false);
             handled = false;
+            break;
         case GossipOptionNpc::RuneforgeLegendaryUpgrade:
             PlayerTalkClass->SendCloseGossip();
             SendRuneforgeLegendaryCraftingOpenNpc(source->GetGUID(), true);
             handled = false;
+            break;
         case GossipOptionNpc::ProfessionsCraftingOrder: // NYI
             break;
         case GossipOptionNpc::ProfessionsCustomerOrder: // NYI

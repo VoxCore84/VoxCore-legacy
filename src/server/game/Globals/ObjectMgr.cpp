@@ -9233,7 +9233,7 @@ void ObjectMgr::LoadCreatureOutfits()
 
         auto* maleModel = sDB2Manager.GetChrModel(co->race, GENDER_MALE);
         auto* femaleModel = sDB2Manager.GetChrModel(co->race, GENDER_FEMALE);
-        ASSERT(maleModel && femaleModel, "Dress NPCs cannot find male or female model from DBC with race {}", co->race);
+        ASSERT(maleModel && femaleModel, "Dress NPCs cannot find male or female model from DBC with race %u", co->race);
 
 
         co->gender = fields[i++].GetUInt8();
