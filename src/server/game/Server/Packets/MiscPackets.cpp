@@ -947,4 +947,9 @@ void ChromieTimeSelectExpansion::Read()
 {
     _worldPacket >> ExpansionID;
 }
+
+void OpenTradeskillNpc::Read()
+{
+    _worldPacket >> NpcGUID;
+}
 }

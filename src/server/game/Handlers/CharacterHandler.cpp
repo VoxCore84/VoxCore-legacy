@@ -3161,3 +3161,8 @@ void WorldSession::SendUndeleteCharacterResponse(CharacterUndeleteResult result,
 
     SendPacket(response.Write());
 }
+
+void WorldSession::HandleGetAccountCharacterList(WorldPackets::Character::GetAccountCharacterList& /*packet*/)
+{
+    TC_LOG_DEBUG("network", "WorldSession::HandleGetAccountCharacterList");
+}

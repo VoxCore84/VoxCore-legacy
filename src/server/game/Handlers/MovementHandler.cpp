@@ -897,3 +897,21 @@ void WorldSession::ComputeNewClockDelta()
         _player->SetTransportServerTime(int32(_timeSyncClockDelta));
     }
 }
+
+void WorldSession::HandleMoveSetTurnRateCheat(WorldPackets::Movement::MoveSetTurnRateCheat& packet)
+{
+    Player* player = GetPlayer();
+    if (!player)
+        return;
+
+    float turnRate = packet.TurnRate;
+
+    // Validate reasonable range
+    if (turnRate < 0.01f || turnRate > 10.0f)
+    {
+        TC_LOG_ERROR("network", "WorldSession::HandleMoveSetTurnRateCheat: {} sent invalid turn rate {}", player->GetName(), turnRate);
+        return;
+    }
+
+    player->SetSpeedRate(MOVE_TURN_RATE, turnRate / playerBaseMoveSpeed[MOVE_TURN_RATE]);
+}

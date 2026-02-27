@@ -282,6 +282,7 @@ namespace WorldPackets
         class SetPlayerDeclinedNames;
         class SavePersonalEmblem;
         class SetupWarbandGroups;
+        class GetAccountCharacterList;
 
         enum class LoginFailureReason : uint8;
     }
@@ -553,6 +554,8 @@ namespace WorldPackets
         class ShowTradeSkill;
         class ActivateSoulbind;
         class ChromieTimeSelectExpansion;
+        class OpenTradeskillNpc;
+        class RequestWeeklyRewards;
     }
 
     namespace Movement
@@ -574,6 +577,7 @@ namespace WorldPackets
         class MoveApplyMovementForceAck;
         class MoveRemoveMovementForceAck;
         class MoveInitActiveMoverComplete;
+        class MoveSetTurnRateCheat;
     }
 
     namespace NPC
@@ -1251,6 +1255,7 @@ class TC_GAME_API WorldSession
         void HandleCharEnum(CharacterDatabaseQueryHolder const& holder);
         void HandleCharEnumOpcode(WorldPackets::Character::EnumCharacters& /*enumCharacters*/);
         void HandleCharUndeleteEnumOpcode(WorldPackets::Character::EnumCharacters& /*enumCharacters*/);
+        void HandleGetAccountCharacterList(WorldPackets::Character::GetAccountCharacterList& packet);
         void HandleSetupWarbandGroups(WorldPackets::Character::SetupWarbandGroups& setupWarbandGroups);
         void HandleCharDeleteOpcode(WorldPackets::Character::CharDelete& charDelete);
         void HandleCharCreateOpcode(WorldPackets::Character::CreateCharacter& charCreate);
@@ -1402,6 +1407,7 @@ class TC_GAME_API WorldSession
         void HandleMoveTimeSkippedOpcode(WorldPackets::Movement::MoveTimeSkipped& moveTimeSkipped);
         void HandleMovementAckMessage(WorldPackets::Movement::MovementAckMessage& movementAck);
         void HandleMoveInitActiveMoverComplete(WorldPackets::Movement::MoveInitActiveMoverComplete const& moveInitActiveMoverComplete);
+        void HandleMoveSetTurnRateCheat(WorldPackets::Movement::MoveSetTurnRateCheat& packet);
 
         void HandleRequestRaidInfoOpcode(WorldPackets::Party::RequestRaidInfo& packet);
 
@@ -1868,6 +1874,10 @@ class TC_GAME_API WorldSession
         void HandleSceneTriggerEvent(WorldPackets::Scenes::SceneTriggerEvent& sceneTriggerEvent);
         void HandleScenePlaybackComplete(WorldPackets::Scenes::ScenePlaybackComplete& scenePlaybackComplete);
         void HandleScenePlaybackCanceled(WorldPackets::Scenes::ScenePlaybackCanceled& scenePlaybackCanceled);
+
+        // Tradeskill / Weekly Rewards
+        void HandleOpenTradeskillNpc(WorldPackets::Misc::OpenTradeskillNpc& packet);
+        void HandleRequestWeeklyRewards(WorldPackets::Misc::RequestWeeklyRewards& packet);
 
         // Token
         void HandleCommerceTokenGetLog(WorldPackets::Token::CommerceTokenGetLog& updateListedAuctionableTokens);

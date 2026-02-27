@@ -1212,4 +1212,9 @@ WorldPacket const* MoveAddImpulse::Write()
 
     return &_worldPacket;
 }
+
+void MoveSetTurnRateCheat::Read()
+{
+    _worldPacket >> TurnRate;
+}
 }

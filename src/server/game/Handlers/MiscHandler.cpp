@@ -1371,3 +1371,13 @@ void WorldSession::HandleChromieTimeSelectExpansion(WorldPackets::Misc::ChromieT
     // Send success response
     player->SendDirectMessage(WorldPackets::Misc::ChromieTimeSelectExpansionSuccess().Write());
 }
+
+void WorldSession::HandleOpenTradeskillNpc(WorldPackets::Misc::OpenTradeskillNpc& packet)
+{
+    TC_LOG_DEBUG("network", "WorldSession::HandleOpenTradeskillNpc: NpcGUID: {}", packet.NpcGUID.ToString());
+}
+
+void WorldSession::HandleRequestWeeklyRewards(WorldPackets::Misc::RequestWeeklyRewards& /*packet*/)
+{
+    TC_LOG_DEBUG("network", "WorldSession::HandleRequestWeeklyRewards");
+}

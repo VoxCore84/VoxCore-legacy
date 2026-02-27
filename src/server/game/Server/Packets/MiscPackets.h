@@ -1200,6 +1200,23 @@ namespace WorldPackets
 
             WorldPacket const* Write() override { return &_worldPacket; }
         };
+        class OpenTradeskillNpc final : public ClientPacket
+        {
+        public:
+            explicit OpenTradeskillNpc(WorldPacket&& packet) : ClientPacket(CMSG_OPEN_TRADESKILL_NPC, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid NpcGUID;
+        };
+
+        class RequestWeeklyRewards final : public ClientPacket
+        {
+        public:
+            explicit RequestWeeklyRewards(WorldPacket&& packet) : ClientPacket(CMSG_REQUEST_WEEKLY_REWARDS, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 

@@ -926,6 +926,13 @@ namespace WorldPackets
             uint32 NewRaceID = 0;
             bool Success = false;
         };
+        class GetAccountCharacterList final : public ClientPacket
+        {
+        public:
+            explicit GetAccountCharacterList(WorldPacket&& packet) : ClientPacket(CMSG_GET_ACCOUNT_CHARACTER_LIST, std::move(packet)) { }
+
+            void Read() override { }
+        };
     }
 }
 

@@ -778,6 +778,16 @@ namespace WorldPackets
             TaggedPosition<Position::XYZ> Direction;
         };
 
+        class MoveSetTurnRateCheat final : public ClientPacket
+        {
+        public:
+            explicit MoveSetTurnRateCheat(WorldPacket&& packet) : ClientPacket(CMSG_MOVE_SET_TURN_RATE_CHEAT, std::move(packet)) { }
+
+            void Read() override;
+
+            float TurnRate = 0.0f;
+        };
+
         ByteBuffer& operator>>(ByteBuffer& data, MovementAck& ack);
     }
 }
