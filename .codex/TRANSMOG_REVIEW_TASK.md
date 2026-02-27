@@ -1,286 +1,100 @@
-# Task: Review & Validate 12.x Transmog Outfit System
+# Codex Review Task: Transmog Outfit System — Full Audit (Feb 26 2026)
 
-## Your Role
-You are a **second set of eyes** reviewing the transmog outfit implementation for a TrinityCore-based WoW server targeting the **12.x / Midnight** client. The primary developer (Claude Code) has been iterating on fixes. Your job is to:
+## Context
 
-1. **Validate** the current slot mapping against the packet evidence
-2. **Identify** any remaining bugs or logical errors
-3. **Suggest** fixes if you find problems
-4. **Do NOT blindly trust** the existing code or comments — verify everything against the raw packet data
+We have a custom transmog outfit system for a 12.x WoW private server (TrinityCore-based). Recent changes fixed how CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS and CMSG_TRANSMOG_OUTFIT_NEW route IMAIDs (ItemModifiedAppearanceIDs) to equipment slots.
 
-## Background: What Happened
+**Critical discovery (Feb 2026)**: The 16-byte slot entry wire format uses **bytes[6-7] (ItemAppearance.DisplayType)** as the routing key, NOT byte[0] (which is just a sequential ordinal 1-14). This was verified by looking up every IMAID from a WPP packet sniff in Wago DB2 CSVs:
+- byte[0]=1 had IMAID 301683 "Shul'ka Shoulderspikes" (DT=1=Shoulder, NOT Head)
+- byte[0]=4 had IMAID 301676 "Shul'ka Vest" (DT=3=Chest, NOT Shirt)
+- byte[0]=9 had IMAID 301677 "Shul'ka Girdle" (DT=4=Waist, NOT Wrists)
 
-The transmog outfit system lets players save and apply transmog appearances via the Wardrobe UI. The 12.x client sends `CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS` packets containing slot entries, and the server must map those to the correct equipment slots.
-
-### Timeline of Issues
-
-1. **Stock TrinityCore** had a 0-based slot mapping (0=Head, 1=Shoulder, 2=SecShoulder, 3=Back, 4=Chest...). This was inherited from an older client version.
-
-2. **First fix attempt** swapped slots 3/4 (Chest before Back) and inserted a new slot 6, shifting everything after. Result: items floated in wrong positions.
-
-3. **Second fix attempt** (current) changed to 1-based mapping after analyzing raw packet hex data. The packet data shows the client starts slot indices at 1, not 0.
-
-4. **SetVisibleItemSlot ItemID issue**: An earlier attempt forced `ItemID = base item entry` when transmog was active (theory: base item for skeleton, IMAID for visual). This was wrong — it prevented transmog visuals from showing. Reverted to stock TC behavior: `GetVisibleEntry()` returns the transmog source's ItemID.
-
-5. **DB2 data was missing**: The server's `ItemModifiedAppearance.db2` and `ItemAppearance.db2` files are WDC5 format with data (156K and 63K records respectively). Additionally, 218K+ rows were imported into the hotfixes DB tables from Wago CSVs.
-
-## Current State (Pending Test)
-
-The latest changes have been made but **NOT yet tested**. The user is rebuilding now.
-
-### The Corrected 1-Based Slot Mapping
-
-Evidence from **raw packet hex dumps** (multiple packets analyzed):
-
-| Byte 15 (SlotIndex) | IMAID in packet | Resolved Item | Item InventoryType | Slot Meaning |
-|---|---|---|---|---|
-| 1 | 77344 | Hidden Helm | Head (1) | **HEAD** |
-| 1 | 184599 | Lionguard Greathelm | Head (1) | **HEAD** |
-| 1 | 301643 | South Guard's Facemask | Head (1) | **HEAD** |
-| 2 | 114080 | Monster Mantle | Shoulder (3) | **SHOULDER** |
-| 2 | 184602 | Lionguard Pauldrons | Shoulder (3) | **SHOULDER** |
-| 2 | 301644 | South Guard's Mantle | Shoulder (3) | **SHOULDER** |
-| 3 | 114080 | Monster Mantle | Shoulder (3) | **SEC SHOULDER** |
-| 3 | 184602 | Lionguard Pauldrons | Shoulder (3) | **SEC SHOULDER** |
-| 3 | 301644 | South Guard's Mantle | Shoulder (3) | **SEC SHOULDER** |
-| 4 | 108785 | Hidden Cloak | Back (16) | **BACK** |
-| 4 | 77345 | Hidden Cloak | Back (16) | **BACK** |
-| 4 | 302942 | Shawl of Collapsed Star | Back (16) | **BACK** |
-| 5 | 184604 | Lionguard Chestplate | Chest (5) | **CHEST** |
-| 5 | 184605 | Lionguard Chestplate (alt) | Chest (5) | **CHEST** |
-| 5 | 302550 | Carrot Dunecloth Vest | Chest (5) | **CHEST** |
-| 7 | 83203 | Hidden Tabard | InvType 19 (Tabard) | **TABARD** |
-
-**No slot 0 ever appears in any packet.** Slot indices start at 1.
-
-Slots 8-16 were not captured in the hex preview truncation but follow the same pattern by elimination.
-
-### Current Mapping Code
-
-**File: `src/server/game/Server/Packets/TransmogrificationPackets.cpp` (line 72)**
-```cpp
-uint8 TransmogOutfitSlotToEquipSlot(uint8 transmogSlot)
-{
-    switch (transmogSlot)
-    {
-        case 1:  return EQUIPMENT_SLOT_HEAD;            // 0
-        case 2:  return EQUIPMENT_SLOT_SHOULDERS;       // 2
-        case 3:  return TRANSMOG_SECONDARY_SHOULDER_SLOT; // 20
-        case 4:  return EQUIPMENT_SLOT_BACK;            // 14
-        case 5:  return EQUIPMENT_SLOT_CHEST;           // 4
-        case 6:  return EQUIPMENT_SLOT_END;             // new 12.x slot — skipped
-        case 7:  return EQUIPMENT_SLOT_TABARD;          // 18
-        case 8:  return EQUIPMENT_SLOT_BODY;            // 3
-        case 9:  return EQUIPMENT_SLOT_WRISTS;          // 8
-        case 10: return EQUIPMENT_SLOT_HANDS;           // 9
-        case 11: return EQUIPMENT_SLOT_WAIST;           // 5
-        case 12: return EQUIPMENT_SLOT_LEGS;            // 6
-        case 13: return EQUIPMENT_SLOT_FEET;            // 7
-        case 14: return EQUIPMENT_SLOT_MAINHAND;        // 15
-        case 15: return EQUIPMENT_SLOT_OFFHAND;         // 16
-        case 16: return EQUIPMENT_SLOT_RANGED;          // 17
-        default: return EQUIPMENT_SLOT_END;
-    }
-}
+## Wire Format (16 bytes per entry, verified)
+```
+byte[0]     = Sequential ordinal (1-14) — NOT a meaningful slot identifier
+byte[1]     = Always 0 (padding)
+bytes[2-5]  = AppearanceID (IMAID, uint32 LE)
+bytes[6-7]  = ItemAppearance.DisplayType (uint16 LE) — THIS IS THE ROUTING KEY
+bytes[8-15] = Reserved (zeros)
 ```
 
-**File: `src/server/game/Entities/Player/Player.cpp` (line ~18063)**
-```cpp
-// _SyncTransmogOutfitsToActivePlayerData() — sends outfits back to client
-static constexpr TransmogSlotMapping slotMap[] = {
-    {  1,  0 }, // Head            -> EQUIPMENT_SLOT_HEAD
-    {  2,  2 }, // ShoulderRight   -> EQUIPMENT_SLOT_SHOULDERS
-    {  3,  2 }, // ShoulderLeft    -> EQUIPMENT_SLOT_SHOULDERS (secondary)
-    {  4, 14 }, // Back            -> EQUIPMENT_SLOT_BACK
-    {  5,  4 }, // Chest           -> EQUIPMENT_SLOT_CHEST
-    {  7, 18 }, // Tabard          -> EQUIPMENT_SLOT_TABARD
-    {  8,  3 }, // Body (Shirt)    -> EQUIPMENT_SLOT_BODY
-    {  9,  8 }, // Wrist           -> EQUIPMENT_SLOT_WRISTS
-    { 10,  9 }, // Hand            -> EQUIPMENT_SLOT_HANDS
-    { 11,  5 }, // Waist           -> EQUIPMENT_SLOT_WAIST
-    { 12,  6 }, // Legs            -> EQUIPMENT_SLOT_LEGS
-    { 13,  7 }, // Feet            -> EQUIPMENT_SLOT_FEET
-    { 14, 15 }, // WeaponMainHand  -> EQUIPMENT_SLOT_MAINHAND
-    { 15, 16 }, // WeaponOffHand   -> EQUIPMENT_SLOT_OFFHAND
-    { 16, 17 }, // WeaponRanged    -> EQUIPMENT_SLOT_RANGED
-};
-```
+## Files to Review
 
-### Equipment Slot Constants (for reference)
-```cpp
-EQUIPMENT_SLOT_HEAD      = 0
-EQUIPMENT_SLOT_NECK      = 1
-EQUIPMENT_SLOT_SHOULDERS = 2
-EQUIPMENT_SLOT_BODY      = 3   // Shirt
-EQUIPMENT_SLOT_CHEST     = 4
-EQUIPMENT_SLOT_WAIST     = 5
-EQUIPMENT_SLOT_LEGS      = 6
-EQUIPMENT_SLOT_FEET      = 7
-EQUIPMENT_SLOT_WRISTS    = 8
-EQUIPMENT_SLOT_HANDS     = 9
-EQUIPMENT_SLOT_FINGER1   = 10
-EQUIPMENT_SLOT_FINGER2   = 11
-EQUIPMENT_SLOT_TRINKET1  = 12
-EQUIPMENT_SLOT_TRINKET2  = 13
-EQUIPMENT_SLOT_BACK      = 14
-EQUIPMENT_SLOT_MAINHAND  = 15
-EQUIPMENT_SLOT_OFFHAND   = 16
-EQUIPMENT_SLOT_RANGED    = 17
-EQUIPMENT_SLOT_TABARD    = 18
-EQUIPMENT_SLOT_END       = 19
-TRANSMOG_SECONDARY_SHOULDER_SLOT = 20  // sentinel, not a real equip slot
-```
+1. `src/server/game/Server/Packets/TransmogrificationPackets.cpp` — Packet parsing (DisplayTypeToEquipSlot, Read() methods)
+2. `src/server/game/Server/Packets/TransmogrificationPackets.h` — Struct definitions
+3. `src/server/game/Handlers/TransmogrificationHandler.cpp` — All Handle* functions
+4. `src/server/game/Entities/Player/TransmogrificationUtils.cpp` — ApplyTransmogOutfitToPlayer
+5. `src/server/game/Entities/Player/Player.cpp` — Search for `_SyncTransmogOutfitsToActivePlayerData` and `SetVisibleItemSlot`
 
-## What To Validate
+## Review Checklist
 
-### 1. Slot Mapping Correctness (CRITICAL)
+### A. Packet Parsing (TransmogrificationPackets.cpp)
 
-Verify the 1-based mapping against ALL available packet data. Key questions:
-- Is the mapping for slots 8-16 correct? We only have direct packet evidence for 1-5 and 7.
-- Could slots 8-16 follow a different order than what we assumed (sequential Body, Wrists, Hands, Waist, Legs, Feet, MH, OH, Ranged)?
-- The 15-slot packet had `slotCount=15` but the hex only showed entries with slots 1-7 in the preview. The 120-slot and 255-slot packets also existed — are these valid or malformed?
+1. **DisplayTypeToEquipSlot mapping completeness**: Verify DT→EQUIPMENT_SLOT mapping:
+   - DT 0→HEAD(0), 1→SHOULDERS(2), 2→BODY/Shirt(3), 3→CHEST(4), 4→WAIST(5), 5→LEGS(6), 6→FEET(7), 7→WRISTS(8), 8→HANDS(9), 9→BACK(14), 10→TABARD(18), 11→MH(15), 13→Shield/OH(16), 15→OH(16)
+   - Are DT 12 and 14 intentionally unmapped?
 
-### 2. SetVisibleItemSlot Field Values
+2. **UPDATE_SLOTS Read()**:
+   - Does it correctly limit to first 14 entries as base outfit (skip iterations > 0)?
+   - Is `seenPrimaryShoulder` correctly placed — first DT=1 → primary shoulder, second → SecondaryShoulderApparanceID?
+   - Does it correctly read bytes[2-5] as IMAID and bytes[6-7] as WireDisplayType?
 
-Current code sets:
-```cpp
-ItemID                          = GetVisibleEntry(this)    // transmog source's item entry
-SecondaryItemModifiedAppearanceID = GetVisibleSecondaryModifiedAppearanceId(this)
-ItemAppearanceModID             = GetVisibleAppearanceModId(this)
-ItemVisual                      = GetVisibleItemVisual(this)
-ItemModifiedAppearanceID        = GetVisibleModifiedAppearanceId(this)
-HasTransmog                     = (transmogAppearance != 0)
-HasIllusion                     = (illusionEnchant != 0)
-Field_18                        = displayType from ItemAppearance DB2
-```
+3. **NEW Read()**:
+   - Same DT routing + seenPrimaryShoulder logic — is it consistent with UPDATE_SLOTS?
+   - Name parsing: length-byte method vs ASCII fallback — edge cases?
+   - Does it handle packets with zero slot entries?
 
-Questions:
-- Is `Field_18 = displayType` correct? Or should it be something else (InventoryType override? Always 0?)?
-- Should `HasTransmog` and `HasIllusion` be set at all? Stock TC never sets them. Maybe the client doesn't expect them and they cause rendering issues?
-- Is `ConditionalItemAppearanceID` (never set, always 0) needed for anything?
+4. **UPDATE_INFO Read()**: Does it correctly parse without slot data?
 
-### 3. The "unknown transmog set id" Rejection
+5. **UPDATE_SITUATIONS Read()**: Clean structured reads — verify format.
 
-Log shows:
-```
-CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS rejected: unknown transmog set id 1
-CMSG_TRANSMOG_OUTFIT_UPDATE_SITUATIONS rejected: unknown transmog set id 1
-```
+### B. Handler Logic (TransmogrificationHandler.cpp)
 
-This happens when `GetTransmogOutfitBySetID(1)` returns null. The function searches `_equipmentSets` for a TRANSMOG type entry with matching SetID. Possible causes:
-- The outfit was saved under the old (wrong) slot mapping and the data is now incompatible
-- The outfit wasn't loaded from DB on login
-- The outfit was deleted/corrupted
+6. **HandleTransmogOutfitUpdateSlots**:
+   - Per-slot merge: Does it correctly preserve HEAD/MH/OH from existing outfit?
+   - Does `ApplyTransmogOutfitToPlayer` get called with the right data?
 
-The packets with `slotCount=255` and `slotCount=120` seem abnormal — a normal outfit has 15-16 slots max. Could these be wardrobe/collection updates that use a different packet format?
+7. **HandleTransmogOutfitNew**:
+   - Does it assign a valid SetID?
+   - Does `ValidateTransmogOutfitSet` correctly validate appearances?
 
-### 4. Data Flow Integrity
+8. **HandleTransmogrifyItems** sync-back:
+   - When individual transmog happens (not via outfit), does it correctly sync back?
+   - Could this sync corrupt outfit data?
 
-Trace the full path:
-1. Client sends `CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS` with 16-byte entries
-2. Each entry has `SlotIndex` at byte 15 (1-based)
-3. `TransmogOutfitSlotToEquipSlot()` maps to server equipment slot
-4. `Set.Appearances[equipSlot] = AppearanceID` stores the IMAID
-5. `IgnoreMask` is built from unset slots: `if (!Set.Appearances[slot]) IgnoreMask |= (1u << slot)`
-6. Handler calls `ApplyTransmogOutfitToPlayer()` which iterates equipment slots, sets item modifiers, calls `SetVisibleItemSlot()`
-7. `_SyncTransmogOutfitsToActivePlayerData()` sends outfit data back to client using inverse mapping
+9. **ValidateTransmogOutfitSet**:
+   - Does it set Type = TRANSMOG?
+   - IgnoreMask for empty slots?
+   - SecondaryShoulderApparanceID validation?
 
-Verify there are no off-by-one errors or missing slots in this chain.
+### C. Application Logic (TransmogrificationUtils.cpp)
 
-### 5. IgnoreMask Bits
+10. **ApplyTransmogOutfitToPlayer**:
+    - Iterates all EQUIPMENT_SLOTs correctly?
+    - Skips ignored slots (IgnoreMask)?
+    - Handles SecondaryShoulderApparanceID?
+    - Gold cost calculation?
 
-`IgnoreMask` uses equipment slot indices as bit positions. With the 1-based mapping, verify:
-- Slots that the client sends data for correctly clear their IgnoreMask bit
-- Slots the client doesn't send (slot 0, slot 6) correctly remain in IgnoreMask
-- The mask doesn't accidentally ignore valid slots
+### D. Rendering Pipeline (Player.cpp)
 
-## Key Files to Read
+11. **SetVisibleItemSlot**:
+    - Sets HasTransmog, HasIllusion, Field_18 (DisplayType)?
+    - Correct behavior when IMAID is 0?
 
-| File | Lines | What |
-|------|-------|------|
-| `src/server/game/Server/Packets/TransmogrificationPackets.cpp` | 72-98 | `TransmogOutfitSlotToEquipSlot()` — the mapping function |
-| `src/server/game/Server/Packets/TransmogrificationPackets.cpp` | 363-454 | `TransmogOutfitUpdateSlots::Read()` — packet parsing |
-| `src/server/game/Entities/Player/Player.cpp` | 12138-12197 | `SetVisibleItemSlot()` — update field setter |
-| `src/server/game/Entities/Player/Player.cpp` | ~18023-18102 | `_SyncTransmogOutfitsToActivePlayerData()` — outfit sync |
-| `src/server/game/Entities/Player/TransmogrificationUtils.cpp` | 1-119 | `ApplyTransmogOutfitToPlayer()` — outfit application |
-| `src/server/game/Handlers/TransmogrificationHandler.cpp` | 553-595 | `HandleTransmogOutfitUpdateSlots()` — handler |
-| `src/server/game/Entities/Player/EquipmentSet.h` | 54-72 | `EquipmentSetData` struct |
-| `src/server/game/Entities/Object/Updates/UpdateFields.h` | 255-271 | `VisibleItem` struct |
-| `src/server/game/Entities/Object/Updates/UpdateFields.cpp` | 877-943 | `VisibleItem` serialization |
-| `src/server/game/Entities/Item/Item.cpp` | 2585-2649 | `GetVisibleEntry()` and related functions |
+12. **_SyncTransmogOutfitsToActivePlayerData**:
+    - EQUIPMENT_SLOT → db2SlotInfoID mapping correct?
+    - Looks up real DisplayType from DB2?
+    - Handles SecondaryShoulderApparanceID?
 
-## Raw Packet Hex Data (for independent verification)
+### E. Cross-Cutting
 
-### 15-slot packet (first successful outfit apply)
-```
-Full preview (128 bytes from offset 0):
-010000000F00000003A6140798C40420FCFD0000000000000000
-17D102000100000000000000000001   <- entry: appear=184599 slot=1
-1AD102000100000000000000000002   <- entry: appear=184602 slot=2
-1AD102000100000000000000000003   <- entry: appear=184602 slot=3
-212E01000300000000000000000004   <- entry: appear=77345  slot=4
-1DD102000100000000000000000005   <- entry: appear=184605 slot=5
-03450100030000000000000000000?   <- entry: appear=83203  slot=7
-29D102000100                     <- (truncated at 128 bytes)
-```
+13. **No stale references**: Search for `TransmogSlotToEquipSlot` — should be NONE.
+14. **Compilation**: Syntax errors, missing includes, type mismatches?
+15. **Thread safety**: Shared state accessed without locks?
+16. **Edge cases**: No item equipped? IMAID not owned? SetID=0?
 
-Entry wire format (16 bytes each):
-```
-Byte  0: 0x00 (padding)
-Bytes 1-4: AppearanceID (uint32 LE)
-Byte  5: Flags
-Bytes 6-14: reserved/zero
-Byte  15: SlotIndex
-```
+## Expected Output
 
-### 255-slot packet (rejected — "unknown transmog set id 1")
-```
-Full preview:
-01000000FF00000003A6140798C40420A0A10000000000000000
-202E01000300000000000000000001   <- appear=77344  slot=1 (Hidden Helm)
-A0BD01000300000000000000000002   <- appear=114080 slot=2 (Monster Mantle)
-A0BD01000300000000000000000003   <- appear=114080 slot=3 (Monster Mantle)
-F1A801000300000000000000000004   <- appear=108785 slot=4 (Hidden Cloak)
-1CD102000100000000000000000005   <- appear=184604 slot=5 (Lionguard Chestplate)
-034501000300000000000000000007   <- appear=83203  slot=7 (Hidden Tabard)
-28D102000100                     <- (truncated)
-```
+For each checklist item (1-16), state **PASS** or **FAIL** with brief explanation. If FAIL, describe exactly what needs fixing with file path and line numbers.
 
-### 120-slot packet (successful apply)
-```
-Full preview:
-010000007800000003A6140798C40420B8B80000000000000000
-4B9A04000100000000000000000001   <- appear=301643 slot=1 (South Guard's Facemask, Head)
-4C9A04000100000000000000000002   <- appear=301644 slot=2 (South Guard's Mantle, Shoulder)
-4C9A04000100000000000000000003   <- appear=301644 slot=3 (South Guard's Mantle, SecShoulder)
-5E9F04000100000000000000000004   <- appear=302942 slot=4 (Shawl, Back)
-D69D04000100000000000000000005   <- appear=302550 slot=5 (Dunecloth Vest, Chest)
-109A04000100000000000000000007   <- appear=301584 slot=7 (Mageweave Vestments, Chest InvType)
-034501000100                     <- (truncated)
-```
-
-## Acceptance Criteria
-
-1. Transmogged items render at the correct skeleton attachment points (no floating)
-2. The slot mapping correctly maps ALL 12.x client transmog slots to server equipment slots
-3. No regressions — non-transmogged items render correctly
-4. Outfit save/load works (SetEquipmentSet -> DB -> _LoadTransmogOutfits -> Sync)
-5. `IgnoreMask` correctly identifies slots without appearances
-6. Secondary shoulder appearance is handled separately (TRANSMOG_SECONDARY_SHOULDER_SLOT sentinel)
-
-## Build & Test
-
-- **Build type**: RelWithDebInfo (or Debug)
-- **Build command**: Build in Visual Studio 2022 (don't use ninja from CLI)
-- **CMake presets**: `x64-Debug` and `x64-RelWithDebInfo`
-- **Key CMake options**: `SCRIPTS=static`, `ELUNA=ON`, `TOOLS=ON`
-- **C++ standard**: C++20
-- **Test**: Start worldserver, log in, open Transmog NPC, apply outfit, observe character model
-
-## Coding Conventions
-
-- 4 spaces indent, max 160 chars per line
-- `#pragma once` for new headers
-- `TC_GAME_API` on game classes
-- `#include "..."` for TC headers, `#include <...>` for system
-- Use `TC_LOG_DEBUG("network.opcode.transmog", ...)` for transmog debug logging
+Summary at the end: total PASS/FAIL, architectural concerns, suggested improvements.
