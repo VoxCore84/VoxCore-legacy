@@ -18,6 +18,6 @@ INSERT INTO `build_auth_key` (`build`,`platform`,`arch`,`type`,`key`) VALUES
 (66102,'Win','x64','WoW',0x9C5E4611B87738D89FE8A27C3AC3F375),
 (66102,'Win','x64','WoWC',0xBDE323DD7628C72BDD953A0253CFF53E);
 
-UPDATE `realmlist` SET `gamebuild`=66102;
+UPDATE `realmlist` SET `gamebuild`=66102 WHERE 1;
 
 ALTER TABLE `realmlist` CHANGE `gamebuild` `gamebuild` int unsigned NOT NULL DEFAULT '66102';
