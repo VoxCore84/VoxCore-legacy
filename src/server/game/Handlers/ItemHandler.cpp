@@ -650,14 +650,17 @@ void WorldSession::SendListInventory(ObjectGuid vendorGuid)
             int32 leftInStock = !vendorItem->maxcount ? -1 : vendor->GetVendorItemCurrentCount(vendorItem);
             if (!_player->IsGameMaster()) // ignore conditions if GM on
             {
-                // Respect allowed class
-                if (!(itemTemplate->GetAllowableClass() & _player->GetClassMask()) && itemTemplate->GetBonding() == BIND_ON_ACQUIRE)
-                    continue;
+                if (!vendorItem->IgnoreFiltering)
+                {
+                    // Respect allowed class
+                    if (!(itemTemplate->GetAllowableClass() & _player->GetClassMask()) && itemTemplate->GetBonding() == BIND_ON_ACQUIRE)
+                        continue;
 
-                // Only display items in vendor lists for the team the player is on
-                if ((itemTemplate->HasFlag(ITEM_FLAG2_FACTION_HORDE) && _player->GetTeam() == ALLIANCE) ||
-                    (itemTemplate->HasFlag(ITEM_FLAG2_FACTION_ALLIANCE) && _player->GetTeam() == HORDE))
-                    continue;
+                    // Only display items in vendor lists for the team the player is on
+                    if ((itemTemplate->HasFlag(ITEM_FLAG2_FACTION_HORDE) && _player->GetTeam() == ALLIANCE) ||
+                        (itemTemplate->HasFlag(ITEM_FLAG2_FACTION_ALLIANCE) && _player->GetTeam() == HORDE))
+                        continue;
+                }
 
                 // Items sold out are not displayed in list
                 if (leftInStock == 0)
