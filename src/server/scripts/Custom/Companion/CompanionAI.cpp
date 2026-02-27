@@ -337,7 +337,6 @@ void CompanionAI::UpdateAI(uint32 diff)
     Player* owner = GetOwner();
     if (!owner || !owner->IsInWorld())
     {
-        TC_LOG_DEBUG("scripts.companion", "CompanionAI [{}]: No owner or owner not in world, despawning.", me->GetEntry());
         me->DespawnOrUnsummon();
         return;
     }
@@ -353,28 +352,14 @@ void CompanionAI::UpdateAI(uint32 diff)
     // Get control state
     Companion::PlayerSquadState* state = sCompanionMgr->GetPlayerState(owner->GetGUID().GetCounter());
     if (!state)
-    {
-        TC_LOG_DEBUG("scripts.companion", "CompanionAI [{}]: No player state found for owner {}.", me->GetEntry(), owner->GetGUID().GetCounter());
         return;
-    }
 
     // Healer always checks for heal targets first
     Companion::RosterEntry const* myRoster = nullptr;
     for (auto const& ac : state->active)
         if (ac.creatureGuid == me->GetGUID()) { myRoster = ac.rosterEntry; break; }
 
-    if (!myRoster)
-    {
-        TC_LOG_DEBUG("scripts.companion", "CompanionAI [{}]: Not found in active list (active size: {}).", me->GetEntry(), state->active.size());
-        return;
-    }
-
-    TC_LOG_DEBUG("scripts.companion", "CompanionAI [{}] role={} mode={}: owner victim={}, owner target={}",
-        me->GetEntry(), Companion::RoleToString(myRoster->role), Companion::ModeToString(state->control.mode),
-        owner->GetVictim() ? owner->GetVictim()->GetEntry() : 0,
-        !owner->GetTarget().IsEmpty() ? owner->GetTarget().GetCounter() : 0);
-
-    if (myRoster->role == Companion::ROLE_HEALER)
+    if (myRoster && myRoster->role == Companion::ROLE_HEALER)
     {
         UpdateHealerAI();
         // Healers don't initiate melee — if attacked, kite
@@ -406,8 +391,6 @@ void CompanionAI::UpdateAI(uint32 diff)
             if (!target || !IsValidCompanionTarget(target))
                 target = SelectDefendTarget();
 
-            TC_LOG_DEBUG("scripts.companion", "CompanionAI [{}] DEFEND: target={}", me->GetEntry(), target ? target->GetEntry() : 0);
-
             if (target && myRoster)
             {
                 switch (myRoster->role)
@@ -430,11 +413,6 @@ void CompanionAI::UpdateAI(uint32 diff)
             Unit* target = me->GetVictim();
             if (!target || !IsValidCompanionTarget(target))
                 target = SelectAssistTarget();
-
-            TC_LOG_DEBUG("scripts.companion", "CompanionAI [{}] ASSIST: target={}, ownerVictim={}, isValid={}",
-                me->GetEntry(), target ? target->GetEntry() : 0,
-                owner->GetVictim() ? owner->GetVictim()->GetEntry() : 0,
-                owner->GetVictim() ? (IsValidCompanionTarget(owner->GetVictim()) ? "yes" : "no") : "n/a");
 
             if (target && myRoster)
             {

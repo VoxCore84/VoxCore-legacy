@@ -254,6 +254,7 @@ void CompanionMgr::SummonSquad(Player* player)
         // Match owner's level, faction, and flags
         summon->SetLevel(player->GetLevel());
         summon->SetFaction(player->GetFaction());
+        summon->SetUnitFlag(UNIT_FLAG_PLAYER_CONTROLLED);
         summon->SetImmuneToPC(true);
 
         // Scale health based on player's max HP and role
