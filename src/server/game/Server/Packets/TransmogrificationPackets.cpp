@@ -16,6 +16,7 @@
  */
 
 #include "TransmogrificationPackets.h"
+#include "DB2Stores.h"
 #include "Log.h"
 #include "PacketOperators.h"
 #include "Util.h"
@@ -67,6 +68,18 @@ std::string BuildDiagnosticReadTrace(char const* opcodeName, WorldPacket const& 
         trace << " | u64@8=" << ReadLE<uint64>(payload, 8);
 
     return trace.str();
+}
+
+// Look up the IMAID's correct DisplayType from server DB2 stores.
+// The client's wireDT (bytes[6-7]) is unreliable — many IMAIDs have wrong
+// ItemAppearance.DisplayType in the client's DB2 data, causing everything
+// to route to SECONDARY_SHOULDER.
+uint16 GetServerDisplayType(uint32 itemModifiedAppearanceId)
+{
+    if (ItemModifiedAppearanceEntry const* ima = sItemModifiedAppearanceStore.LookupEntry(itemModifiedAppearanceId))
+        if (ItemAppearanceEntry const* ia = sItemAppearanceStore.LookupEntry(ima->ItemAppearanceID))
+            return static_cast<uint16>(ia->DisplayType);
+    return uint16(-1); // not found
 }
 
 // Maps IMAID's ItemAppearance.DisplayType to server EQUIPMENT_SLOT constants.
@@ -234,8 +247,13 @@ void TransmogOutfitNew::Read()
                     continue;
                 }
 
-                // Route by the IMAID's own DisplayType (bytes[6-7])
-                uint8 equipSlot = DisplayTypeToEquipSlot(wireDisplayType);
+                // Use server-side DB2 lookup for correct DisplayType; fall back to wire data only if IMAID not found
+                uint16 serverDT = GetServerDisplayType(appearanceID);
+                uint8 equipSlot = DisplayTypeToEquipSlot(serverDT != uint16(-1) ? serverDT : wireDisplayType);
+
+                if (serverDT != uint16(-1) && serverDT != wireDisplayType)
+                    TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_NEW entry[{}]: wireDT={} overridden by serverDT={} for IMAID={}",
+                        i / 16, wireDisplayType, serverDT, appearanceID);
 
                 // DT=1 (Shoulder) appears twice: first is primary, second is secondary
                 if (equipSlot == EQUIPMENT_SLOT_SHOULDERS && seenPrimaryShoulder)
@@ -251,8 +269,8 @@ void TransmogOutfitNew::Read()
                         Set.Appearances[equipSlot] = int32(appearanceID);
                 }
 
-                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_NEW entry[{}]: appear={} ordinal={} wireDT={} equipSlot={}",
-                    i / 16, appearanceID, ordinal, wireDisplayType, equipSlot);
+                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_NEW entry[{}]: appear={} ordinal={} wireDT={} serverDT={} equipSlot={}",
+                    i / 16, appearanceID, ordinal, wireDisplayType, serverDT, equipSlot);
             }
         }
 
@@ -487,29 +505,31 @@ void TransmogOutfitUpdateSlots::Read()
                 continue;
             }
 
-            // Route by the IMAID's own DisplayType (bytes[6-7]).
-            // byte[0] is a sequential ordinal, NOT a slot identifier.
-            uint8 equipSlot = DisplayTypeToEquipSlot(slot.WireDisplayType);
+            // Use server-side DB2 lookup for correct DisplayType; fall back to wire data only if IMAID not found
+            uint16 serverDT = GetServerDisplayType(slot.AppearanceID);
+            uint8 equipSlot = DisplayTypeToEquipSlot(serverDT != uint16(-1) ? serverDT : slot.WireDisplayType);
+
+            if (serverDT != uint16(-1) && serverDT != slot.WireDisplayType)
+                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: wireDT={} overridden by serverDT={} for IMAID={}",
+                    i, slot.WireDisplayType, serverDT, slot.AppearanceID);
 
             // DT=1 (Shoulder) appears twice: first is primary, second is secondary
             if (equipSlot == EQUIPMENT_SLOT_SHOULDERS && seenPrimaryShoulder)
             {
                 Set.SecondaryShoulderApparanceID = int32(slot.AppearanceID);
                 Set.SecondaryShoulderSlot = 2;
-                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: appear={} ordinal={} wireDT={} equipSlot=SECONDARY_SHOULDER",
-                    i, slot.AppearanceID, ordinal, slot.WireDisplayType);
+                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: appear={} ordinal={} wireDT={} serverDT={} equipSlot=SECONDARY_SHOULDER",
+                    i, slot.AppearanceID, ordinal, slot.WireDisplayType, serverDT);
                 continue;
             }
             if (equipSlot == EQUIPMENT_SLOT_SHOULDERS)
                 seenPrimaryShoulder = true;
 
             if (equipSlot < EQUIPMENT_SLOT_END)
-            {
                 Set.Appearances[equipSlot] = int32(slot.AppearanceID);
-            }
 
-            TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: appear={} ordinal={} wireDT={} equipSlot={}",
-                i, slot.AppearanceID, ordinal, slot.WireDisplayType, equipSlot);
+            TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: appear={} ordinal={} wireDT={} serverDT={} equipSlot={}",
+                i, slot.AppearanceID, ordinal, slot.WireDisplayType, serverDT, equipSlot);
         }
 
         if (slotCount > 14)
