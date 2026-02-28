@@ -44,6 +44,11 @@ enum RoleplayDatabaseStatements
     Roleplay_REP_CREATUREEXTRA,
     Roleplay_REP_CUSTOMNPCDATA,
     Roleplay_REP_SERVER_SETTINGS,
+    Roleplay_REP_PLAYER_MORPH,
+
+    // PLAYER MORPH
+    Roleplay_SEL_PLAYER_MORPH,
+    Roleplay_DEL_PLAYER_MORPH,
 
     MAX_RoleplayDATABASE_STATEMENTS
 };

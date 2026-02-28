@@ -40,6 +40,11 @@ void RoleplayDatabaseConnection::DoPrepareStatements()
     PrepareStatement(Roleplay_REP_CREATUREEXTRA, "REPLACE INTO creature_extra (guid, scale, id_creator_bnet, id_creator_player, id_modifier_bnet, id_modifier_player, created, modified, phaseMask, displayLock, displayId, nativeDisplayId, genderLock, gender, swim, gravity, fly) VALUES (?, ?, ?, ?, ?, ?, from_unixtime(?), from_unixtime(?), ?, ?, ?, ?, ?, ?, ?, ?, ?)", CONNECTION_ASYNC);
     PrepareStatement(Roleplay_REP_CUSTOMNPCDATA, "REPLACE INTO custom_npcs (`Key`, Entry) VALUES (?, ?)", CONNECTION_ASYNC);
     PrepareStatement(Roleplay_REP_SERVER_SETTINGS, "INSERT INTO server_settings (setting_name, setting_value) VALUES (?, ?)", CONNECTION_ASYNC);
+    PrepareStatement(Roleplay_REP_PLAYER_MORPH, "REPLACE INTO player_morph (playerGuid, morphDisplayId, scale) VALUES (?, ?, ?)", CONNECTION_ASYNC);
+
+    // PLAYER MORPH
+    PrepareStatement(Roleplay_SEL_PLAYER_MORPH, "SELECT morphDisplayId, scale FROM player_morph WHERE playerGuid = ?", CONNECTION_SYNCH);
+    PrepareStatement(Roleplay_DEL_PLAYER_MORPH, "DELETE FROM player_morph WHERE playerGuid = ?", CONNECTION_ASYNC);
 }
 
 RoleplayDatabaseConnection::RoleplayDatabaseConnection(MySQLConnectionInfo& connInfo, ConnectionFlags connectionFlags) : MySQLConnection(connInfo, connectionFlags)
