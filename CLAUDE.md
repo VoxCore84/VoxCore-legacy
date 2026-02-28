@@ -140,16 +140,55 @@ _patches_transmog/       # Reference git diff patches for the transmog outfit fe
 - **`creature_template`**: `faction` (not FactionID), `npcflag` (bigint), spells in `creature_template_spell`
 - **Always DESCRIBE tables before writing SQL**
 
-## Debugging Methodology
+## Debugging Methodology — MANDATORY PIPELINE
 
-**Follow this for ALL bug investigations. The #1 cause of wasted time is coding fixes based on assumptions instead of data.**
+**This is a BLOCKING pipeline. Each gate MUST be passed before proceeding to the next. Skipping a gate is a hard error — equivalent to writing code that doesn't compile. The #1 cause of wasted time is coding fixes based on assumptions instead of data.**
 
-### The 5 Steps
-1. **Understand** — Reproduce the bug. Trace the full code path with codeintel (`find_definition`, `call_hierarchy`). Narrow scope: what works vs what doesn't.
-2. **Collect Data** — Check logs (`Server.log`, `DBErrors.log`, `Debug.log`) first. Then use the right tool: `opcode_analyzer.py` (packets), mysql MCP (DB state), `transmog_debug.py` (transmog), TransmogSpy (client-side). **Always SELECT before UPDATE.**
-3. **Analyze** — Form an explicit hypothesis ("X happens because Y, data should show Z"). Cross-reference IDs against DB2/Wago. Check for data corruption before blaming code.
-4. **Fix** — One change at a time. Add logging at decision points, never remove it. Verify root cause, not symptom. Trace downstream callers with codeintel before changing any function.
-5. **Verify** — Build, reproduce in clean state, collect ALL outputs (logs + DB state + packets if relevant), confirm hypothesis. If data doesn't match, back to step 1.
+### GATE 1: Collect Data (DO THIS FIRST — NO EXCEPTIONS)
+
+**You may NOT form a hypothesis, propose a fix, write a summary, or produce any conclusion until you have read the actual data.** "I already know what's wrong" is not an excuse to skip this gate.
+
+For EVERY bug investigation, fan out **parallel agents** to collect ALL relevant data sources simultaneously:
+
+| Data Source | When Required | How to Collect |
+|---|---|---|
+| `Server.log` | Always | Read the file — check for errors/warnings around the bug |
+| `DBErrors.log` | Always | Read the file — check for SQL failures |
+| `Debug.log` | Always | Read the file — grep for the system under investigation |
+| Packet captures (`PacketLog/`) | Any visual/sync/network issue | `opcode_analyzer.py`, `transmog_debug.py --packet`, WPP parsed output |
+| Database state | Any persistence/data issue | mysql MCP — `SELECT` the relevant rows. **DESCRIBE first.** |
+| TransmogSpy SavedVariables | Any transmog issue | Read `C:/WoW/_retail_/WTF/Account/1#1/SavedVariables/TransmogSpy.lua` |
+| Client addon output | If client-side addon is involved | Read the SavedVariables file |
+| Code path | Always | codeintel `find_definition`, `find_references`, `call_hierarchy` |
+
+**Gate check**: Before writing ANY analysis, list what data you collected and from which sources. If a relevant source exists and you didn't read it, go back and read it.
+
+### GATE 2: Analyze (Hypothesis MUST Reference Collected Data)
+
+Only after Gate 1 is complete:
+1. State an explicit hypothesis: "X happens because Y"
+2. **Cite the specific data** that supports it — quote log lines, packet field values, DB rows, code paths
+3. Cross-reference IDs against DB2/Wago
+4. Check for data corruption before blaming code
+5. Identify what the data SHOULD show if the hypothesis is correct vs what it actually shows
+
+**Gate check**: Every claim must have a data citation. "The client omits HEAD/MH/OH" requires showing the actual packet bytes where those slots are absent. No citation = no claim.
+
+### GATE 3: Propose Fix (Minimal, Targeted, Root-Cause)
+
+Only after Gate 2 is complete:
+1. One change at a time — never combine fixes
+2. Fix targets the root cause identified in Gate 2, not a symptom
+3. Trace downstream callers with codeintel before changing any function
+4. Add logging at decision points, never remove it
+
+### GATE 4: Implement and Verify
+
+Only after Gate 3 is approved:
+1. Build with `/build-loop`
+2. Reproduce in clean state
+3. Collect ALL outputs again (same sources as Gate 1)
+4. Confirm hypothesis — if data doesn't match, **back to Gate 1** with the new data
 
 ### Code Change Rules
 - **Never combine multiple fixes** — each is a separate commit and test cycle
@@ -157,6 +196,13 @@ _patches_transmog/       # Reference git diff patches for the transmog outfit fe
 - **Don't fix writers by patching readers** — if the DB has bad data, clean the DB
 - **DESCRIBE tables before writing SQL** — always
 - **Trace downstream** — use codeintel `find_references`/`call_hierarchy` before changing any function signature
+
+### Anti-Patterns (NEVER DO THESE)
+- **Summarizing before reading data** — Writing "Issue: X is broken because Y" before examining logs/packets/DB is a hard violation
+- **Proposing a fix in the same message as the bug report** — Gate 1 and Gate 3 cannot be in the same response
+- **"I believe" without data** — Every hypothesis needs a citation to actual collected data
+- **Churning** — If you've been thinking for >30s without issuing tool calls, you're churning. Fan out data collection agents instead.
+- **Sequential data collection** — Always fan out parallel agents for independent data sources. Never read log, then packet, then DB one at a time.
 
 Full patterns and domain-specific recipes: see auto-memory `debugging-methodology.md`
 
