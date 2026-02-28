@@ -30,6 +30,7 @@ void AddSC_CompanionAI();
 void AddSC_CompanionCommands();
 void AddSC_CompanionScripts();
 void AddSC_PlayerMorphScripts();
+void AddSC_wormhole_generators();
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
@@ -48,4 +49,5 @@ void AddCustomScripts()
     AddSC_CompanionCommands();
     AddSC_CompanionScripts();
     AddSC_PlayerMorphScripts();
+    AddSC_wormhole_generators();
 }
