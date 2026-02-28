@@ -111,8 +111,15 @@ def parse_opcodes_h(filepath):
 
             # Alias: OTHER_NAME  (no arithmetic)
             am = re.fullmatch(r'(\w+)', expr)
-            if am and am.group(1) in opcodes:
-                opcodes[name] = opcodes[am.group(1)]
+            if am:
+                ref = am.group(1)
+                if ref in opcodes:
+                    opcodes[name] = opcodes[ref]
+                elif ref == 'UNKNOWN_OPCODE':
+                    pass  # intentionally disabled opcode, skip silently
+                else:
+                    print(f"  [warn] Cannot resolve {name} = {ref} (alias unknown)",
+                          file=sys.stderr)
                 continue
 
     return opcodes
@@ -452,11 +459,11 @@ def print_report(opcode_dict, packet_stats, highlight_opcode=None, unhandled_onl
 # ---------------------------------------------------------------------------
 
 def do_lookup(opcode_dict, query):
-    """Look up by hex value or name substring."""
+    """Look up by hex value, decimal value, or name substring."""
     q = query.strip()
     results = []
 
-    # Try hex
+    # Explicit hex prefix
     if q.lower().startswith('0x'):
         try:
             val = int(q, 16)
@@ -470,17 +477,28 @@ def do_lookup(opcode_dict, query):
                 print(f"0x{val:06X}  not found in dictionary")
                 return
 
-    # Try decimal
+    # Decimal
     if not results and q.isdigit():
         val = int(q)
         info = opcode_dict.get(val)
         if info:
             results.append((val, info))
 
-    # Name substring search
+    # Name substring search (always preferred over bare-hex guessing)
     if not results:
         upper = q.upper()
         results = [(h, i) for h, i in opcode_dict.items() if upper in i['name']]
+
+    # Bare hex fallback (no 0x prefix, no name matches)
+    if not results:
+        try:
+            val = int(q, 16)
+        except ValueError:
+            pass
+        else:
+            info = opcode_dict.get(val)
+            if info:
+                results.append((val, info))
 
     if results:
         for hx, info in sorted(results):
@@ -502,6 +520,48 @@ def do_dict_dump(opcode_dict, filter_type=None):
 # ---------------------------------------------------------------------------
 # 7. Main
 # ---------------------------------------------------------------------------
+
+def _resolve_opcode(text, opcode_dict):
+    """Resolve a user-provided opcode string to an int hex value.
+
+    Tries in order:
+      1. Explicit '0x' prefix  -> parse as hex
+      2. Exact name match      -> return that opcode's value
+      3. Name substring match  -> return if unambiguous, warn + pick lowest if multiple
+      4. Bare hex (only if no name matches found) -> parse as hex
+    """
+    t = text.strip()
+
+    # 1. Explicit hex prefix — unambiguous intent
+    if t.lower().startswith('0x'):
+        try:
+            return int(t, 16)
+        except ValueError:
+            print(f"[warn] '{t}' looks like hex but won't parse", file=sys.stderr)
+            return None
+
+    # 2. Exact name match (case-insensitive)
+    upper = t.upper()
+    for hx, info in opcode_dict.items():
+        if info['name'] == upper:
+            return hx
+
+    # 3. Substring match
+    matches = sorted([(h, i) for h, i in opcode_dict.items() if upper in i['name']])
+    if len(matches) == 1:
+        return matches[0][0]
+    elif matches:
+        print(f"[warn] '{text}' matched {len(matches)} opcodes, "
+              f"using: {matches[0][1]['name']}", file=sys.stderr)
+        return matches[0][0]
+
+    # 4. Bare hex fallback (no 0x prefix) — only if no name matched
+    try:
+        return int(t, 16)
+    except ValueError:
+        print(f"[warn] Cannot resolve '{text}' to any opcode", file=sys.stderr)
+        return None
+
 
 def find_packet_file(root):
     """Auto-detect the most recent World_parsed.txt."""
@@ -571,25 +631,7 @@ def main():
         print(f"[error] File not found: {pkt}", file=sys.stderr)
         sys.exit(1)
 
-    highlight = None
-    if args.highlight:
-        try:
-            highlight = int(args.highlight, 16)
-        except ValueError:
-            # Name match — try exact first, then substring
-            upper = args.highlight.upper()
-            for hx, info in opcode_dict.items():
-                if info['name'] == upper:
-                    highlight = hx
-                    break
-            if highlight is None:
-                matches = [(h, i) for h, i in opcode_dict.items() if upper in i['name']]
-                if len(matches) == 1:
-                    highlight = matches[0][0]
-                elif matches:
-                    print(f"[warn] --highlight '{args.highlight}' matched {len(matches)} opcodes, "
-                          f"using first: {matches[0][1]['name']}", file=sys.stderr)
-                    highlight = sorted(matches)[0][0]
+    highlight = _resolve_opcode(args.highlight, opcode_dict) if args.highlight else None
 
     packet_stats = parse_packet_capture(pkt)
     print_report(opcode_dict, packet_stats, highlight_opcode=highlight,
