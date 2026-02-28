@@ -27,4 +27,5 @@ src/server/scripts/Custom/cs_custom.cpp
 src/server/scripts/Custom/custom_commandscrip.cpp
 CLAUDE.md
 .clangd
+.opcode_cache.json
 sql/dumps/

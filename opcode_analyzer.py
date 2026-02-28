@@ -227,7 +227,8 @@ def parse_packet_capture(filepath):
     stats = defaultdict(lambda: {
         'direction': None,
         'count': 0,
-        'sizes': [],
+        'min_size': None,
+        'max_size': None,
         'first_time': None,
         'last_time': None,
         'first_hex_dump': None,
@@ -242,10 +243,14 @@ def parse_packet_capture(filepath):
         r'.*?Time:\s+(\S+\s+\S+)')
 
     hex_line_re = re.compile(r'^\|\s+([0-9A-Fa-f ]{2,}?)\s*\|')
+    # The column-offset header "| 00 01 02 ... 0F |" also matches hex_line_re,
+    # so we skip lines that exactly match the 16-byte offset row.
+    OFFSET_HEADER = "00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F"
 
     current_opcode = None
     hex_lines = []
     line_count = 0
+    is_first_hex_block = True  # track whether we still need hex dump for current opcode
 
     file_size = os.path.getsize(filepath)
     print(f"[parse] Streaming {filepath} ({file_size / 1048576:.1f} MB)", file=sys.stderr)
@@ -259,10 +264,8 @@ def parse_packet_capture(filepath):
             m = header_re.match(line)
             if m:
                 # Flush previous packet's hex dump
-                if current_opcode is not None and hex_lines:
-                    entry = stats[current_opcode]
-                    if entry['first_hex_dump'] is None:
-                        entry['first_hex_dump'] = '\n'.join(hex_lines[:32])  # cap at 32 lines
+                if current_opcode is not None and hex_lines and is_first_hex_block:
+                    stats[current_opcode]['first_hex_dump'] = '\n'.join(hex_lines[:32])
 
                 direction = m.group(1)
                 name_or_dec = m.group(2)
@@ -276,10 +279,10 @@ def parse_packet_capture(filepath):
                 entry = stats[hex_val]
                 entry['direction'] = direction
                 entry['count'] += 1
-                if len(entry['sizes']) < 50:       # keep memory bounded
-                    entry['sizes'].append(length)
-                elif length not in entry['sizes']:  # still track unique sizes
-                    entry['sizes'].append(length)
+                if entry['min_size'] is None or length < entry['min_size']:
+                    entry['min_size'] = length
+                if entry['max_size'] is None or length > entry['max_size']:
+                    entry['max_size'] = length
                 if entry['first_time'] is None:
                     entry['first_time'] = timestamp
                 entry['last_time'] = timestamp
@@ -287,19 +290,23 @@ def parse_packet_capture(filepath):
                 if not name_or_dec.isdigit():
                     entry['wpp_name'] = name_or_dec
 
+                # Only capture hex dump for the first occurrence of each opcode
+                is_first_hex_block = entry['first_hex_dump'] is None
+
                 continue
 
-            # Hex-dump lines (only for first occurrence)
-            if current_opcode is not None:
+            # Hex-dump lines (only for first occurrence of this opcode)
+            if current_opcode is not None and is_first_hex_block:
                 hm = hex_line_re.match(line)
                 if hm:
-                    hex_lines.append(hm.group(1).rstrip())
+                    captured = hm.group(1).rstrip()
+                    # Skip the column-offset header row
+                    if captured != OFFSET_HEADER:
+                        hex_lines.append(captured)
 
     # Flush last packet
-    if current_opcode is not None and hex_lines:
-        entry = stats[current_opcode]
-        if entry['first_hex_dump'] is None:
-            entry['first_hex_dump'] = '\n'.join(hex_lines[:32])
+    if current_opcode is not None and hex_lines and is_first_hex_block:
+        stats[current_opcode]['first_hex_dump'] = '\n'.join(hex_lines[:32])
 
     print(f"[parse] {line_count:,} lines, {len(stats)} unique opcodes, "
           f"{sum(s['count'] for s in stats.values()):,} total packets", file=sys.stderr)
@@ -310,14 +317,14 @@ def parse_packet_capture(filepath):
 # 5. Report generation
 # ---------------------------------------------------------------------------
 
-def _size_range(sizes):
-    if not sizes:
+def _size_range(ps):
+    lo, hi = ps.get('min_size'), ps.get('max_size')
+    if lo is None:
         return "0 bytes"
-    lo, hi = min(sizes), max(sizes)
     return f"{lo} bytes" if lo == hi else f"{lo}-{hi} bytes"
 
 
-def print_report(opcode_dict, packet_stats, highlight_opcode=None):
+def print_report(opcode_dict, packet_stats, highlight_opcode=None, unhandled_only=False):
     # -- Section 1: unhandled client opcodes actually sent -----------------
     print("\n" + "=" * 90)
     print("  UNHANDLED CLIENT OPCODES  (sent by client, server ignores)")
@@ -335,9 +342,12 @@ def print_report(opcode_dict, packet_stats, highlight_opcode=None):
         for hx, info, ps in unhandled:
             tag = "  <-- NEEDS HANDLER" if 'TRANSMOG' in info['name'] else ""
             print(f"  0x{hx:06X}  {info['name']:<52s} {info['status']:<20s}"
-                  f" sent {ps['count']}x ({_size_range(ps['sizes'])}){tag}")
+                  f" sent {ps['count']}x ({_size_range(ps)}){tag}")
     else:
         print("  (none)")
+
+    if unhandled_only:
+        return
 
     # -- Section 2: unknown opcodes ----------------------------------------
     print("\n" + "=" * 90)
@@ -349,7 +359,7 @@ def print_report(opcode_dict, packet_stats, highlight_opcode=None):
     if unknown:
         for hx, ps in unknown:
             wpp = f"  WPP:{ps['wpp_name']}" if ps['wpp_name'] else ""
-            print(f"  0x{hx:06X}  {ps['direction']:<18s} sent {ps['count']}x ({_size_range(ps['sizes'])})"
+            print(f"  0x{hx:06X}  {ps['direction']:<18s} sent {ps['count']}x ({_size_range(ps)})"
                   f"  first: {ps['first_time']}  last: {ps['last_time']}{wpp}")
     else:
         print("  (none)")
@@ -409,8 +419,7 @@ def print_report(opcode_dict, packet_stats, highlight_opcode=None):
         if ps:
             print(f"  Direction:  {ps['direction']}")
             print(f"  Times seen: {ps['count']}")
-            unique_sizes = sorted(set(ps['sizes']))
-            print(f"  Sizes:      {', '.join(str(s) for s in unique_sizes)}")
+            print(f"  Sizes:      {_size_range(ps)}")
             print(f"  First:      {ps['first_time']}")
             print(f"  Last:       {ps['last_time']}")
             if ps['first_hex_dump']:
@@ -524,6 +533,8 @@ def main():
                     help='With --dict-only, show only client opcodes')
     ap.add_argument('--smsg-only', action='store_true',
                     help='With --dict-only, show only server opcodes')
+    ap.add_argument('--unhandled-only', action='store_true',
+                    help='Only print the unhandled client opcodes section')
     ap.add_argument('--lookup', metavar='QUERY',
                     help='Look up an opcode by hex value or name substring')
 
@@ -565,15 +576,24 @@ def main():
         try:
             highlight = int(args.highlight, 16)
         except ValueError:
-            # Maybe it's a name — resolve it
+            # Name match — try exact first, then substring
             upper = args.highlight.upper()
             for hx, info in opcode_dict.items():
                 if info['name'] == upper:
                     highlight = hx
                     break
+            if highlight is None:
+                matches = [(h, i) for h, i in opcode_dict.items() if upper in i['name']]
+                if len(matches) == 1:
+                    highlight = matches[0][0]
+                elif matches:
+                    print(f"[warn] --highlight '{args.highlight}' matched {len(matches)} opcodes, "
+                          f"using first: {matches[0][1]['name']}", file=sys.stderr)
+                    highlight = sorted(matches)[0][0]
 
     packet_stats = parse_packet_capture(pkt)
-    print_report(opcode_dict, packet_stats, highlight_opcode=highlight)
+    print_report(opcode_dict, packet_stats, highlight_opcode=highlight,
+                 unhandled_only=args.unhandled_only)
 
 
 if __name__ == '__main__':
