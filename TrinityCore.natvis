@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TrinityCore debugger visualizers for Visual Studio 2022.
+  Place in project root — VS auto-discovers .natvis files in CMake folder-mode projects.
+-->
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+  <!-- ==================== ObjectGuid ==================== -->
+  <Type Name="ObjectGuid">
+    <DisplayString Condition="_data._Elems[1] == 0 &amp;&amp; _data._Elems[0] == 0">Empty</DisplayString>
+    <DisplayString>[Type={(_data._Elems[1] >> 58) &amp; 0x3F}] Entry={(_data._Elems[1] >> 6) &amp; 0x7FFFFF} Map={(_data._Elems[1] >> 29) &amp; 0x1FFF} Counter={_data._Elems[0] &amp; 0xFFFFFFFFFF}</DisplayString>
+    <Expand>
+      <Item Name="[HighGuid type]">(_data._Elems[1] >> 58) &amp; 0x3F</Item>
+      <Item Name="[RealmId]">(_data._Elems[1] >> 42) &amp; 0xFFFF</Item>
+      <Item Name="[MapId]">(_data._Elems[1] >> 29) &amp; 0x1FFF</Item>
+      <Item Name="[Entry]">(_data._Elems[1] >> 6) &amp; 0x7FFFFF</Item>
+      <Item Name="[SubType]">_data._Elems[1] &amp; 0x3F</Item>
+      <Item Name="[Counter]">_data._Elems[0] &amp; 0xFFFFFFFFFF</Item>
+      <Item Name="[Raw High]">_data._Elems[1],X</Item>
+      <Item Name="[Raw Low]">_data._Elems[0],X</Item>
+    </Expand>
+  </Type>
+
+  <!-- ==================== Position ==================== -->
+  <Type Name="Position">
+    <DisplayString>({m_positionX,g}, {m_positionY,g}, {m_positionZ,g}, O={m_orientation,g})</DisplayString>
+    <Expand>
+      <Item Name="X">m_positionX</Item>
+      <Item Name="Y">m_positionY</Item>
+      <Item Name="Z">m_positionZ</Item>
+      <Item Name="Orientation">m_orientation</Item>
+    </Expand>
+  </Type>
+
+  <!-- ==================== WorldLocation ==================== -->
+  <Type Name="WorldLocation">
+    <DisplayString Condition="m_mapId == 0xFFFFFFFF">[No Map] ({m_positionX,g}, {m_positionY,g}, {m_positionZ,g})</DisplayString>
+    <DisplayString>Map {m_mapId} ({m_positionX,g}, {m_positionY,g}, {m_positionZ,g}, O={m_orientation,g})</DisplayString>
+    <Expand>
+      <Item Name="MapId">m_mapId</Item>
+      <Item Name="X">m_positionX</Item>
+      <Item Name="Y">m_positionY</Item>
+      <Item Name="Z">m_positionZ</Item>
+      <Item Name="Orientation">m_orientation</Item>
+    </Expand>
+  </Type>
+
+  <!-- ==================== ByteBuffer ==================== -->
+  <Type Name="ByteBuffer">
+    <DisplayString>[size={_storage._Mypair._Myval2._Mylast - _storage._Mypair._Myval2._Myfirst} rpos={_rpos} wpos={_wpos} bits={_bitpos}]</DisplayString>
+    <Expand>
+      <Item Name="[read pos]">_rpos</Item>
+      <Item Name="[write pos]">_wpos</Item>
+      <Item Name="[size]">_storage._Mypair._Myval2._Mylast - _storage._Mypair._Myval2._Myfirst</Item>
+      <Item Name="[remaining]">_wpos - _rpos</Item>
+      <Item Name="[bit pos]">_bitpos</Item>
+      <Item Name="[cur bit val]">_curbitval,X</Item>
+      <ArrayItems>
+        <Size>_storage._Mypair._Myval2._Mylast - _storage._Mypair._Myval2._Myfirst</Size>
+        <ValuePointer>_storage._Mypair._Myval2._Myfirst</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <!-- ==================== MessageBuffer ==================== -->
+  <Type Name="MessageBuffer">
+    <DisplayString>[size={_storage._Mypair._Myval2._Mylast - _storage._Mypair._Myval2._Myfirst} rpos={_rpos} wpos={_wpos} active={_wpos - _rpos}]</DisplayString>
+    <Expand>
+      <Item Name="[read pos]">_rpos</Item>
+      <Item Name="[write pos]">_wpos</Item>
+      <Item Name="[active bytes]">_wpos - _rpos</Item>
+      <ArrayItems>
+        <Size>_storage._Mypair._Myval2._Mylast - _storage._Mypair._Myval2._Myfirst</Size>
+        <ValuePointer>_storage._Mypair._Myval2._Myfirst</ValuePointer>
+      </ArrayItems>
+    </Expand>
+  </Type>
+
+  <!-- ==================== EnumFlag<T> ==================== -->
+  <Type Name="EnumFlag&lt;*&gt;">
+    <DisplayString>{_value}</DisplayString>
+    <Expand>
+      <Item Name="[value]">_value</Item>
+      <Item Name="[raw]">(unsigned __int64)_value,X</Item>
+    </Expand>
+  </Type>
+
+  <!-- ==================== FlagsArray<T,N> ==================== -->
+  <Type Name="FlagsArray&lt;*,*&gt;">
+    <DisplayString>[{$T2} parts]</DisplayString>
+    <Expand>
+      <IndexListItems>
+        <Size>$T2</Size>
+        <ValueNode>_storage._Elems[$i],X</ValueNode>
+      </IndexListItems>
+    </Expand>
+  </Type>
+
+  <!-- ==================== flag128 ==================== -->
+  <Type Name="flag128">
+    <DisplayString>[{_storage._Elems[0],X} {_storage._Elems[1],X} {_storage._Elems[2],X} {_storage._Elems[3],X}]</DisplayString>
+    <Expand>
+      <Item Name="[part1]">_storage._Elems[0],X</Item>
+      <Item Name="[part2]">_storage._Elems[1],X</Item>
+      <Item Name="[part3]">_storage._Elems[2],X</Item>
+      <Item Name="[part4]">_storage._Elems[3],X</Item>
+    </Expand>
+  </Type>
+
+  <!-- ==================== EventMap ==================== -->
+  <Type Name="EventMap">
+    <DisplayString>[events={_eventMap._Mysize} phase={_phase} last={_lastEvent}]</DisplayString>
+    <Expand>
+      <Item Name="[phase]">_phase</Item>
+      <Item Name="[last event]">_lastEvent</Item>
+      <Item Name="[event count]">_eventMap._Mysize</Item>
+      <ExpandedItem>_eventMap</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <!-- ==================== unique_trackable_ptr<T> ==================== -->
+  <Type Name="Trinity::unique_trackable_ptr&lt;*&gt;">
+    <DisplayString>{_ptr}</DisplayString>
+    <Expand>
+      <ExpandedItem>_ptr</ExpandedItem>
+    </Expand>
+  </Type>
+
+  <!-- ==================== unique_weak_ptr<T> ==================== -->
+  <Type Name="Trinity::unique_weak_ptr&lt;*&gt;">
+    <DisplayString>{_ptr}</DisplayString>
+    <Expand>
+      <ExpandedItem>_ptr</ExpandedItem>
+    </Expand>
+  </Type>
+
+</AutoVisualizer>
