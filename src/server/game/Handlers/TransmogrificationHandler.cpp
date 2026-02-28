@@ -589,6 +589,28 @@ void WorldSession::HandleTransmogOutfitNew(WorldPackets::Transmogrification::Tra
         return;
     }
 
+    // Fill missing slots from player's equipped item transmog modifiers.
+    // The 12.x client omits HEAD, BACK, TABARD, MH, and OH from outfit packets.
+    Player* player = GetPlayer();
+    for (uint8 slot : {EQUIPMENT_SLOT_HEAD, EQUIPMENT_SLOT_BACK, EQUIPMENT_SLOT_TABARD,
+                        EQUIPMENT_SLOT_MAINHAND, EQUIPMENT_SLOT_OFFHAND})
+    {
+        if (set.Appearances[slot] == 0)
+        {
+            if (Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, slot))
+            {
+                uint32 transmogId = item->GetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_ALL_SPECS);
+                if (transmogId)
+                {
+                    set.Appearances[slot] = int32(transmogId);
+                    set.IgnoreMask &= ~(1u << slot);
+                    TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_NEW [{}]: filled missing slot {} from equipped item IMAID {}",
+                        GetPlayerInfo(), slot, transmogId);
+                }
+            }
+        }
+    }
+
     if (!ValidateTransmogOutfitSet(this, set))
         return;
 
@@ -709,6 +731,30 @@ void WorldSession::HandleTransmogOutfitUpdateSlots(WorldPackets::Transmogrificat
             {
                 // Both incoming and existing are 0 — slot is unused
                 updatedSet.IgnoreMask |= (1u << slot);
+            }
+        }
+
+        // Fill missing slots from player's equipped item transmog modifiers.
+        // The 12.x client's CommitAndApplyAllPending() omits HEAD, BACK, TABARD,
+        // MH, and OH from outfit packets — those slots always arrive as IMAID=0.
+        // Read the active transmog from the player's equipped items to populate them.
+        Player* player = GetPlayer();
+        for (uint8 slot : {EQUIPMENT_SLOT_HEAD, EQUIPMENT_SLOT_BACK, EQUIPMENT_SLOT_TABARD,
+                            EQUIPMENT_SLOT_MAINHAND, EQUIPMENT_SLOT_OFFHAND})
+        {
+            if (updatedSet.Appearances[slot] == 0)
+            {
+                if (Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, slot))
+                {
+                    uint32 transmogId = item->GetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_ALL_SPECS);
+                    if (transmogId)
+                    {
+                        updatedSet.Appearances[slot] = int32(transmogId);
+                        updatedSet.IgnoreMask &= ~(1u << slot);
+                        TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS [{}]: filled missing slot {} from equipped item IMAID {}",
+                            GetPlayerInfo(), slot, transmogId);
+                    }
+                }
             }
         }
 
