@@ -31,3 +31,4 @@ CLAUDE.md
 .opcode_cache.json
 sql/dumps/
 __pycache__/
+.cache/
