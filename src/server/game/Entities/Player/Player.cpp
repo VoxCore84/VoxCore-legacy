@@ -18081,6 +18081,9 @@ void Player::_SyncTransmogOutfitsToActivePlayerData()
             { 14, 16 }, // ID 14 = WeaponOffHand   -> EQUIPMENT_SLOT_OFFHAND
         };
 
+        TC_LOG_DEBUG("entities.player", "fillOutfitData [{}]: slotMap size={} setName='{}' ignoreMask=0x{:X}",
+            GetGUID().ToString(), std::size(slotMap), equipmentSet->SetName, equipmentSet->IgnoreMask);
+
         for (auto const& mapping : slotMap)
         {
             // ID 3 (SecondaryShoulder / ShoulderLeft) uses its own dedicated field, not Appearances[]
@@ -18090,6 +18093,22 @@ void Player::_SyncTransmogOutfitsToActivePlayerData()
             else
                 imaID = (mapping.equipSlot < EQUIPMENT_SLOT_END && equipmentSet->Appearances[mapping.equipSlot] > 0)
                     ? uint32(equipmentSet->Appearances[mapping.equipSlot]) : 0;
+
+            // If outfit has no IMAID for this slot, bootstrap from the player's equipped item.
+            // The 12.x client won't merge pending transmog into slots with SlotOption=0 / IMAID=0,
+            // so we must provide a non-empty slot structure for the client to work with.
+            if (imaID == 0 && mapping.db2SlotInfoID != 3 && mapping.equipSlot < EQUIPMENT_SLOT_END)
+            {
+                if (Item* equippedItem = GetItemByPos(INVENTORY_SLOT_BAG_0, mapping.equipSlot))
+                {
+                    // Prefer active transmog modifier on the item
+                    imaID = equippedItem->GetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_ALL_SPECS);
+                    // Fall back to the item's base appearance from DB2
+                    if (!imaID)
+                        if (ItemModifiedAppearanceEntry const* baseAppear = equippedItem->GetItemModifiedAppearance())
+                            imaID = baseAppear->ID;
+                }
+            }
 
             // Look up the real AppearanceDisplayType from DB2 (matches SetVisibleItemSlot logic)
             uint8 displayType = 0;
@@ -18120,6 +18139,9 @@ void Player::_SyncTransmogOutfitsToActivePlayerData()
 
             slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::SpellItemEnchantmentID).SetValue(enchant);
             slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::IllusionDisplayType).SetValue(uint8(0));
+
+            TC_LOG_DEBUG("entities.player", "fillOutfitData [{}]: db2Slot={} equipSlot={} IMAID={} DT={} slotOption={} enchant={}",
+                GetGUID().ToString(), mapping.db2SlotInfoID, mapping.equipSlot, imaID, displayType, slotOption, enchant);
         }
     };
 

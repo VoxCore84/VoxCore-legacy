@@ -25,6 +25,7 @@
 #include "ChatPackets.h"
 #include "DatabaseEnvFwd.h"
 #include "Duration.h"
+#include "EquipmentSet.h"
 #include "IteratorPair.h"
 #include "LockedQueue.h"
 #include "ObjectGuid.h"
@@ -1827,6 +1828,27 @@ class TC_GAME_API WorldSession
         void HandleTransmogOutfitUpdateInfo(WorldPackets::Transmogrification::TransmogOutfitUpdateInfo& transmogOutfitUpdateInfo);
         void HandleTransmogOutfitUpdateSituations(WorldPackets::Transmogrification::TransmogOutfitUpdateSituations& transmogOutfitUpdateSituations);
         void HandleTransmogOutfitUpdateSlots(WorldPackets::Transmogrification::TransmogOutfitUpdateSlots& transmogOutfitUpdateSlots);
+
+        // TransmogBridge: addon-message-based workaround for 12.x client serializer bug.
+        // The client's CommitAndApplyAllPending C++ serializer omits HEAD/MH/OH/enchants
+        // and sends stale IMAIDs for all other slots. A client addon captures the correct
+        // pending IMAIDs and sends them via addon message. HandleTransmogOutfitUpdateSlots
+        // defers finalization so the addon message can merge overrides before save/apply.
+        struct TransmogBridgeOverride
+        {
+            uint8  ClientSlot;   // Client API slot index (0=HEAD, 1=SHOULDER, ..., 13=OH)
+            int32  TransmogID;   // IMAID, 0 = no appearance override
+            int32  IllusionID;   // SpellItemEnchantmentID, 0 = no illusion override
+        };
+        struct TransmogBridgePendingOutfit
+        {
+            EquipmentSetInfo::EquipmentSetData Outfit;
+            bool HasAnyAppearance = false;
+        };
+        void FinalizeTransmogBridgePendingOutfit();
+        std::vector<TransmogBridgeOverride> _transmogBridgeOverrides;
+        std::string _transmogBridgePartialPayload;
+        Optional<TransmogBridgePendingOutfit> _transmogBridgePendingOutfit;
 
         // Miscellaneous
         void HandleSpellClick(WorldPackets::Spells::SpellClick& spellClick);

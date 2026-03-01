@@ -547,6 +547,12 @@ bool WorldSession::Update(uint32 diff, PacketFilter& updater)
 
     TC_METRIC_VALUE("processed_packets", processedPackets);
 
+    // TransmogBridge safety net: if HandleTransmogOutfitUpdateSlots deferred
+    // finalization but no TransmogBridge addon message arrived (addon not installed
+    // or message lost), finalize now without overrides — backward compatible.
+    if (_transmogBridgePendingOutfit)
+        FinalizeTransmogBridgePendingOutfit();
+
     _recvQueue.readd(requeuePackets.begin(), requeuePackets.end());
 
     if (!updater.ProcessUnsafe()) // <=> updater is of type MapSessionFilter

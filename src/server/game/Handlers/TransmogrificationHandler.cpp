@@ -771,23 +771,135 @@ void WorldSession::HandleTransmogOutfitUpdateSlots(WorldPackets::Transmogrificat
             GetPlayerInfo(), transmogOutfitUpdateSlots.Slots.size());
     }
 
-    if (!ValidateTransmogOutfitSet(this, updatedSet))
+    // Defer finalization: the TransmogBridge addon message arrives in the very next
+    // packet (same Update() cycle) with the correct IMAIDs. Store the pending outfit
+    // so FinalizeTransmogBridgePendingOutfit can merge overrides before save/apply.
+    // If no addon message arrives (addon not installed), the safety net in
+    // WorldSession::Update() finalizes without overrides — backward compatible.
+    _transmogBridgePendingOutfit.emplace(TransmogBridgePendingOutfit{std::move(updatedSet), hasAnyAppearance});
+    TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS [{}]: deferred finalization (waiting for TransmogBridge addon message)",
+        GetPlayerInfo());
+}
+
+namespace
+{
+// Maps client addon slot index → EquipmentSlot.
+// Client indices (from SetPendingTransmog, confirmed via TransmogSpy):
+//   0=HEAD, 1=SHOULDER, 2=SECONDARY_SHOULDER, 3=BACK, 4=CHEST,
+//   5=TABARD, 6=SHIRT, 7=WRIST, 8=HANDS, 9=WAIST, 10=LEGS,
+//   11=FEET, 12=MAINHAND, 13=OFFHAND
+// Slot 2 (secondary shoulder) maps to EQUIPMENT_SLOT_SHOULDERS but is handled
+// specially — the override goes to SecondaryShoulderApparanceID, not Appearances[2].
+uint8 MapClientSlotToEquipSlot(uint8 clientSlot)
+{
+    static constexpr uint8 map[] = {
+        EQUIPMENT_SLOT_HEAD,        // 0
+        EQUIPMENT_SLOT_SHOULDERS,   // 1
+        EQUIPMENT_SLOT_SHOULDERS,   // 2 (secondary — caller checks clientSlot==2)
+        EQUIPMENT_SLOT_BACK,        // 3
+        EQUIPMENT_SLOT_CHEST,       // 4
+        EQUIPMENT_SLOT_TABARD,      // 5
+        EQUIPMENT_SLOT_BODY,        // 6 (shirt)
+        EQUIPMENT_SLOT_WRISTS,      // 7
+        EQUIPMENT_SLOT_HANDS,       // 8
+        EQUIPMENT_SLOT_WAIST,       // 9
+        EQUIPMENT_SLOT_LEGS,        // 10
+        EQUIPMENT_SLOT_FEET,        // 11
+        EQUIPMENT_SLOT_MAINHAND,    // 12
+        EQUIPMENT_SLOT_OFFHAND,     // 13
+    };
+    return clientSlot < std::size(map) ? map[clientSlot] : EQUIPMENT_SLOT_END;
+}
+} // anonymous namespace
+
+void WorldSession::FinalizeTransmogBridgePendingOutfit()
+{
+    if (!_transmogBridgePendingOutfit)
         return;
 
-    GetPlayer()->SetEquipmentSet(updatedSet);
+    auto& pending = *_transmogBridgePendingOutfit;
 
-    // Only apply appearances to equipped items when we have real outfit data
-    if (hasAnyAppearance)
+    // Merge bridge overrides if any are buffered
+    bool mergedOverrides = false;
+    if (!_transmogBridgeOverrides.empty())
     {
-        if (!ApplyTransmogOutfitToPlayer(GetPlayer(), updatedSet))
+        mergedOverrides = true;
+        TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: merging {} overrides into pending outfit",
+            GetPlayerInfo(), _transmogBridgeOverrides.size());
+
+        for (auto const& ov : _transmogBridgeOverrides)
+        {
+            // Secondary shoulder (clientSlot 2) — routes to a separate field
+            if (ov.ClientSlot == 2)
+            {
+                if (ov.TransmogID > 0)
+                {
+                    pending.Outfit.SecondaryShoulderApparanceID = ov.TransmogID;
+                    pending.Outfit.SecondaryShoulderSlot = 2;
+                    TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: merged secondary shoulder IMAID={}",
+                        GetPlayerInfo(), ov.TransmogID);
+                }
+                continue;
+            }
+
+            uint8 equipSlot = MapClientSlotToEquipSlot(ov.ClientSlot);
+            if (equipSlot >= EQUIPMENT_SLOT_END)
+                continue;
+
+            // Appearance override
+            if (ov.TransmogID > 0)
+            {
+                pending.Outfit.Appearances[equipSlot] = ov.TransmogID;
+                pending.Outfit.IgnoreMask &= ~(1u << equipSlot);
+                pending.HasAnyAppearance = true;
+                TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: merged clientSlot={} -> equipSlot={} IMAID={}",
+                    GetPlayerInfo(), ov.ClientSlot, equipSlot, ov.TransmogID);
+            }
+
+            // Weapon illusion override
+            if (ov.IllusionID > 0)
+            {
+                if (equipSlot == EQUIPMENT_SLOT_MAINHAND)
+                    pending.Outfit.Enchants[0] = ov.IllusionID;
+                else if (equipSlot == EQUIPMENT_SLOT_OFFHAND)
+                    pending.Outfit.Enchants[1] = ov.IllusionID;
+                TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: merged illusion={} for equipSlot={}",
+                    GetPlayerInfo(), ov.IllusionID, equipSlot);
+            }
+        }
+
+        _transmogBridgeOverrides.clear();
+    }
+
+    // Validate, save, apply, respond — single pass with correct IMAIDs
+    if (!ValidateTransmogOutfitSet(this, pending.Outfit))
+    {
+        TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: outfit validation failed after merge",
+            GetPlayerInfo());
+        _transmogBridgePendingOutfit.reset();
+        return;
+    }
+
+    GetPlayer()->SetEquipmentSet(pending.Outfit);
+
+    if (pending.HasAnyAppearance)
+    {
+        if (!ApplyTransmogOutfitToPlayer(GetPlayer(), pending.Outfit))
+        {
+            _transmogBridgePendingOutfit.reset();
             return;
+        }
     }
 
     WorldPackets::Transmogrification::TransmogOutfitSlotsUpdated response;
-    response.SetID = updatedSet.SetID;
-    response.Guid = updatedSet.Guid;
-    TC_LOG_DEBUG("network.opcode.transmog", "SMSG_TRANSMOG_OUTFIT_SLOTS_UPDATED [{}]: setId={} guid={}", GetPlayerInfo(), response.SetID, response.Guid);
+    response.SetID = pending.Outfit.SetID;
+    response.Guid = pending.Outfit.Guid;
+    TC_LOG_DEBUG("network.opcode.transmog", "SMSG_TRANSMOG_OUTFIT_SLOTS_UPDATED [{}]: setId={} guid={} (finalized{})",
+        GetPlayerInfo(), response.SetID, response.Guid,
+        mergedOverrides ? " with bridge overrides" : "");
     SendPacket(response.Write());
+
+    _transmogBridgePendingOutfit.reset();
 }
 
 void WorldSession::HandleTransmogOutfitUpdateSituations(WorldPackets::Transmogrification::TransmogOutfitUpdateSituations& transmogOutfitUpdateSituations)
