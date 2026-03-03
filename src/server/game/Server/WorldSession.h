@@ -1581,7 +1581,6 @@ class TC_GAME_API WorldSession
         void HandleSetBackpackAutosortDisabled(WorldPackets::Item::SetBackpackAutosortDisabled const& setBackpackAutosortDisabled);
         void HandleSetBackpackSellJunkDisabled(WorldPackets::Item::SetBackpackSellJunkDisabled const& setBackpackSellJunkDisabled);
         void HandleSetBankAutosortDisabled(WorldPackets::Item::SetBankAutosortDisabled const& setBankAutosortDisabled);
-        void HandleSellAllJunkItems(WorldPackets::Item::SellAllJunkItems& sellAllJunkItems);
 
         void HandleAttackSwingOpcode(WorldPackets::Combat::AttackSwing& packet);
         void HandleAttackStopOpcode(WorldPackets::Combat::AttackStop& packet);
@@ -1833,9 +1832,10 @@ class TC_GAME_API WorldSession
 
         // TransmogBridge: addon-message-based workaround for 12.x client serializer bug.
         // The client's CommitAndApplyAllPending C++ serializer omits HEAD/MH/OH/enchants
-        // and sends stale IMAIDs for all other slots. A client addon captures the correct
-        // pending IMAIDs and sends them via addon message. HandleTransmogOutfitUpdateSlots
-        // defers finalization so the addon message can merge overrides before save/apply.
+        // and sends stale IMAIDs for all other slots. A client addon snapshots all 14
+        // slots via GetViewedOutfitSlotInfo and sends them via addon message.
+        // HandleTransmogOutfitUpdateSlots defers finalization so the addon message can
+        // merge overrides before save/apply.
         struct TransmogBridgeOverride
         {
             uint8  ClientSlot;   // Client API slot index (0=HEAD, 1=SHOULDER, ..., 13=OH)
