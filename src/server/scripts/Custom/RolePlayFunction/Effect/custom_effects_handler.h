@@ -25,7 +25,6 @@ namespace Noblegarden
             bool HasEffect(uint32 id);
             void AddEffect(uint32 id, EffectData* data);
             void RemoveEffect(uint32 id);
-            void Clear(uint32 id);
             int Size();
         };
 

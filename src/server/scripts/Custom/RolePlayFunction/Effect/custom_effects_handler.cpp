@@ -154,6 +154,8 @@ namespace Noblegarden
                 unit->SendCancelSpellVisualKit(pair.first);
             }
 
+            for (auto& [key, data] : targetInfo->Store->Effects)
+                delete data;
             targetInfo->Store->Effects.clear();
 
             delete targetInfo;
@@ -206,7 +208,11 @@ namespace Noblegarden
             result->IsCreature  = true;
         }
 
-        return result->IsPlayer || result->IsCreature ? result : nullptr;
+        if (result->IsPlayer || result->IsCreature)
+            return result;
+
+        delete result;
+        return nullptr;
     }
 
 
@@ -255,13 +261,12 @@ namespace Noblegarden
 
     void EffectsHandler::EffectStore::RemoveEffect(uint32 id)
     {
-        Effects.erase(id);
-    }
-
-
-    void EffectsHandler::EffectStore::Clear(uint32 id)
-    {
-        Effects.erase(id);
+        auto it = Effects.find(id);
+        if (it != Effects.end())
+        {
+            delete it->second;
+            Effects.erase(it);
+        }
     }
 
 

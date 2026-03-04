@@ -245,7 +245,7 @@ public:
             { "npcmoveto",       rbac::RBAC_PERM_COMMAND_NPC_MOVE,      false,      &HandleNpcMoveTo,           ""},
             { "npcguidsay",      rbac::RBAC_PERM_COMMAND_NPC_SAY,       false,      &HandleNpcGuidSay,          ""},
             { "npcguidyell",     rbac::RBAC_PERM_COMMAND_NPC_YELL,      false,      &HandleNpcGuidYell,         ""},
-            { "settime",         rbac::RBAC_PERM_COMMAND_NPC_YELL,      false,      &HandleSetTimeCommand,      "<hour> <minute> [instant|smooth] <ms shift>"},
+            { "settime",         rbac::RBAC_PERM_COMMAND_SETTIME,       false,      &HandleSetTimeCommand,      "<hour> <minute> [instant|smooth] <ms shift>"},
             { "typing",          typimgCommandTable },
         };
 

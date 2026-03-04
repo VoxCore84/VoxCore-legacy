@@ -792,6 +792,7 @@ enum RBACPermissions
     RBAC_PERM_COMMAND_DISP_TABARD                           = 1019,
     RBAC_PERM_COMMAND_DISP_MAINHAND                         = 1020,
     RBAC_PERM_COMMAND_DISP_OFFHAND                          = 1021,
+    RBAC_PERM_COMMAND_SETTIME                               = 1022,
     RBAC_PERM_COMMAND_CUSTOMNPC_SET_DISPLAYID               = 1360,
     RBAC_PERM_COMMAND_CUSTOMNPC_SET_GUILD                   = 1361,
     RBAC_PERM_COMMAND_CUSTOMNPC_SET_RANK                    = 1362,
