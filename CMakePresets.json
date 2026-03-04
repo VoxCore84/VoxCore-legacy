@@ -12,7 +12,7 @@
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "SCRIPTS": "static",
                 "ELUNA": "ON",
-                "TOOLS": "ON",
+                "TOOLS": "OFF",
                 "SERVERS": "ON"
             }
         },
@@ -27,7 +27,7 @@
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "SCRIPTS": "static",
                 "ELUNA": "ON",
-                "TOOLS": "ON",
+                "TOOLS": "OFF",
                 "SERVERS": "ON"
             }
         }
@@ -36,26 +36,26 @@
         {
             "name": "x64-Debug",
             "configurePreset": "x64-Debug",
-            "nativeToolOptions": ["-j4"]
+            "nativeToolOptions": ["-j20"]
         },
         {
             "name": "x64-Debug-scripts",
             "displayName": "x64 Debug (scripts only)",
             "configurePreset": "x64-Debug",
             "targets": ["scripts"],
-            "nativeToolOptions": ["-j4"]
+            "nativeToolOptions": ["-j20"]
         },
         {
             "name": "x64-RelWithDebInfo",
             "configurePreset": "x64-RelWithDebInfo",
-            "nativeToolOptions": ["-j4"]
+            "nativeToolOptions": ["-j20"]
         },
         {
             "name": "x64-RelWithDebInfo-scripts",
             "displayName": "x64 RelWithDebInfo (scripts only)",
             "configurePreset": "x64-RelWithDebInfo",
             "targets": ["scripts"],
-            "nativeToolOptions": ["-j4"]
+            "nativeToolOptions": ["-j20"]
         }
     ]
 }
