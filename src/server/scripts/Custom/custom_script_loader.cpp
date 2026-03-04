@@ -31,6 +31,7 @@ void AddSC_CompanionCommands();
 void AddSC_CompanionScripts();
 void AddSC_PlayerMorphScripts();
 void AddSC_wormhole_generators();
+void AddSC_clear_transmog_scripts();
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
@@ -50,4 +51,5 @@ void AddCustomScripts()
     AddSC_CompanionScripts();
     AddSC_PlayerMorphScripts();
     AddSC_wormhole_generators();
+    AddSC_clear_transmog_scripts();
 }

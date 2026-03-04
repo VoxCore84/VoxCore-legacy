@@ -1,13 +1,14 @@
--- TransmogBridge: Sends all outfit slot appearances to the server via addon message.
+-- TransmogBridge: Sends all outfit slot appearances and illusions to the server via addon message.
 -- The 12.x client's CommitAndApplyAllPending() C++ serializer omits HEAD, MH, OH,
--- weapon enchants, and sends stale data for all other slots. This addon uses a hybrid
--- approach: snapshot via GetViewedOutfitSlotInfo (captures outfit-loaded armor slots)
--- merged with SetPendingTransmog hooks (captures weapons, secondary shoulder, tabard,
--- shirt — slots where the snapshot is unreliable). Hook data wins on conflict.
+-- and sends stale data for all other slots. This addon uses a hybrid approach:
+-- snapshot via GetViewedOutfitSlotInfo (captures outfit-loaded armor slots)
+-- merged with SetPendingTransmog hooks (captures weapons, illusions, secondary shoulder,
+-- tabard, shirt — slots where the snapshot is unreliable). Hook data wins on conflict.
 
 local ADDON_PREFIX = "TMOG_BRIDGE"
 local LOG_PREFIX  = "TMOG_LOG"
 local pendingOverrides = {}
+local pendingIllusions = {} -- slot -> SpellItemEnchantmentID (weapon enchant visuals)
 
 -- Inventory slot names for TransmogUtil.GetTransmogLocation (Layer 3 fallback)
 local INV_SLOT_NAMES = {
@@ -50,6 +51,12 @@ end
 -- tmogType: 0=appearance, 1=illusion (weapon enchant visual)
 -- transmogID: IMAID (type 0) or SpellItemEnchantmentID (type 1)
 hooksecurefunc(C_TransmogOutfitInfo, "SetPendingTransmog", function(slot, tmogType, option, transmogID, displayType)
+    if tmogType == 1 then
+        -- Illusion (weapon enchant visual): slot 12=MH, 13=OH
+        pendingIllusions[slot] = transmogID or 0
+        Log(string.format("SetPending illusion slot=%d enchantID=%d", slot, transmogID or 0))
+        return
+    end
     if tmogType ~= 0 then
         Log(string.format("SetPending SKIP type=%d slot=%d id=%d", tmogType, slot, transmogID or 0))
         return
@@ -71,6 +78,7 @@ f:SetScript("OnEvent", function(self, event)
             Log(string.format("TRANSMOGRIFY_CLOSE — cleared %d pending overrides", count))
         end
         wipe(pendingOverrides)
+        wipe(pendingIllusions)
     end
 end)
 
@@ -101,10 +109,15 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
     end
 
     -- Layer 2: SetPendingTransmog accumulations override snapshot (wins on conflict)
+    -- transmogID=0 from SetPendingTransmog means user explicitly cleared this slot
     for slot, data in pairs(pendingOverrides) do
         local tmogID = data.transmogID or 0
         if tmogID > 0 then
             merged[slot] = { transmogID = tmogID, option = data.option or 0 }
+        else
+            -- Explicit clear: user removed transmog from this slot via UI
+            merged[slot] = { transmogID = 0, option = 0 }
+            Log(string.format("Layer2 explicit clear slot=%d", slot))
         end
     end
 
@@ -134,6 +147,31 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
         end
     end
 
+    -- Illusion overlay: apply SetPendingTransmog illusion data to weapon slots (12=MH, 13=OH)
+    for slot, illusionID in pairs(pendingIllusions) do
+        if not merged[slot] then
+            -- Get current weapon appearance (illusions require a transmogged weapon)
+            local invName = INV_SLOT_NAMES[slot]
+            if invName and HAS_SLOT_VISUAL_INFO then
+                local ok, loc = pcall(TransmogUtil.GetTransmogLocation, invName, Enum.TransmogType.Appearance, false)
+                if ok and loc then
+                    local ok2, visInfo = pcall(C_Transmog.GetSlotVisualInfo, loc)
+                    if ok2 and visInfo then
+                        local id = visInfo.appliedSourceID
+                        if id and id > 0 then
+                            merged[slot] = { transmogID = id, option = 0 }
+                            Log(string.format("Illusion: looked up current appearance slot=%d IMAID=%d", slot, id))
+                        end
+                    end
+                end
+            end
+        end
+        if merged[slot] then
+            merged[slot].illusionID = illusionID
+            Log(string.format("Illusion overlay slot=%d enchantID=%d", slot, illusionID))
+        end
+    end
+
     -- Log slots that are still missing after all 3 layers (known limitation for weapons
     -- during outfit loading — server baseline restoration handles these)
     local missing = {}
@@ -147,22 +185,28 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
             table.concat(missing, ",")))
     end
 
-    -- Encode: "slot.transmogID.option;..."
+    -- Encode: "slot.transmogID.option[.illusionID];..."
+    -- 4th field only included when illusion data was explicitly set
     local parts = {}
     for slot, data in pairs(merged) do
-        parts[#parts + 1] = string.format("%d.%d.%d", slot, data.transmogID, data.option)
+        if data.illusionID ~= nil then
+            parts[#parts + 1] = string.format("%d.%d.%d.%d", slot, data.transmogID, data.option, data.illusionID)
+        else
+            parts[#parts + 1] = string.format("%d.%d.%d", slot, data.transmogID, data.option)
+        end
     end
 
     if #parts == 0 then
         Log("CommitAndApplyAllPending — hybrid merge produced 0 overrides")
         wipe(pendingOverrides)
+        wipe(pendingIllusions)
         return
     end
 
     local payload = table.concat(parts, ";")
 
     -- Addon message payload limit is 255 bytes.
-    -- 14 slots * ~18 chars = ~252 bytes. Tight but fits.
+    -- Worst case: 12 3-field + 2 4-field (illusions) = ~192 bytes. Multi-part handles overflow.
     if #payload <= 255 then
         C_ChatInfo.SendAddonMessage(ADDON_PREFIX, payload, "WHISPER", UnitName("player"))
     else
@@ -177,4 +221,5 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
     Log(string.format("Sent %d overrides (%d bytes): %s", #parts, #payload, payload))
 
     wipe(pendingOverrides)
+    wipe(pendingIllusions)
 end)

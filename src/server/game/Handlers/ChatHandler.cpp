@@ -619,7 +619,7 @@ void WorldSession::HandleChatAddonMessage(ChatMsg type, std::string prefix, std:
 
         for (std::string_view token : Trinity::Tokenize(std::string_view(payload), ';', false))
         {
-            // Format: "clientSlot.transmogID.option"
+            // Format: "clientSlot.transmogID.option[.illusionID]"
             std::vector<std::string_view> fields = Trinity::Tokenize(token, '.', true);
             if (fields.size() < 2)
                 continue;
@@ -632,8 +632,26 @@ void WorldSession::HandleChatAddonMessage(ChatMsg type, std::string prefix, std:
             if (*clientSlot > 13)
                 continue;
 
-            if (*transmogID > 0)
-                _transmogBridgeOverrides.push_back({*clientSlot, *transmogID});
+            // transmogID=0 is valid: explicit "clear this slot's transmog" from addon
+            if (*transmogID >= 0)
+            {
+                TransmogBridgeOverride ov;
+                ov.ClientSlot = *clientSlot;
+                ov.TransmogID = *transmogID;
+
+                // Optional 4th field: illusion (SpellItemEnchantmentID)
+                if (fields.size() >= 4)
+                {
+                    Optional<int32> illusionID = Trinity::StringTo<int32>(fields[3]);
+                    if (illusionID)
+                    {
+                        ov.IllusionID = *illusionID;
+                        ov.HasIllusion = true;
+                    }
+                }
+
+                _transmogBridgeOverrides.push_back(ov);
+            }
         }
 
         TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: received {} overrides",

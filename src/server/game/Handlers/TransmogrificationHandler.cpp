@@ -836,6 +836,8 @@ void WorldSession::FinalizeTransmogBridgePendingOutfit()
     bool mergedOverrides = false;
     bool bridgeOverrodeSecondary = false; // separate flag — secondary shoulder doesn't use bridgeOverriddenMask
     uint32 bridgeOverriddenMask = 0; // bitmask of equipment slots the bridge explicitly set
+    uint32 bridgeClearedMask = 0;    // bitmask of equipment slots the bridge explicitly cleared
+    bool bridgeClearedSecondary = false; // secondary shoulder explicitly cleared
     if (!_transmogBridgeOverrides.empty())
     {
         mergedOverrides = true;
@@ -855,6 +857,16 @@ void WorldSession::FinalizeTransmogBridgePendingOutfit()
                     TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: merged secondary shoulder IMAID={}",
                         GetPlayerInfo(), ov.TransmogID);
                 }
+                else
+                {
+                    // Explicit clear of secondary shoulder
+                    pending.Outfit.SecondaryShoulderApparanceID = 0;
+                    pending.Outfit.SecondaryShoulderSlot = 0;
+                    bridgeOverrodeSecondary = true;
+                    bridgeClearedSecondary = true;
+                    TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: cleared secondary shoulder",
+                        GetPlayerInfo());
+                }
                 continue;
             }
 
@@ -870,6 +882,36 @@ void WorldSession::FinalizeTransmogBridgePendingOutfit()
                 bridgeOverriddenMask |= (1u << equipSlot);
                 TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: merged clientSlot={} -> equipSlot={} IMAID={}",
                     GetPlayerInfo(), ov.ClientSlot, equipSlot, ov.TransmogID);
+            }
+            else
+            {
+                // Explicit clear: user removed transmog from this slot
+                pending.Outfit.Appearances[equipSlot] = 0;
+                pending.Outfit.IgnoreMask &= ~(1u << equipSlot);
+                pending.HasAnyAppearance = true; // need apply pass to clear the item modifier
+                bridgeOverriddenMask |= (1u << equipSlot);
+                bridgeClearedMask |= (1u << equipSlot);
+                TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: clear clientSlot={} -> equipSlot={}",
+                    GetPlayerInfo(), ov.ClientSlot, equipSlot);
+            }
+
+            // Handle illusion (weapon enchant visual) — only for MH/OH slots
+            if (ov.HasIllusion)
+            {
+                if (equipSlot == EQUIPMENT_SLOT_MAINHAND)
+                {
+                    pending.Outfit.Enchants[0] = ov.IllusionID;
+                    pending.HasAnyAppearance = true;
+                    TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: merged MH illusion enchantID={}",
+                        GetPlayerInfo(), ov.IllusionID);
+                }
+                else if (equipSlot == EQUIPMENT_SLOT_OFFHAND)
+                {
+                    pending.Outfit.Enchants[1] = ov.IllusionID;
+                    pending.HasAnyAppearance = true;
+                    TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: merged OH illusion enchantID={}",
+                        GetPlayerInfo(), ov.IllusionID);
+                }
             }
         }
 
@@ -927,6 +969,29 @@ void WorldSession::FinalizeTransmogBridgePendingOutfit()
             GetPlayerInfo());
         _transmogBridgePendingOutfit.reset();
         return;
+    }
+
+    // Re-apply explicit clears after validation.
+    // ValidateTransmogOutfitSet forces IgnoreMask for Appearances==0 slots,
+    // but bridge clears need the slot active so ApplyTransmogOutfitToPlayer
+    // will set the item modifier to 0 (removing the transmog).
+    if (bridgeClearedMask)
+    {
+        for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)
+        {
+            if (bridgeClearedMask & (1u << slot))
+            {
+                pending.Outfit.Appearances[slot] = 0;
+                pending.Outfit.IgnoreMask &= ~(1u << slot);
+            }
+        }
+        TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: re-applied slot clears after validation (mask=0x{:X})",
+            GetPlayerInfo(), bridgeClearedMask);
+    }
+    if (bridgeClearedSecondary)
+    {
+        pending.Outfit.SecondaryShoulderApparanceID = 0;
+        pending.Outfit.SecondaryShoulderSlot = 0;
     }
 
     GetPlayer()->SetEquipmentSet(pending.Outfit);
