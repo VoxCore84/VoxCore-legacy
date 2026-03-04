@@ -27,6 +27,9 @@ local INV_SLOT_NAMES = {
     [13] = "SECONDARYHANDSLOT",
 }
 
+-- Slots where the client serializer always returns nil (broken, not hidden)
+local ALWAYS_NIL_SLOTS = { [0]=true, [2]=true, [12]=true, [13]=true }
+
 -- Check API availability once at load
 local HAS_SLOT_VISUAL_INFO = C_Transmog and C_Transmog.GetSlotVisualInfo ~= nil
     and TransmogUtil and TransmogUtil.GetTransmogLocation ~= nil
@@ -176,8 +179,7 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
     -- HEAD (0), SECONDARY_SHOULDER (2), MH (12), OH (13) are ALWAYS nil
     -- due to client serializer bugs — defer these to server baseline.
     -- All other slots being nil means a hidden appearance — send explicit clear (slot.0.0).
-    local ALWAYS_NIL_SLOTS = { [0]=true, [2]=true, [12]=true, [13]=true }
-    local missing = {}
+        local missing = {}
     for slot = 0, 13 do
         if not merged[slot] then
             if ALWAYS_NIL_SLOTS[slot] then
@@ -219,8 +221,8 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
     if #payload <= 255 then
         C_ChatInfo.SendAddonMessage(ADDON_PREFIX, payload, "WHISPER", UnitName("player"))
     else
-        -- Split at nearest ; boundary
-        local mid = payload:sub(1, 255):match(".*;") or payload:sub(1, 255)
+        -- Split at nearest ; boundary (253 = 255 limit minus 2-byte "1>" prefix)
+        local mid = payload:sub(1, 253):match(".*;") or payload:sub(1, 253)
         local part1 = mid
         local part2 = payload:sub(#mid + 1)
         C_ChatInfo.SendAddonMessage(ADDON_PREFIX, "1>" .. part1, "WHISPER", UnitName("player"))

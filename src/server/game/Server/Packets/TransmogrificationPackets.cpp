@@ -257,8 +257,11 @@ void TransmogOutfitNew::Read()
                 // DT=1 (Shoulder): ordinal 3 = secondary, ordinals 1-2 = primary (first wins)
                 if (equipSlot == EQUIPMENT_SLOT_SHOULDERS && ordinal == 3)
                 {
-                    Set.SecondaryShoulderApparanceID = int32(appearanceID);
-                    Set.SecondaryShoulderSlot = 2;
+                    if (!Set.SecondaryShoulderApparanceID)
+                    {
+                        Set.SecondaryShoulderApparanceID = int32(appearanceID);
+                        Set.SecondaryShoulderSlot = 2;
+                    }
                 }
                 else if (equipSlot < EQUIPMENT_SLOT_END)
                 {

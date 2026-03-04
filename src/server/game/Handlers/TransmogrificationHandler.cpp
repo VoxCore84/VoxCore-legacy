@@ -574,7 +574,11 @@ void WorldSession::HandleTransmogrifyItems(WorldPackets::Transmogrification::Tra
             }
 
             if (outfitChanged)
+            {
                 player->SetEquipmentSet(*activeOutfit); // persists + re-syncs update fields
+                player->SendUpdateToPlayer(player);
+                player->ClearUpdateMask(true);
+            }
         }
     }
 }
