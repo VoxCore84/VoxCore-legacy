@@ -6,8 +6,9 @@ description: Look up spell IDs or search spell names from the Wago SpellName DB2
 ## Context
 
 The user wants to look up WoW spell data. The source is the Wago DB2 export:
-- CSV (bash path): `/c/Users/atayl/source/wago/wago_csv/major_12/12.0.1.66220/enUS/SpellName-enUS.csv`
-- If using Python: `os.path.expanduser('~') + '/source/wago/wago_csv/major_12/12.0.1.66220/enUS/SpellName-enUS.csv'`
+- In Python, first: `import sys, os; sys.path.insert(0, os.path.expanduser('~/source/wago')); from wago_common import WAGO_CSV_DIR`
+- Then use: `str(WAGO_CSV_DIR / 'SpellName-enUS.csv')`
+- For bash/grep: use `$(python3 -c "import sys; sys.path.insert(0,'C:/Users/atayl/source/wago'); from wago_common import WAGO_CSV_DIR; print(WAGO_CSV_DIR / 'SpellName-enUS.csv')")`
 - Format: `ID,Name_lang` (2 columns, ~400k rows)
 - Names may be quoted if they contain commas
 

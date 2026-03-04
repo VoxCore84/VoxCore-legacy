@@ -13,19 +13,21 @@ Outputs:
 """
 
 import csv
+import os
 import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
+
+sys.path.insert(0, os.path.expanduser("~/source/wago"))
+from wago_common import WAGO_CSV_DIR
 
 # --- Configuration ---
 MYSQL = r"C:/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe"
 MYSQL_USER = "root"
 MYSQL_PASS = "admin"
 
-ITEMSPARSE_CSV = Path(
-    r"C:/Users/atayl/source/wago/wago_csv/major_12/12.0.1.66220/enUS/ItemSparse-enUS.csv"
-)
+ITEMSPARSE_CSV = WAGO_CSV_DIR / "ItemSparse-enUS.csv"
 
 REPORT_PATH = Path(r"C:/Dev/RoleplayCore/sql/exports/cleanup/equipment_validation_report.txt")
 SQL_PATH = Path(r"C:/Dev/RoleplayCore/sql/exports/cleanup/npc_equipment_fixes.sql")

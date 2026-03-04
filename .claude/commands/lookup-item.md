@@ -6,8 +6,8 @@ description: Look up item IDs or search item names from the Wago ItemSparse DB2 
 ## Context
 
 The user wants to look up WoW item data. The source is the Wago DB2 export:
-- CSV path (bash): `/c/Users/atayl/source/wago/wago_csv/major_12/12.0.1.66220/enUS/ItemSparse-enUS.csv`
-- In Python, use `os.path.expanduser('~') + '/source/wago/wago_csv/major_12/12.0.1.66220/enUS/ItemSparse-enUS.csv'` to resolve the path correctly
+- In Python, first: `import sys, os; sys.path.insert(0, os.path.expanduser('~/source/wago')); from wago_common import WAGO_CSV_DIR`
+- Then use: `str(WAGO_CSV_DIR / 'ItemSparse-enUS.csv')`
 - Key columns: `ID` (col 0), `Display_lang` (col 6, the item name), `OverallQualityID` (col 95), `InventoryType` (col 94), `ItemLevel` (col 85)
 - ~171k rows, wide CSV — use Python csv.DictReader for reliable parsing
 

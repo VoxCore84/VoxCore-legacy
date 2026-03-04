@@ -6,13 +6,10 @@ description: Look up emote IDs or search emote names from Wago DB2 CSVs
 ## Context
 
 The user wants to look up WoW emote data. Two CSVs are relevant:
-- **EmotesText** (bash): `/c/Users/atayl/source/wago/wago_csv/major_12/12.0.1.66220/enUS/EmotesText-enUS.csv`
-  - Columns: `ID`, `Name` (e.g., AGREE, AMAZE, WAVE), `EmoteID`
-  - Small table — these are the slash command emotes players use (/wave, /agree, etc.)
-- **Emotes** (bash): `/c/Users/atayl/source/wago/wago_csv/major_12/12.0.1.66220/enUS/Emotes-enUS.csv`
-  - Columns: `ID`, `RaceMask`, `EmoteSlashCommand` (e.g., ONESHOT_NONE), `AnimID`, `EmoteFlags`, `EmoteSpecProc`, `EmoteSpecProcParam`, `EventSoundID`, `SpellVisualKitID`, `ClassMask`
-  - ~494 rows. These are animation-level emotes used in SmartAI and creature_text.
-- In Python, use `os.path.expanduser('~') + '/source/wago/wago_csv/major_12/12.0.1.66220/enUS/<filename>'` to resolve paths
+- In Python, first: `import sys, os; sys.path.insert(0, os.path.expanduser('~/source/wago')); from wago_common import WAGO_CSV_DIR`
+- Then use: `str(WAGO_CSV_DIR / 'EmotesText-enUS.csv')` and `str(WAGO_CSV_DIR / 'Emotes-enUS.csv')`
+- **EmotesText**: Columns: `ID`, `Name` (e.g., AGREE, AMAZE, WAVE), `EmoteID`. Small table — slash command emotes (/wave, /agree, etc.)
+- **Emotes**: Columns: `ID`, `RaceMask`, `EmoteSlashCommand` (e.g., ONESHOT_NONE), `AnimID`, `EmoteFlags`, `EmoteSpecProc`, `EmoteSpecProcParam`, `EventSoundID`, `SpellVisualKitID`, `ClassMask`. ~494 rows — animation-level emotes used in SmartAI and creature_text.
 
 ## Arguments
 

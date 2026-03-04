@@ -9,8 +9,8 @@ TrinityCore-based WoW private server targeting the **12.x / Midnight** client, s
 - **Compiler**: MSVC (Visual Studio 2022)
 - **Build type**: Debug
 - **Build directory**: `out/build/x64-Debug/`
-- **Build command**: `cd /c/Dev/RoleplayCore/out/build/x64-Debug && ninja -j4 2>&1`
-- **Build just scripts**: `cd /c/Dev/RoleplayCore/out/build/x64-Debug && ninja -j4 scripts 2>&1`
+- **Build command**: `cd /c/Dev/RoleplayCore/out/build/x64-Debug && ninja -j16 2>&1`
+- **Build just scripts**: `cd /c/Dev/RoleplayCore/out/build/x64-Debug && ninja -j16 scripts 2>&1`
 - **CMake reconfigure**: `cmake -B out/build/x64-Debug -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`
 - **Key CMake options**: `SCRIPTS=static`, `ELUNA=ON`, `TOOLS=ON`
 - **MySQL**: MySQL Server 8.0 at `C:/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe`

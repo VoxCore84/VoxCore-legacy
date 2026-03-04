@@ -15,11 +15,15 @@ Output:
 """
 
 import csv
+import os
 import sys
 from collections import defaultdict
 from datetime import datetime
 
 import pymysql
+
+sys.path.insert(0, os.path.expanduser("~/source/wago"))
+from wago_common import WAGO_CSV_DIR
 
 # ── Configuration ────────────────────────────────────────────────────────────
 MYSQL_HOST = "127.0.0.1"
@@ -28,7 +32,7 @@ MYSQL_PASS = "admin"
 MYSQL_DB = "world"
 
 WOWHEAD_CSV = r"C:\Users\atayl\source\wago\wowhead_data\npc\npc_spawn_summary.csv"
-AREA_TABLE_CSV = r"C:\Users\atayl\source\wago\wago_csv\major_12\12.0.1.66220\enUS\AreaTable-enUS.csv"
+AREA_TABLE_CSV = WAGO_CSV_DIR / "AreaTable-enUS.csv"
 
 REPORT_PATH = r"C:\Dev\RoleplayCore\sql\exports\cleanup\zone_mismatch_report.txt"
 SQL_PATH = r"C:\Dev\RoleplayCore\sql\exports\cleanup\npc_zone_fixes.sql"

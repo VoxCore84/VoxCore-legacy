@@ -23,18 +23,19 @@ Outputs:
 """
 
 import csv
+import os
 import subprocess
 import sys
 from collections import defaultdict
+
+sys.path.insert(0, os.path.expanduser("~/source/wago"))
+from wago_common import WAGO_CSV_DIR
 
 # =============================================================================
 # Configuration
 # =============================================================================
 
-CDI_CSV = (
-    r"C:\Users\atayl\source\wago\wago_csv\major_12"
-    r"\12.0.1.66220\enUS\CreatureDisplayInfo-enUS.csv"
-)
+CDI_CSV = WAGO_CSV_DIR / "CreatureDisplayInfo-enUS.csv"
 OUTPUT_DIR = r"C:\Dev\RoleplayCore\sql\exports\cleanup"
 MYSQL_BIN = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
 MYSQL_USER = "root"
