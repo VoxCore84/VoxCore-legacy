@@ -18094,10 +18094,13 @@ void Player::_SyncTransmogOutfitsToActivePlayerData()
                 imaID = (mapping.equipSlot < EQUIPMENT_SLOT_END && equipmentSet->Appearances[mapping.equipSlot] > 0)
                     ? uint32(equipmentSet->Appearances[mapping.equipSlot]) : 0;
 
-            // If outfit has no IMAID for this slot, bootstrap from the player's equipped item.
-            // The 12.x client won't merge pending transmog into slots with SlotOption=0 / IMAID=0,
-            // so we must provide a non-empty slot structure for the client to work with.
-            if (imaID == 0 && mapping.db2SlotInfoID != 3 && mapping.equipSlot < EQUIPMENT_SLOT_END)
+            // Bootstrap from the player's equipped item ONLY for slots the outfit ignores
+            // (IgnoreMask bit set = slot not part of this outfit).
+            // Slots with Appearances==0 and IgnoreMask bit CLEARED are explicit bridge clears —
+            // the user's outfit intentionally has no transmog for that slot. Don't override with
+            // the item's current transmog (which may not have been cleared yet by ApplyTransmogOutfitToPlayer).
+            if (imaID == 0 && mapping.db2SlotInfoID != 3 && mapping.equipSlot < EQUIPMENT_SLOT_END
+                && (equipmentSet->IgnoreMask & (1u << mapping.equipSlot)))
             {
                 if (Item* equippedItem = GetItemByPos(INVENTORY_SLOT_BAG_0, mapping.equipSlot))
                 {
@@ -18108,6 +18111,18 @@ void Player::_SyncTransmogOutfitsToActivePlayerData()
                         if (ItemModifiedAppearanceEntry const* baseAppear = equippedItem->GetItemModifiedAppearance())
                             imaID = baseAppear->ID;
                 }
+            }
+            else if (imaID == 0 && mapping.db2SlotInfoID != 3 && mapping.equipSlot < EQUIPMENT_SLOT_END
+                && !(equipmentSet->IgnoreMask & (1u << mapping.equipSlot)))
+            {
+                // Canary: bootstrap was skipped because IgnoreMask bit is CLEAR (explicit bridge clear).
+                // Log if the equipped item still has a stale transmog modifier — confirms the fix is
+                // actively preventing stale data from leaking into ViewedOutfit.
+                if (Item* dbgItem = GetItemByPos(INVENTORY_SLOT_BAG_0, mapping.equipSlot))
+                    if (uint32 staleIMAID = dbgItem->GetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_ALL_SPECS))
+                        TC_LOG_DEBUG("network.opcode.transmog",
+                            "fillOutfitData [{}]: equipSlot={} CLEAR-SKIP equipped has stale IMAID={} (will be cleared by ApplyTransmogOutfitToPlayer)",
+                            GetGUID().ToString(), mapping.equipSlot, staleIMAID);
             }
 
             // Look up the real AppearanceDisplayType from DB2 (matches SetVisibleItemSlot logic)

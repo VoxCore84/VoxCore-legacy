@@ -1020,6 +1020,15 @@ void WorldSession::FinalizeTransmogBridgePendingOutfit()
         pending.Outfit.SecondaryShoulderSlot = 0;
     }
 
+    // Diagnostic: verify IgnoreMask state after re-apply — confirms equipment-slot-indexed
+    // bridgeClearedMask correctly undid ValidateTransmogOutfitSet's IgnoreMask re-set.
+    TC_LOG_DEBUG("network.opcode.transmog",
+        "TransmogBridge: post-reapply bridgeClearedMask=0x{:X} bridgeOverriddenMask=0x{:X} final IgnoreMask=0x{:X}",
+        bridgeClearedMask, bridgeOverriddenMask, pending.Outfit.IgnoreMask);
+    for (uint8 s = 0; s < EQUIPMENT_SLOT_END; ++s)
+        TC_LOG_DEBUG("network.opcode.transmog", "  equipSlot={} Appearances={} ignored={}",
+            s, pending.Outfit.Appearances[s], (pending.Outfit.IgnoreMask & (1u << s)) != 0);
+
     GetPlayer()->SetEquipmentSet(pending.Outfit);
 
     if (pending.HasAnyAppearance)
