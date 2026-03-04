@@ -95,6 +95,28 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
     -- bypasses SetPendingTransmog but populates the viewed state for armor slots.
     local merged = {} -- slot -> {transmogID, option}
 
+    -- Pre-snapshot: capture current applied appearances BEFORE the merge.
+    -- GetSlotVisualInfo.appliedSourceID = what's on the equipped item right now.
+    -- After merge, if a slot's IMAID matches the pre-snapshot, it's stale data
+    -- from Layer 1 (echoing current appearance, not from the applied outfit set).
+    local preSnapshot = {}
+    if HAS_SLOT_VISUAL_INFO then
+        for slot = 0, 13 do
+            if slot ~= 2 then
+                local invName = INV_SLOT_NAMES[slot]
+                if invName then
+                    local ok, loc = pcall(TransmogUtil.GetTransmogLocation, invName, Enum.TransmogType.Appearance, false)
+                    if ok and loc then
+                        local ok2, visInfo = pcall(C_Transmog.GetSlotVisualInfo, loc)
+                        if ok2 and visInfo and visInfo.appliedSourceID and visInfo.appliedSourceID > 0 then
+                            preSnapshot[slot] = visInfo.appliedSourceID
+                        end
+                    end
+                end
+            end
+        end
+    end
+
     -- Layer 1: snapshot from GetViewedOutfitSlotInfo (base)
     for slot = 0, 13 do
         if slot ~= 2 then -- secondary shoulder queried separately below
@@ -113,8 +135,10 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
 
     -- Layer 2: SetPendingTransmog accumulations override snapshot (wins on conflict)
     -- transmogID=0 from SetPendingTransmog means user explicitly cleared this slot
+    local layer2Slots = {} -- slots explicitly set by user (exempt from stale detection)
     for slot, data in pairs(pendingOverrides) do
         local tmogID = data.transmogID or 0
+        layer2Slots[slot] = true
         if tmogID > 0 then
             merged[slot] = { transmogID = tmogID, option = data.option or 0 }
         else
@@ -179,21 +203,45 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
     -- HEAD (0), SECONDARY_SHOULDER (2), MH (12), OH (13) are ALWAYS nil
     -- due to client serializer bugs — defer these to server baseline.
     -- All other slots being nil means a hidden appearance — send explicit clear (slot.0.0).
-        local missing = {}
+    local missing = {}
+    local nilCount = 0
+    local clearCount = 0
     for slot = 0, 13 do
         if not merged[slot] then
-            if ALWAYS_NIL_SLOTS[slot] then
+            nilCount = nilCount + 1
+            local isAlwaysNil = ALWAYS_NIL_SLOTS[slot]
+            Log(string.format("nil-detect: slot=%d isAlwaysNil=%s", slot, tostring(isAlwaysNil)))
+            if isAlwaysNil then
                 missing[#missing + 1] = slot
             else
                 -- Nil across all layers = hidden appearance, send explicit clear
                 merged[slot] = { transmogID = 0, option = 0 }
+                clearCount = clearCount + 1
                 Log(string.format("Hidden detect: slot=%d nil in all layers, sending clear", slot))
             end
         end
     end
+    Log(string.format("nil-detection found %d nil slots, generated %d clears", nilCount, clearCount))
     if #missing > 0 then
         Log(string.format("Deferred to server baseline: slots %s (always-nil client slots)",
             table.concat(missing, ",")))
+    end
+
+    -- Stale data detection: Layer 1 returns currently-worn appearances for ALL slots,
+    -- including slots the applied set doesn't define. Compare merged IMAIDs against
+    -- the pre-snapshot to detect stale echoes. Layer 2 slots are exempt (user choices).
+    local staleCount = 0
+    for slot, data in pairs(merged) do
+        if data.transmogID > 0 and not layer2Slots[slot] and preSnapshot[slot] then
+            if data.transmogID == preSnapshot[slot] then
+                Log(string.format("stale-detect: slot=%d merged=%d snapshot=%d -> clear", slot, data.transmogID, preSnapshot[slot]))
+                merged[slot] = { transmogID = 0, option = 0 }
+                staleCount = staleCount + 1
+            end
+        end
+    end
+    if staleCount > 0 then
+        Log(string.format("stale-detect: cleared %d stale slots", staleCount))
     end
 
     -- Encode: "slot.transmogID.option[.illusionID];..."

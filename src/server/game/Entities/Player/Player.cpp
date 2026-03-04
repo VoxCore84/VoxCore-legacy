@@ -18203,9 +18203,22 @@ void Player::_SyncTransmogOutfitsToActivePlayerData()
     SetUpdateFieldValue(viewedOutfitSetter.ModifyValue(&UF::TransmogOutfitData::Id), firstOutfitId);
     // Clear dynamic arrays before re-populating — without this, Slots/Situations
     // accumulate across calls (14→28→42...) and the client renders naked.
+    TC_LOG_DEBUG("network.opcode.transmog", "ClearDynamicUpdateFieldValues: clearing ViewedOutfit Slots/Situations for player {} outfitId={}",
+        GetGUID().ToString(), firstOutfitId);
     ClearDynamicUpdateFieldValues(viewedOutfitSetter.ModifyValue(&UF::TransmogOutfitData::Slots));
     ClearDynamicUpdateFieldValues(viewedOutfitSetter.ModifyValue(&UF::TransmogOutfitData::Situations));
+    TC_LOG_DEBUG("network.opcode.transmog", "ClearDynamicUpdateFieldValues: done, calling fillOutfitData");
     fillOutfitData(viewedOutfitSetter, firstOutfitData);
+    TC_LOG_DEBUG("network.opcode.transmog", "ClearDynamicUpdateFieldValues: fillOutfitData complete, ViewedOutfit rebuilt");
+
+    // Force-flush ViewedOutfit update fields to client — clear+rebuild alone doesn't
+    // trigger a model refresh without an explicit SMSG_UPDATE_OBJECT delivery.
+    if (IsInWorld())
+    {
+        TC_LOG_DEBUG("network.opcode.transmog", "_SyncTransmogOutfitsToActivePlayerData: flushing update to player");
+        SendUpdateToPlayer(this);
+        ClearUpdateMask(true);
+    }
 }
 
 void Player::_LoadBGData(PreparedQueryResult result)
