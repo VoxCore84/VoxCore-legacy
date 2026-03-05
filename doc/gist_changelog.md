@@ -2,6 +2,18 @@ RoleplayCore â€” Session Changelog (WoW 12.x private server)
 
 
 
+### Session 64 — Build 66263 Auth Fix (Mar 5 2026)
+- **New WoW build** 12.0.1.66263 detected — client auto-updated from 66220
+- **Auth SQL** `2026_03_05_00_auth.sql`: registers build 66263 in `build_info`, updates realmlist gamebuild, deletes stale `build_auth_key` rows, has commented-out key INSERT template
+- **WorldSocket.cpp bypass**: Temporary — logs warning instead of rejecting when auth key not found. Will be reverted when TrinityCore publishes official 66263 keys
+- Commit: `e3fc8cd9d6`
+
+### Session 63 — High-Tier Service NPC Spawns (Mar 5 2026)
+- 1,492 vendor/trainer/flightmaster spawns from Wowhead coordinate transforms
+- 1,483 ContentTuningID assignments via zone lookup
+- GUID range 3000217122–3000218613
+- Commit: `25031c1eda`
+
 ### Session 63 — Transmog Audit Full Implementation (Mar 5 2026)
 - **All 4 phases implemented** from 26-item 5-agent audit action plan
 - **Phase 1+2** (commit `20c9a0ea23`): 4 server bugs fixed (per-spec appearance bootstrap, HandleTransmogOutfitNew active ID, Finalize flush, clear spell active ID reset) + 4 Bridge cleanup items (multi-part split bail-out, dead Layer 2 code, diagnostic probe removal, deterministic slot ordering)

@@ -136,6 +136,11 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 - ~20K missing rows from schema mismatches
 - `model_file_data`/`texture_file_data`: massive gaps (client-only rendering data)
 
+### Build 66263 Auth Keys — WAITING FOR TC
+- **Bypass active** in WorldSocket.cpp (commit `e3fc8cd9d6`) — logs warning, doesn't reject
+- **When TC publishes keys**: Fill SQL template in `2026_03_05_00_auth.sql`, apply to DB, revert WorldSocket.cpp bypass
+- **Also needed**: Data pipeline bump to 66263 (wago_common.py, CSVs, TACT, merge, hotfix repair), Ymir update
+
 ### Auth Key Self-Service Extraction
 - x64dbg + WoWDumpFix or Frida method â€” documented, not yet attempted
 
