@@ -110,16 +110,16 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
     -- Layer 1: snapshot from GetViewedOutfitSlotInfo (base)
     for slot = 0, 13 do
         if slot ~= 2 then -- secondary shoulder queried separately below
-            local info = C_TransmogOutfitInfo.GetViewedOutfitSlotInfo(slot, 0, 0)
-            if info and info.transmogID and info.transmogID > 0 then
+            local ok, info = pcall(C_TransmogOutfitInfo.GetViewedOutfitSlotInfo, slot, 0, 0)
+            if ok and info and info.transmogID and info.transmogID > 0 then
                 merged[slot] = { transmogID = info.transmogID, option = 0 }
             end
         end
     end
 
     -- Secondary shoulder: slot 1 with option=1
-    local info2 = C_TransmogOutfitInfo.GetViewedOutfitSlotInfo(1, 0, 1)
-    if info2 and info2.transmogID and info2.transmogID > 0 then
+    local ok2, info2 = pcall(C_TransmogOutfitInfo.GetViewedOutfitSlotInfo, 1, 0, 1)
+    if ok2 and info2 and info2.transmogID and info2.transmogID > 0 then
         merged[2] = { transmogID = info2.transmogID, option = 0 }
     end
 
@@ -238,11 +238,18 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
     end
 
     local payload = table.concat(parts, ";")
+    local target = GetPlayerFullName()
+    if not target then
+        Log("ERROR: player name unavailable — cannot send bridge payload")
+        wipe(pendingOverrides)
+        wipe(pendingIllusions)
+        return
+    end
 
     -- Addon message payload limit is 255 bytes.
     -- Worst case: 12 3-field + 2 4-field (illusions) = ~192 bytes. Multi-part handles overflow.
     if #payload <= 255 then
-        C_ChatInfo.SendAddonMessage(ADDON_PREFIX, payload, "WHISPER", GetPlayerFullName())
+        C_ChatInfo.SendAddonMessage(ADDON_PREFIX, payload, "WHISPER", target)
     else
         -- Split at nearest ; boundary (253 = 255 limit minus 2-byte "1>" prefix)
         local mid = payload:sub(1, 253):match(".*;")
@@ -260,8 +267,8 @@ hooksecurefunc(C_TransmogOutfitInfo, "CommitAndApplyAllPending", function(useDis
             wipe(pendingIllusions)
             return
         end
-        C_ChatInfo.SendAddonMessage(ADDON_PREFIX, "1>" .. part1, "WHISPER", GetPlayerFullName())
-        C_ChatInfo.SendAddonMessage(ADDON_PREFIX, "2>" .. part2, "WHISPER", GetPlayerFullName())
+        C_ChatInfo.SendAddonMessage(ADDON_PREFIX, "1>" .. part1, "WHISPER", target)
+        C_ChatInfo.SendAddonMessage(ADDON_PREFIX, "2>" .. part2, "WHISPER", target)
     end
 
     Log(string.format("Sent %d overrides (%d bytes): %s", #parts, #payload, payload))
