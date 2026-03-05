@@ -74,7 +74,7 @@ bool ValidateTransmogOutfitSet(WorldSession* session, EquipmentSetInfo::Equipmen
     {
         set.Pieces[i].Clear();
 
-        if (set.IgnoreMask & (1 << i))
+        if (set.IgnoreMask & (1u << i))
         {
             set.Appearances[i] = 0;
             continue;
@@ -96,7 +96,7 @@ bool ValidateTransmogOutfitSet(WorldSession* session, EquipmentSetInfo::Equipmen
             }
         }
         else
-            set.IgnoreMask |= (1 << i);
+            set.IgnoreMask |= (1u << i);
     }
 
     if (set.SecondaryShoulderApparanceID)
@@ -171,6 +171,8 @@ bool ValidateTransmogOutfitSet(WorldSession* session, EquipmentSetInfo::Equipmen
 
 void WorldSession::HandleTransmogrifyItems(WorldPackets::Transmogrification::TransmogrifyItems& transmogrifyItems)
 {
+    TC_LOG_WARN("network.opcode.transmog", "HandleTransmogrifyItems [{}]: CMSG_TRANSMOGRIFY_ITEMS received — this opcode is not sent by the 12.x client", GetPlayerInfo());
+
     Player* player = GetPlayer();
 
     TC_LOG_DEBUG("network.opcode.transmog", "HandleTransmogrifyItems [{}]: SINGLE-ITEM transmog fired ({} items in packet)",
@@ -438,7 +440,6 @@ void WorldSession::HandleTransmogrifyItems(WorldPackets::Transmogrification::Tra
 
             item->SetModifier(AppearanceModifierSlotBySpec[player->GetActiveTalentGroup()], 0);
             item->SetModifier(SecondaryAppearanceModifierSlotBySpec[player->GetActiveTalentGroup()], 0);
-            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_ALL_SPECS, 0);
         }
 
         item->SetState(ITEM_CHANGED, player);
@@ -470,7 +471,6 @@ void WorldSession::HandleTransmogrifyItems(WorldPackets::Transmogrification::Tra
                 item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_5, item->GetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_ALL_SPECS));
 
             item->SetModifier(IllusionModifierSlotBySpec[player->GetActiveTalentGroup()], 0);
-            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_ALL_SPECS, 0);
         }
 
         item->SetState(ITEM_CHANGED, player);
@@ -1062,11 +1062,6 @@ void WorldSession::FinalizeTransmogBridgePendingOutfit()
             return;
         }
     }
-
-    // Flush UpdateField changes before response (see HandleTransmogOutfitNew comment)
-    Player* player = GetPlayer();
-    player->SendUpdateToPlayer(player);
-    player->ClearUpdateMask(true);
 
     WorldPackets::Transmogrification::TransmogOutfitSlotsUpdated response;
     response.SetID = pending.Outfit.SetID;

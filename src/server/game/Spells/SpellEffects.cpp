@@ -6025,6 +6025,7 @@ void Spell::EffectEquipTransmogOutfit()
     // check internally, but for spell-based application we skip cost via the aura check
     // or simply accept the cost (spell effects from retail don't charge).
     // The helper will charge gold if the player lacks SPELL_AURA_REMOVE_TRANSMOG_COST.
+    player->SetActiveTransmogOutfitID(outfit->SetID);
     ApplyTransmogOutfitToPlayer(player, *outfit);
 }
 

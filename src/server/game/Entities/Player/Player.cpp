@@ -17962,8 +17962,8 @@ void Player::_LoadTransmogOutfits(PreparedQueryResult result)
     //SELECT setguid, setindex, name, iconname, ignore_mask, appearance0, appearance1, appearance2, appearance3, appearance4,
     //             10           11           12           13           14            15            16            17            18            19            20            21
     //    appearance5, appearance6, appearance7, appearance8, appearance9, appearance10, appearance11, appearance12, appearance13, appearance14, appearance15, appearance16,
-    //              22            23               24              25                          26                          27
-    //    appearance17, appearance18, mainHandEnchant, offHandEnchant, secondaryShoulderAppearance, secondaryShoulderSlot
+    //              22            23               24              25                          26                          27        28
+    //    appearance17, appearance18, mainHandEnchant, offHandEnchant, secondaryShoulderAppearance, secondaryShoulderSlot, active
     if (!result)
         return;
 
@@ -17988,6 +17988,9 @@ void Player::_LoadTransmogOutfits(PreparedQueryResult result)
 
         eqSet.Data.SecondaryShoulderApparanceID = fields[26].GetInt32();
         eqSet.Data.SecondaryShoulderSlot = fields[27].GetInt32();
+
+        if (fields[28].GetUInt8())
+            _activeTransmogOutfitID = eqSet.Data.SetID;
 
         if (eqSet.Data.SetID >= MAX_EQUIPMENT_SET_INDEX)   // client limit
             continue;
@@ -18224,7 +18227,9 @@ void Player::_SyncTransmogOutfitsToActivePlayerData(char const* caller)
             {
                 if (Item* weapon = GetItemByPos(INVENTORY_SLOT_BAG_0, mapping.equipSlot))
                 {
-                    uint32 itemIllusion = weapon->GetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_ALL_SPECS);
+                    uint32 itemIllusion = weapon->GetModifier(IllusionModifierSlotBySpec[GetActiveTalentGroup()]);
+                    if (!itemIllusion)
+                        itemIllusion = weapon->GetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_ALL_SPECS);
                     if (itemIllusion)
                     {
                         enchant = itemIllusion;
@@ -28883,6 +28888,7 @@ void Player::_SaveEquipmentSets(CharacterDatabaseTransaction trans)
                         stmt->setInt32(j++, eqSet.Data.Enchants[i]);
                     stmt->setInt32(j++, eqSet.Data.SecondaryShoulderApparanceID);
                     stmt->setInt32(j++, eqSet.Data.SecondaryShoulderSlot);
+                    stmt->setUInt8(j++, (_activeTransmogOutfitID == eqSet.Data.SetID) ? 1 : 0);
                     stmt->setUInt64(j++, GetGUID().GetCounter());
                     stmt->setUInt64(j++, eqSet.Data.Guid);
                     stmt->setUInt32(j, eqSet.Data.SetID);
@@ -28939,6 +28945,7 @@ void Player::_SaveEquipmentSets(CharacterDatabaseTransaction trans)
                         stmt->setInt32(j++, eqSet.Data.Enchants[i]);
                     stmt->setInt32(j++, eqSet.Data.SecondaryShoulderApparanceID);
                     stmt->setInt32(j++, eqSet.Data.SecondaryShoulderSlot);
+                    stmt->setUInt8(j++, (_activeTransmogOutfitID == eqSet.Data.SetID) ? 1 : 0);
 
                     // Save situations for new outfit
                     for (TransmogSituationData const& sit : eqSet.Data.Situations)
@@ -29080,6 +29087,9 @@ void Player::DeleteEquipmentSet(uint64 id)
                 "Player::DeleteEquipmentSet [{}]: guid={} setId={} type={} state={} name='{}'",
                 GetGUID().ToString(), id, itr->second.Data.SetID,
                 int32(itr->second.Data.Type), int32(itr->second.State), itr->second.Data.SetName);
+
+            if (itr->second.Data.Type == EquipmentSetInfo::TRANSMOG && itr->second.Data.SetID == _activeTransmogOutfitID)
+                _activeTransmogOutfitID = 0;
 
             bool isTransmogOutfit = itr->second.Data.Type == EquipmentSetInfo::TRANSMOG;
             if (itr->second.State == EQUIPMENT_SET_NEW)

@@ -612,6 +612,12 @@ void TransmogOutfitUpdateSituations::Read()
         TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SITUATIONS diag: setId={} npc={} rposAfterGuid={} count={}",
             SetID, Npc.ToString(), rposAfterGuid, count);
 
+        if (count > 256)
+        {
+            TC_LOG_ERROR("network.opcode.transmog", "TransmogOutfitUpdateSituations: excessive count {} from client", count);
+            return;
+        }
+
         Situations.resize(count);
         for (TransmogOutfitSituationEntry& entry : Situations)
         {

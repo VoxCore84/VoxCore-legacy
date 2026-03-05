@@ -94,6 +94,7 @@ class spell_clear_current_transmogrifications : public SpellScript
                 outfit->SecondaryShoulderApparanceID = 0;
                 for (auto& enchant : outfit->Enchants)
                     enchant = 0;
+                outfit->IgnoreMask = 0x7FFFF; // All slots ignored — no appearances defined
 
                 player->SetEquipmentSet(*outfit);
 
