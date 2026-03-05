@@ -21,7 +21,7 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 - **Bug D**: Draenei lower leg geometry loss
 - ~~**Bug E** (root cause confirmed): Single-item transmog â†’ SetEquipmentSet â†’ full ViewedOutfit rebuild~~ — **FIXED** (session 59, commit `289677be44`): `HandleTransmogrifyItems` now calls `SetEquipmentSet()` after syncing changes — persists to DB, refreshes ViewedOutfit
 - **Remaining medium bugs** (session 60):
-  - Stale detection false positive — TransmogBridge snapshot comparison triggers unnecessary rebuilds
+  - ~~Stale detection false positive~~ — **FIXED** (session 60c, commit `0cde8db70c`): Moved detection from client-side preSnapshot to server-side source tagging (FromHook flag). No more double-apply needed
   - ~~Outfit-loaded illusions dropped~~ — **FIXED** (session 60, commit `5d38823153`): M4 fix — `fillOutfitData` bootstraps weapon enchant illusions from equipped items when outfit doesn't define them
   - ~~IgnoreMask repair one-directional~~ — **NOT A BUG** (session 60): analyzed, current behavior correct — explicit clears render base item via DT=0
 

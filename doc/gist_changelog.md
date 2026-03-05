@@ -2,6 +2,23 @@ RoleplayCore â€” Session Changelog (WoW 12.x private server)
 
 
 
+### Session 60c — Transmog Stale Detection Fix (Mar 5 2026)
+- **Server-side stale rejection** replaces client-side preSnapshot/comparison detection
+- Addon now tags overrides: `option=1` (SetPendingTransmog hook = trusted), `option=0` (snapshot/fallback)
+- Server parses into `FromHook` flag; rejects snapshot data for slots the saved outfit ignores
+- Eliminates false positive where bootstrapped appearance echoed back as outfit data (required double-apply)
+- Removed ~44 lines client-side detection, added ~37 lines server-side rejection
+- Commit: `0cde8db70c`
+
+### Session 60b — Transmog 11-Fix QA Sweep (Mar 5 2026)
+- 5 MEDIUM + 6 LOW fixes from comprehensive 4-agent audit
+- M1: `_activeTransmogOutfitID` persisted to DB (new `active` column + SQL migration)
+- M2: `EffectEquipTransmogOutfit` sets active outfit ID before applying
+- M3: Situations packet parser capped at 256 entries (OOM prevention)
+- M4: Cross-contamination fix in CurrentSpecOnly reset paths
+- L1-L6: Double flush removal, per-spec illusion bootstrap, clear spell IgnoreMask, DeleteEquipmentSet cleanup, signed shift fix, dead code warning
+- Commit: `27b5496f4f`
+
 ### Session 61 — Midnight Expansion Data Scrape + Import
 - Scraped 38 Wowhead Midnight guide pages + 586 entity pages (44 MB raw HTML, 0 WAF blocks)
 - Extracted: 712 items, 282 NPCs, 247 spells, 154 quests, 85 achievements, 1,314 loot drops
