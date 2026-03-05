@@ -30,7 +30,6 @@ src/server/scripts/Custom/custom_commandscrip.cpp
 .opcode_cache.json
 sql/dumps/
 sql/exports/locale/
-sql/exports/lw_imports/
 sql/exports/existing_smartai_entries.txt
 sql/exports/missing_smartai_entries.txt
 __pycache__/
