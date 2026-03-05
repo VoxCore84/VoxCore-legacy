@@ -81,7 +81,7 @@
   - + 175K orphan hotfix_data rows cleaned
 - **Post-cleanup**: ~244K genuine content rows (8,396 override + 231,199 new). hotfix_data: 226,984 entries. DB 535 MB
 - **NOTE**: spell_name can no longer validate spells — use Wago DB2 CSVs or DBC runtime
-- **Auth keys**: TC published 66220 keys on 2026-03-04. Bypass reverted in commit `8bbd610fc7`. **66263 bypass active** (commit `e3fc8cd9d6`)
+- **Auth keys**: 66220 keys applied (Mar 4), 66263 keys applied (Mar 5). Both bypasses reverted
 
 ### Build Diff Audit — [details](build-diff-audit.md)
 - **COMPLETE** (Mar 3 2026). Diffed all 5 builds: 66044→66102→66192→66198→66220→66263 across 39 priority tables

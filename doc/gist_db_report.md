@@ -741,7 +741,7 @@ After the hotfix repair ([Part 2](#part-2-hotfix-repair-system)), the hotfix dat
 
 ### 13.2 Approach: 3-Round Audit
 
-A custom diff pipeline (`hotfix_audit/` in the repo) compares every hotfix row against DBC baselines extracted from the WoW 12.0.1.66220 client via **wow.tools.local (WTL)**. WTL extracts complete DB2 files from the client's CASC archive â€” more complete than Wago CSV exports, which can be partial.
+A custom diff pipeline (`hotfix_audit/` in the repo) compares every hotfix row against DBC baselines extracted from the WoW 12.0.1.66263 client via **wow.tools.local (WTL)**. WTL extracts complete DB2 files from the client's CASC archive â€” more complete than Wago CSV exports, which can be partial.
 
 Each row is classified:
 
@@ -1065,7 +1065,7 @@ Specialized agents defined in `.claude/agents/`:
 |--------|----------|--------|
 | **LoreWalkerTDB** | World DB, Hotfixes DB | 1.2 GB SQL dumps |
 | **Wago.tools DB2 CSVs** | 1,097 client DB2 tables, 5 builds | ~5.5K CSV files |
-| **wow.tools.local** | DB2 baselines from client CASC (build 66220) | ~1,097 DB2 tables |
+| **wow.tools.local** | DB2 baselines from client CASC (build 66263) | ~1,097 DB2 tables |
 | **Raidbots** | Item names (171K x 7 locales), talents | 168 MB JSON |
 | **Wowhead** | 216K NPC tooltips + gap scraper (vendor/quest data) | 218K JSON files + 6.4K scraped pages |
 | **AllTheThings** | Quest starters, chains, vendor items | 60 SQLite tables from 1,635 Lua files |
@@ -1083,7 +1083,7 @@ Every operation is fully reproducible:
 2. **LW import**: `python import_all.py` + `python validate_import.py` â€” 15 integrity checks
 3. **Raidbots pipeline**: `python run_all_imports.py --regenerate` â€” 8-step with --dry-run
 4. **NPC audit**: `python npc_audit.py all --report --json --sql-out` â€” 27 checks
-5. **Build diff**: `python diff_builds.py --base 66192 --target 66220`
+5. **Build diff**: `python diff_builds.py --base 66220 --target 66263`
 6. **Hotfix audit**: `build_table_info_r3.py` â†’ `hotfix_differ_r3.py` â†’ `gen_practical_sql_r3.py` (see `hotfix_audit/README.md`)
 
 All scripts version-controlled in private GitHub repositories.
