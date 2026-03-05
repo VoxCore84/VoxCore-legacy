@@ -81,10 +81,14 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 
 ## DEFERRED / BLOCKED
 
-### Wowhead 403 Block
-- CloudFront WAF since the 216K NPC scrape
-- Tooltip API (`nether.wowhead.com/tooltip/`) still works
-- **Blocks**: quest scrape (68,604 IDs), vendor scrape (6,735 IDs)
+### ~~Wowhead 403 Block~~ RESOLVED
+- 403 expired on its own (Mar 4 2026). Scraper upgraded with curl_cffi Chrome131 TLS fingerprint
+
+### ATT Data Import — READY TO APPLY
+- AllTheThings Database parser extracts quest/NPC/vendor data from 1,576 curated Lua files
+- **8,950 validated new rows**: 4,359 quest starters, 3,081 quest chain links, 1,510 vendor items
+- All rows validated against TC quest_template + creature_template
+- SQL generated at `att_validated.sql` in wago-tooling repo
 
 ### Missing Spawns (3,716 high-priority)
 - 2,004 quest NPCs + 1,712 service NPCs
@@ -93,13 +97,14 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 
 ### Service Gaps (997 vendors/trainers)
 - VENDOR/TRAINER flag but zero inventory/spell data
-- Needs Wowhead page scraping (blocked by 403)
 
 ### Equipment Gaps (~13,001 NPCs)
 - Cross-reference LoreWalkerTDB `creature_equip_template` — not yet attempted
 
-### Missing quest_offer_reward (29,651 quests)
-- LW only had 541 more. Players see no reward text.
+### Missing quest_offer_reward (27,328 quests) — READY TO SCRAPE
+- TDB delta applied (+1,967 rows). 27,328 remaining
+- Scraper hardened with curl_cffi, ~2 hours via two-phase approach
+- Import pipeline: `import_quest_rewards.py` converts JSON to SQL
 
 ### Hotfix Repair Persistent Issues
 - `mail_template`: 110 rows with truncated multi-line bodies

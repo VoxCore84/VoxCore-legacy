@@ -6,6 +6,21 @@ Chronological log of all database, code, and infrastructure changes. Each entry 
 
 ## Mar 5, 2026
 
+### Session 50 — AllTheThings Database Parser
+- **ATT Database parser built** (`att_parser.py`): Full Lua tokenizer + parser for the AllTheThings Database repo (1,576 files, 47K quests extracted)
+- **Validated SQL generator** (`att_generate_sql.py`): Cross-references ATT data against TC MySQL, filters deprecated/DNT quests, validates all IDs
+- **8,950 new rows ready to apply**:
+  - 4,359 `creature_queststarter` — quest-giver NPC assignments
+  - 3,081 `quest_template_addon` PrevQuestID — quest chain prerequisite links
+  - 1,510 `npc_vendor` — vendor inventory items
+- Tools committed to `VoxCore84/wago-tooling`: `81cf71a`
+
+### Session 49 — TDB Delta + Scraper Hardening
+- **TDB 1200.26021 delta applied**: quest_offer_reward 18,054 → 20,022 (+1,967), quest_request_items +69
+- **Wowhead 403 resolved** — expired on its own, scraper upgraded with curl_cffi Chrome131 TLS
+- **27,328 quests** ready for reward text scrape (~2 hours via two-phase approach)
+- Commits: `e6b44edab3` (RoleplayCore), `f594f1b`+`7a9667b`+`80d42e8` (wago-tooling)
+
 ### Session 47 — Gist Accuracy Audit + hotfix_data R3 Cleanup
 - **hotfix_data orphan cleanup**: `cleanup_hotfix_data_orphans.py` removed 608,401 orphaned entries. 226,984 remaining (was 835,385). Hotfixes DB 637→535 MB
 - **Gist accuracy audit**: Verified all report numbers against live DB. Fixed 6 critical errors:
