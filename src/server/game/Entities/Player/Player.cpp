@@ -18228,6 +18228,8 @@ void Player::_SyncTransmogOutfitsToActivePlayerData(char const* caller)
 
     uint32 firstOutfitId = 0;
     EquipmentSetInfo::EquipmentSetData const* firstOutfitData = nullptr;
+    uint32 activeOutfitId = 0;
+    EquipmentSetInfo::EquipmentSetData const* activeOutfitData = nullptr;
 
     for (auto const& [_, equipmentSet] : _equipmentSets)
     {
@@ -18258,24 +18260,35 @@ void Player::_SyncTransmogOutfitsToActivePlayerData(char const* caller)
             firstOutfitId = equipmentSet.Data.SetID;
             firstOutfitData = &equipmentSet.Data;
         }
+
+        // Track the actively-applied outfit for ViewedOutfit rendering
+        if (_activeTransmogOutfitID && equipmentSet.Data.SetID == _activeTransmogOutfitID)
+        {
+            activeOutfitId = equipmentSet.Data.SetID;
+            activeOutfitData = &equipmentSet.Data;
+        }
     }
 
-    TC_LOG_DEBUG("entities.player", "_SyncTransmogOutfitsToActivePlayerData [{}]: transmogSetCount={} mapSize={} firstOutfitId={}",
-        GetGUID().ToString(), transmogSetCount, m_activePlayerData->TransmogOutfits.size(), firstOutfitId);
+    // Use the actively-applied outfit for ViewedOutfit + Metadata, falling back to lowest SetID
+    uint32 viewedId = activeOutfitId ? activeOutfitId : firstOutfitId;
+    EquipmentSetInfo::EquipmentSetData const* viewedData = activeOutfitData ? activeOutfitData : firstOutfitData;
+
+    TC_LOG_DEBUG("entities.player", "_SyncTransmogOutfitsToActivePlayerData [{}]: transmogSetCount={} mapSize={} firstOutfitId={} activeOutfitId={} viewedId={}",
+        GetGUID().ToString(), transmogSetCount, m_activePlayerData->TransmogOutfits.size(), firstOutfitId, activeOutfitId, viewedId);
 
     auto transmogMetadataSetter = activePlayerData.ModifyValue(&UF::ActivePlayerData::TransmogMetadata);
     SetUpdateFieldValue(transmogMetadataSetter.ModifyValue(&UF::TransmogOutfitMetadata::Locked), false);
-    SetUpdateFieldValue(transmogMetadataSetter.ModifyValue(&UF::TransmogOutfitMetadata::TransmogOutfitID), firstOutfitId);
+    SetUpdateFieldValue(transmogMetadataSetter.ModifyValue(&UF::TransmogOutfitMetadata::TransmogOutfitID), viewedId);
     SetUpdateFieldValue(transmogMetadataSetter.ModifyValue(&UF::TransmogOutfitMetadata::SituationTrigger), uint8(0));
     // StampedOption tells the client whether weapon slots have a valid outfit appearance.
     // 0 = no weapon transmog, 1 = weapon transmog present. Without this, the Transmog UI
     // avatar won't render weapon visuals even if the Appearances array has MH/OH IMAIDs.
     uint8 stampedMH = 0, stampedOH = 0;
-    if (firstOutfitData)
+    if (viewedData)
     {
-        if (firstOutfitData->Appearances[EQUIPMENT_SLOT_MAINHAND])
+        if (viewedData->Appearances[EQUIPMENT_SLOT_MAINHAND])
             stampedMH = 1;
-        if (firstOutfitData->Appearances[EQUIPMENT_SLOT_OFFHAND])
+        if (viewedData->Appearances[EQUIPMENT_SLOT_OFFHAND])
             stampedOH = 1;
     }
     SetUpdateFieldValue(transmogMetadataSetter.ModifyValue(&UF::TransmogOutfitMetadata::StampedOptionMainHand), stampedMH);
@@ -18283,26 +18296,26 @@ void Player::_SyncTransmogOutfitsToActivePlayerData(char const* caller)
     SetUpdateFieldValue(transmogMetadataSetter.ModifyValue(&UF::TransmogOutfitMetadata::CostMod), 0.0f);
 
     auto viewedOutfitSetter = activePlayerData.ModifyValue(&UF::ActivePlayerData::ViewedOutfit);
-    SetUpdateFieldValue(viewedOutfitSetter.ModifyValue(&UF::TransmogOutfitData::Id), firstOutfitId);
+    SetUpdateFieldValue(viewedOutfitSetter.ModifyValue(&UF::TransmogOutfitData::Id), viewedId);
     // Clear dynamic arrays before re-populating — without this, Slots/Situations
     // accumulate across calls (14→28→42...) and the client renders naked.
     TC_LOG_DEBUG("network.opcode.transmog", "ClearDynamicUpdateFieldValues: clearing ViewedOutfit Slots/Situations for player {} outfitId={}",
-        GetGUID().ToString(), firstOutfitId);
+        GetGUID().ToString(), viewedId);
     ClearDynamicUpdateFieldValues(viewedOutfitSetter.ModifyValue(&UF::TransmogOutfitData::Slots));
     ClearDynamicUpdateFieldValues(viewedOutfitSetter.ModifyValue(&UF::TransmogOutfitData::Situations));
     TC_LOG_DEBUG("network.opcode.transmog", "ClearDynamicUpdateFieldValues: done, calling fillOutfitData");
-    fillOutfitData(viewedOutfitSetter, firstOutfitData);
+    fillOutfitData(viewedOutfitSetter, viewedData);
     TC_LOG_DEBUG("network.opcode.transmog", "ClearDynamicUpdateFieldValues: fillOutfitData complete, ViewedOutfit rebuilt");
 
-    // Dump the appearance array that was written to ViewedOutfit (Bug A diagnostic)
-    if (firstOutfitData)
+    // Dump the appearance array that was written to ViewedOutfit
+    if (viewedData)
     {
         TC_LOG_DEBUG("network.opcode.transmog",
-            "_SyncTransmogOutfitsToActivePlayerData [{}]: caller='{}' wrote ViewedOutfit from outfit '{}' (IgnoreMask=0x{:X}):",
-            GetGUID().ToString(), caller, firstOutfitData->SetName, firstOutfitData->IgnoreMask);
+            "_SyncTransmogOutfitsToActivePlayerData [{}]: caller='{}' wrote ViewedOutfit from outfit '{}' setId={} (IgnoreMask=0x{:X}):",
+            GetGUID().ToString(), caller, viewedData->SetName, viewedId, viewedData->IgnoreMask);
         for (uint8 s = 0; s < EQUIPMENT_SLOT_END; ++s)
             TC_LOG_DEBUG("network.opcode.transmog", "  ViewedOutfit: equipSlot={} Appearances={} ignored={}",
-                s, firstOutfitData->Appearances[s], (firstOutfitData->IgnoreMask & (1u << s)) != 0);
+                s, viewedData->Appearances[s], (viewedData->IgnoreMask & (1u << s)) != 0);
     }
 
     // Force-flush ViewedOutfit update fields to client — clear+rebuild alone doesn't
@@ -29011,7 +29024,21 @@ EquipmentSetInfo::EquipmentSetData* Player::GetMutableTransmogOutfitBySetID(uint
 
 uint32 Player::GetActiveTransmogOutfitID() const
 {
-    // Return the smallest valid SetID > 0 (matches _SyncTransmogOutfitsToActivePlayerData logic)
+    // Return the explicitly tracked active outfit if set and still valid
+    if (_activeTransmogOutfitID)
+    {
+        for (auto const& [_, equipmentSet] : _equipmentSets)
+        {
+            if (equipmentSet.State == EQUIPMENT_SET_DELETED)
+                continue;
+            if (equipmentSet.Data.Type != EquipmentSetInfo::TRANSMOG)
+                continue;
+            if (equipmentSet.Data.SetID == _activeTransmogOutfitID)
+                return _activeTransmogOutfitID;
+        }
+    }
+
+    // Fallback: return the smallest valid SetID > 0
     uint32 firstId = 0;
     for (auto const& [_, equipmentSet] : _equipmentSets)
     {

@@ -580,15 +580,17 @@ void WorldSession::HandleTransmogrifyItems(WorldPackets::Transmogrification::Tra
             if (outfitChanged)
             {
                 TC_LOG_DEBUG("network.opcode.transmog",
-                    "HandleTransmogrifyItems [{}]: syncing outfit {} to SetEquipmentSet — IgnoreMask=0x{:X} (THIS TRIGGERS FULL ViewedOutfit REBUILD)",
+                    "HandleTransmogrifyItems [{}]: synced changed slots into active outfit {} — IgnoreMask=0x{:X}",
                     GetPlayerInfo(), activeOutfitID, activeOutfit->IgnoreMask);
                 for (uint8 s = 0; s < EQUIPMENT_SLOT_END; ++s)
-                    TC_LOG_DEBUG("network.opcode.transmog", "  single-item sync: equipSlot={} Appearances={} ignored={}",
-                        s, activeOutfit->Appearances[s], (activeOutfit->IgnoreMask & (1u << s)) != 0);
+                    if (activeOutfit->Appearances[s] || !(activeOutfit->IgnoreMask & (1u << s)))
+                        TC_LOG_DEBUG("network.opcode.transmog", "  single-item sync: equipSlot={} Appearances={} ignored={}",
+                            s, activeOutfit->Appearances[s], (activeOutfit->IgnoreMask & (1u << s)) != 0);
 
-                player->SetEquipmentSet(*activeOutfit); // persists + re-syncs update fields
-                player->SendUpdateToPlayer(player);
-                player->ClearUpdateMask(true);
+                // Persist to DB and refresh ViewedOutfit UpdateFields.
+                // Without this, in-memory changes are lost on logout (State stays UNCHANGED)
+                // and the Transmog UI avatar goes stale until next full sync.
+                player->SetEquipmentSet(*activeOutfit);
             }
         }
     }
@@ -688,7 +690,10 @@ void WorldSession::HandleTransmogOutfitUpdateInfo(WorldPackets::Transmogrificati
     updatedSet.SetID = transmogOutfitUpdateInfo.Set.SetID;
     updatedSet.SetName = transmogOutfitUpdateInfo.Set.SetName;
     updatedSet.SetIcon = transmogOutfitUpdateInfo.Set.SetIcon;
-    updatedSet.IgnoreMask = transmogOutfitUpdateInfo.Set.IgnoreMask;
+    // Preserve existing IgnoreMask — UPDATE_INFO only changes name/icon, not appearances.
+    // The incoming packet struct has IgnoreMask=0 (uninitialized), which would clobber
+    // the real mask and cause ValidateTransmogOutfitSet to reconstruct it by accident.
+    updatedSet.IgnoreMask = existingSet->IgnoreMask;
 
     if (!ValidateTransmogOutfitSet(this, updatedSet))
         return;
@@ -1046,6 +1051,7 @@ void WorldSession::FinalizeTransmogBridgePendingOutfit()
         TC_LOG_DEBUG("network.opcode.transmog", "  equipSlot={} Appearances={} ignored={}",
             s, pending.Outfit.Appearances[s], (pending.Outfit.IgnoreMask & (1u << s)) != 0);
 
+    GetPlayer()->SetActiveTransmogOutfitID(pending.Outfit.SetID);
     GetPlayer()->SetEquipmentSet(pending.Outfit);
 
     if (pending.HasAnyAppearance)
