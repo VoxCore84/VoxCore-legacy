@@ -65,14 +65,14 @@ namespace WorldPackets
         struct TransmogOutfitSlotEntry
         {
             // Wire format (verified via WPP sniff + Wago DB2 item lookups, Feb 2026) — 16 bytes per entry:
-            //   byte[0]    = Sequential ordinal (1-14, NOT a meaningful slot identifier)
-            //   byte[1]    = Always 0 (padding)
+            //   byte[0]    = Sequential ordinal (1-30, NOT a meaningful slot identifier)
+            //   byte[1]    = Weapon option index (0 for armor, 0-8 for weapon type variants)
             //   bytes[2-5] = AppearanceID (IMAID, uint32 LE)
             //   bytes[6-7] = ItemAppearance.DisplayType of the IMAID (uint16 LE) — THIS is the routing key
             //   bytes[8-15]= Reserved (zeros)
             uint32 AppearanceID = 0;
-            uint8 Flags = 0;          // byte[1] — always 0 in observed packets
-            uint8 SlotIndex = 0;      // byte[0] — sequential ordinal (1-14)
+            uint8 Option = 0;         // byte[1] — weapon option index (0 for armor/base weapon, 1-8 for weapon type variants)
+            uint8 SlotIndex = 0;      // byte[0] — sequential ordinal (1-30)
             uint16 WireDisplayType = 0;
             uint8 RawBytes[16] = {};
         };

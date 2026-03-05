@@ -101,6 +101,7 @@ uint8 DisplayTypeToEquipSlot(uint16 displayType)
         case 9:  return EQUIPMENT_SLOT_BACK;
         case 10: return EQUIPMENT_SLOT_TABARD;
         case 11: return EQUIPMENT_SLOT_MAINHAND;
+        case 12: return EQUIPMENT_SLOT_MAINHAND;    // Ranged (Bow, Crossbow, Gun)
         case 13: return EQUIPMENT_SLOT_OFFHAND;    // Shield
         case 15: return EQUIPMENT_SLOT_OFFHAND;    // Off-hand weapon
         default: return EQUIPMENT_SLOT_END;
@@ -229,8 +230,8 @@ void TransmogOutfitNew::Read()
             for (std::size_t i = 0; i < slotData.size(); i += 16)
             {
                 // Wire format (verified via WPP sniff + Wago DB2 Feb 2026 — 16 bytes per entry):
-                //   byte[0]    = Sequential ordinal (1-14, NOT a slot identifier)
-                //   byte[1]    = Always 0 (padding)
+                //   byte[0]    = Sequential ordinal (1-30, NOT a slot identifier)
+                //   byte[1]    = Weapon option index (0 for armor/base, 1-8 for weapon type variants)
                 //   bytes[2-5] = AppearanceID (IMAID, uint32 LE)
                 //   bytes[6-7] = ItemAppearance.DisplayType of the IMAID (uint16 LE) — THIS is the routing key
                 //   bytes[8-15]= Reserved (zeros)
@@ -471,13 +472,13 @@ void TransmogOutfitUpdateSlots::Read()
             _worldPacket.read(slot.RawBytes, 16);
 
             // Wire format (verified via WPP sniff + Wago DB2, Feb 2026 — 16 bytes per entry):
-            //   byte[0]    = Sequential ordinal (1-14, NOT a slot identifier)
-            //   byte[1]    = Always 0 (padding)
+            //   byte[0]    = Sequential ordinal (1-30, NOT a slot identifier)
+            //   byte[1]    = Weapon option index (0 for armor/base, 1-8 for weapon type variants)
             //   bytes[2-5] = AppearanceID (IMAID, uint32 LE)
             //   bytes[6-7] = ItemAppearance.DisplayType of the IMAID (uint16 LE) — routing key
             //   bytes[8-15]= Reserved (zeros)
             slot.SlotIndex = slot.RawBytes[0];
-            slot.Flags = slot.RawBytes[1];    // Always 0 in observed packets
+            slot.Option = slot.RawBytes[1];   // Weapon option index (0 for armor/base, 1-8 for weapon variants)
             slot.AppearanceID = ReadLE<uint32>(std::span<uint8 const>(slot.RawBytes, 16), 2);
             slot.WireDisplayType = ReadLE<uint16>(std::span<uint8 const>(slot.RawBytes, 16), 6);
         }
@@ -492,8 +493,8 @@ void TransmogOutfitUpdateSlots::Read()
             // Empty slot = IMAID is 0 (no transmog applied) — skip, don't overwrite
             if (slot.AppearanceID == 0)
             {
-                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: ordinal={} wireDT={} group={} (empty, skipped)",
-                    i, ordinal, slot.WireDisplayType, i / 14);
+                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: ordinal={} option={} wireDT={} (empty, skipped)",
+                    i, ordinal, slot.Option, slot.WireDisplayType);
                 continue;
             }
 
@@ -513,8 +514,8 @@ void TransmogOutfitUpdateSlots::Read()
                     Set.SecondaryShoulderApparanceID = int32(slot.AppearanceID);
                     Set.SecondaryShoulderSlot = 2;
                 }
-                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: appear={} ordinal={} wireDT={} serverDT={} group={} equipSlot=SECONDARY_SHOULDER",
-                    i, slot.AppearanceID, ordinal, slot.WireDisplayType, serverDT, i / 14);
+                TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: appear={} ordinal={} option={} wireDT={} serverDT={} equipSlot=SECONDARY_SHOULDER",
+                    i, slot.AppearanceID, ordinal, slot.Option, slot.WireDisplayType, serverDT);
                 continue;
             }
 
@@ -522,8 +523,8 @@ void TransmogOutfitUpdateSlots::Read()
             if (equipSlot < EQUIPMENT_SLOT_END && !Set.Appearances[equipSlot])
                 Set.Appearances[equipSlot] = int32(slot.AppearanceID);
 
-            TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: appear={} ordinal={} wireDT={} serverDT={} group={} equipSlot={}",
-                i, slot.AppearanceID, ordinal, slot.WireDisplayType, serverDT, i / 14, equipSlot);
+            TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS entry[{}]: appear={} ordinal={} option={} wireDT={} serverDT={} equipSlot={}",
+                i, slot.AppearanceID, ordinal, slot.Option, slot.WireDisplayType, serverDT, equipSlot);
         }
 
         for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)

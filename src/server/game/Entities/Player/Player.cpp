@@ -18067,22 +18067,43 @@ void Player::_SyncTransmogOutfitsToActivePlayerData(char const* caller)
         // The db2SlotInfoID is sent as the Slot field in the TransmogOutfitSlotData UpdateField.
         // Note: in CMSG packets, byte[0] is this ordinal but is NOT the routing key —
         // the wire DisplayType (bytes[6-7]) routes IMAIDs to equipment slots.
-        struct TransmogSlotMapping { uint8 db2SlotInfoID; uint8 equipSlot; };
+        // Retail sends 30 entries per outfit: 12 armor + 9 MH weapon options + 9 OH weapon options.
+        // The `option` field is the weapon type variant index (0 = base, 1-8 = TransmogOutfitSlotOption entries).
+        struct TransmogSlotMapping { uint8 db2SlotInfoID; uint8 equipSlot; uint8 option; };
         static constexpr TransmogSlotMapping slotMap[] = {
-            {  1,  0 }, // ID 1  = Head            -> EQUIPMENT_SLOT_HEAD
-            {  2,  2 }, // ID 2  = ShoulderRight   -> EQUIPMENT_SLOT_SHOULDERS
-            {  3,  2 }, // ID 3  = ShoulderLeft    -> EQUIPMENT_SLOT_SHOULDERS (secondary)
-            {  4,  3 }, // ID 4  = Shirt           -> EQUIPMENT_SLOT_BODY
-            {  5,  4 }, // ID 5  = Chest           -> EQUIPMENT_SLOT_CHEST
-            {  6,  5 }, // ID 6  = Waist           -> EQUIPMENT_SLOT_WAIST
-            {  7,  6 }, // ID 7  = Legs            -> EQUIPMENT_SLOT_LEGS
-            {  8,  7 }, // ID 8  = Feet            -> EQUIPMENT_SLOT_FEET
-            {  9,  8 }, // ID 9  = Wrist           -> EQUIPMENT_SLOT_WRISTS
-            { 10,  9 }, // ID 10 = Hands           -> EQUIPMENT_SLOT_HANDS
-            { 11, 14 }, // ID 11 = Back            -> EQUIPMENT_SLOT_BACK
-            { 12, 18 }, // ID 12 = Tabard          -> EQUIPMENT_SLOT_TABARD
-            { 13, 15 }, // ID 13 = WeaponMainHand  -> EQUIPMENT_SLOT_MAINHAND
-            { 14, 16 }, // ID 14 = WeaponOffHand   -> EQUIPMENT_SLOT_OFFHAND
+            // 12 armor entries (option = 0)
+            {  1,  0, 0 }, // Head
+            {  2,  2, 0 }, // ShoulderRight (primary)
+            {  3,  2, 0 }, // ShoulderLeft (secondary)
+            {  4,  3, 0 }, // Shirt
+            {  5,  4, 0 }, // Chest
+            {  6,  5, 0 }, // Waist
+            {  7,  6, 0 }, // Legs
+            {  8,  7, 0 }, // Feet
+            {  9,  8, 0 }, // Wrist
+            { 10,  9, 0 }, // Hands
+            { 11, 14, 0 }, // Back
+            { 12, 18, 0 }, // Tabard
+            // 9 MH weapon options (option 0 = base, 1-8 = weapon type variants from TransmogOutfitSlotOption)
+            { 13, 15, 0 }, // MH base
+            { 13, 15, 1 }, // MH: One-Handed Weapon
+            { 13, 15, 2 }, // MH: Two-Handed Weapon
+            { 13, 15, 3 }, // MH: Ranged Weapon
+            { 13, 15, 4 }, // MH: Two-Handed (Fury)
+            { 13, 15, 5 }, // MH: paired 8
+            { 13, 15, 6 }, // MH: paired 9
+            { 13, 15, 7 }, // MH: paired 10
+            { 13, 15, 8 }, // MH: paired 11
+            // 9 OH weapon options (option 0 = base, 1-8 = weapon type variants from TransmogOutfitSlotOption)
+            { 14, 16, 0 }, // OH base
+            { 14, 16, 1 }, // OH: One-Handed Weapon
+            { 14, 16, 2 }, // OH: Dagger
+            { 14, 16, 3 }, // OH: Two-Handed (Fury)
+            { 14, 16, 4 }, // OH: Shield
+            { 14, 16, 5 }, // OH: Off Hand
+            { 14, 16, 6 }, // OH: paired 8
+            { 14, 16, 7 }, // OH: paired 9
+            { 14, 16, 8 }, // OH: paired 10
         };
 
         TC_LOG_DEBUG("entities.player", "fillOutfitData [{}]: slotMap size={} setName='{}' ignoreMask=0x{:X}",
@@ -18107,6 +18128,21 @@ void Player::_SyncTransmogOutfitsToActivePlayerData(char const* caller)
 
         for (auto const& mapping : slotMap)
         {
+            // Weapon option entries (option > 0) are empty placeholder slots for weapon type variants.
+            // They must be emitted so the client sees exactly 30 entries, preventing packet growth.
+            if (mapping.option > 0)
+            {
+                auto slotSetter = AddDynamicUpdateFieldValue(outfitSetter.ModifyValue(&UF::TransmogOutfitData::Slots));
+                slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::Slot).SetValue(mapping.db2SlotInfoID);
+                slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::SlotOption).SetValue(mapping.option);
+                slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::ItemModifiedAppearanceID).SetValue(uint32(0));
+                slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::AppearanceDisplayType).SetValue(uint8(0));
+                slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::Flags).SetValue(uint32(0));
+                slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::SpellItemEnchantmentID).SetValue(uint32(0));
+                slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::IllusionDisplayType).SetValue(uint8(0));
+                continue;
+            }
+
             // ID 3 (SecondaryShoulder / ShoulderLeft) uses its own dedicated field, not Appearances[]
             uint32 imaID;
             if (mapping.db2SlotInfoID == 3)
@@ -18152,8 +18188,8 @@ void Player::_SyncTransmogOutfitsToActivePlayerData(char const* caller)
             //   3 = Hidden     — apply hidden visual IMA (requires real hidden IMA ID, never IMA=0)
             uint8 displayType = (imaID > 0) ? 1 : 0;
 
-            TC_LOG_DEBUG("network.opcode.transmog", "fillOutfitData [{}]: db2Slot={} equipSlot={} IMAID={} DT={} ignored={}",
-                GetGUID().ToString(), mapping.db2SlotInfoID, mapping.equipSlot, imaID, displayType,
+            TC_LOG_DEBUG("network.opcode.transmog", "fillOutfitData [{}]: db2Slot={} option={} equipSlot={} IMAID={} DT={} ignored={}",
+                GetGUID().ToString(), mapping.db2SlotInfoID, mapping.option, mapping.equipSlot, imaID, displayType,
                 (mapping.equipSlot < EQUIPMENT_SLOT_END && (repairedIgnoreMask & (1u << mapping.equipSlot))) != 0);
 
             // SlotOption tells the client how to render the slot:
@@ -18185,8 +18221,8 @@ void Player::_SyncTransmogOutfitsToActivePlayerData(char const* caller)
             slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::SpellItemEnchantmentID).SetValue(enchant);
             slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::IllusionDisplayType).SetValue(uint8(0));
 
-            TC_LOG_DEBUG("entities.player", "fillOutfitData [{}]: db2Slot={} equipSlot={} IMAID={} DT={} slotOption={} enchant={}",
-                GetGUID().ToString(), mapping.db2SlotInfoID, mapping.equipSlot, imaID, displayType, slotOption, enchant);
+            TC_LOG_DEBUG("entities.player", "fillOutfitData [{}]: db2Slot={} option={} equipSlot={} IMAID={} DT={} slotOption={} enchant={}",
+                GetGUID().ToString(), mapping.db2SlotInfoID, mapping.option, mapping.equipSlot, imaID, displayType, slotOption, enchant);
         }
     };
 
