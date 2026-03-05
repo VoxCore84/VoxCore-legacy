@@ -2,6 +2,16 @@ RoleplayCore â€” Session Changelog (WoW 12.x private server)
 
 
 
+### Session 64 — BtWQuests + Vendor Scrape + Midnight Data (Mar 5 2026)
+- **BtWQuests addon parse**: Extracted quest starter/ender data from BtWQuests addon Lua files
+  - 1,062 new `creature_queststarter` entries, 57 new `gameobject_queststarter` entries
+  - All cross-referenced against existing DB to avoid duplicates
+- **Wowhead vendor scrape R2**: 772 pages scraped, 92 had vendor data
+  - 1,435 new `npc_vendor` entries across 82 NPCs
+- **Midnight data import** (from session 61 scrape): 58 quest starters, 60 quest enders, 819 loot entries, 526 creature spells
+- **Running totals**: creature_queststarter 32,458 | gameobject_queststarter 1,933 | npc_vendor 173,855
+- Commit: `9340906e9d`
+
 ### Session 64 — Build 66263 Auth Fix (Mar 5 2026)
 - **New WoW build** 12.0.1.66263 detected — client auto-updated from 66220
 - **Auth SQL** `2026_03_05_00_auth.sql`: registers build 66263 in `build_info`, updates realmlist gamebuild, deletes stale `build_auth_key` rows, has commented-out key INSERT template
@@ -287,8 +297,8 @@ Chronological log of all database, code, and infrastructure changes. Each entry 
 
 | Repo | Latest Commit | Purpose |
 |------|--------------|---------|
-| VoxCore84/RoleplayCore | `ab43e4823d` | Main server |
-| VoxCore84/wago-tooling | `b1f0bd0` | Wago/LW/hotfix tools |
+| VoxCore84/RoleplayCore | `9340906e9d` | Main server |
+| VoxCore84/wago-tooling | `966e0eb` | Wago/LW/hotfix tools |
 | VoxCore84/tc-packet-tools | `821e74f` | WPP + packet analysis |
 | VoxCore84/code-intel | â€” | C++ MCP server |
 | VoxCore84/trinitycore-claude-skills | `25967f7` | Claude Code skills |

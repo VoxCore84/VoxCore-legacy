@@ -53,8 +53,8 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 
 ## MEDIUM Priority
 
-### Midnight Vendor Items (337 new, blocked on ExtendedCost)
-- 17 NPCs with zero npc_vendor entries, 337 items ready
+### Midnight Vendor Items (blocked on ExtendedCost)
+- Some Midnight NPCs still lack vendor items
 - Blocked: scrape doesn't include ExtendedCost data (items would be free without it)
 - Need: cross-ref NpcVendor DB2 or ItemExtendedCost DB2 for currency costs
 
@@ -123,9 +123,11 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 ### Service Gaps (997 vendors/trainers) — PARTIALLY RESOLVED
 - Originally 997 vendors/trainers with VENDOR/TRAINER flag but zero inventory/spell data
 - **Session 58**: Wowhead gap scraper applied 8,799 vendor items — 404 of 687 vendor NPCs now have items
+- **Session 64**: BtWQuests parse added 1,062 creature_queststarter + 57 gameobject_queststarter; vendor scrape R2 added 1,435 npc_vendor entries across 82 NPCs
 - **Remaining**: 68 vendor NPCs still have zero items after scrape (Wowhead has no data for them)
 - **Gossip text broken**: Scraper picks up user comments instead of NPC dialogue — gossip import reverted for 56 NPCs
-- **Remaining gaps**: 16,452 quests missing starters, 13,627 missing enders, 68 empty vendors, 420 gossip NPCs without menus
+- **Current counts**: creature_queststarter 32,458 | gameobject_queststarter 1,933 | npc_vendor 173,855
+- **Remaining gaps**: ~15K quests missing starters, ~13K missing enders, 68 empty vendors, 420 gossip NPCs without menus
 
 ### Equipment Gaps (~13,001 NPCs)
 - Cross-reference LoreWalkerTDB `creature_equip_template` â€” not yet attempted
@@ -147,6 +149,8 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 ---
 
 ## Recently Completed
+- ~~BtWQuests + Vendor Scrape R2 (session 64)~~: 1,062 creature_queststarter + 57 gameobject_queststarter from BtWQuests, 1,435 npc_vendor entries from Wowhead scrape R2
+- ~~Midnight Data Import (session 61/64)~~: 58 quest starters, 60 quest enders, 819 loot entries, 526 creature spells
 - ~~Transmog 5-Agent Audit Phases 1–4 (session 63)~~: All 26 action items implemented — 4 server bugs, 4 Bridge cleanup, TransmogSpy v2, Phase 4 hardening, EffectEquipTransmogOutfit fix. Awaiting in-game testing
 - ~~Transmog Bugs A–E (sessions 36–63)~~: All 5 original bugs fixed + 3 medium bugs. Awaiting in-game testing
 - ~~Wowhead Gap Scrape (session 58)~~: 5,653 pages scraped, 592+683 quest starters/enders, 202+208 GO starters/enders, 8,799 vendor items applied
@@ -174,5 +178,5 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 
 ---
 
-*Updated March 5, 2026 (session 63)*
+*Updated March 5, 2026 (session 64)*
 

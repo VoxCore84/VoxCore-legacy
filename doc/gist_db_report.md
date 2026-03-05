@@ -30,7 +30,7 @@ RoleplayCore Database Report â€” Data quality & optimization summary for Wo
 | 14 | [Discoveries & Lessons](#part-14-discoveries-lessons-useful-for-the-community) | 9 community findings |
 | 15 | [Timeline](#part-15-timeline) | Feb 26 â€“ Mar 5 |
 | 16 | [Complete Tooling Catalog](#part-16-complete-tooling-infrastructure-catalog) | Full inventory |
-| A | [Data Sources](#appendix-a-data-sources) | 6 sources |
+| A | [Data Sources](#appendix-a-data-sources) | 8 sources |
 | B | [Reproducibility](#appendix-b-reproducibility) | 6 pipelines |
 
 ---
@@ -68,6 +68,11 @@ All figures are **net** â€” accounting for subsequent cleanup and deduplica
 - **creature_template_spell**: +526 boss abilities across 61 NPCs
 - **Total**: 1,463 new rows. All IDs cross-referenced against world DB + SpellName DB2
 - SQL: `2026_03_05_15_world.sql`. Commit `d81962a4d6`
+
+### BtWQuests + Vendor Scrape Round 2 (Session 64)
+- **BtWQuests addon parse**: 1,062 creature_queststarter + 57 gameobject_queststarter extracted from BtWQuests addon data
+- **Wowhead vendor scrape R2**: 772 pages scraped, 92 had vendor data, 1,435 new npc_vendor entries across 82 NPCs
+- **Running totals**: creature_queststarter 32,458 | gameobject_queststarter 1,933 | npc_vendor 173,855
 
 ---
 
@@ -353,9 +358,9 @@ Reimported from LoreWalkerTDB to ensure completeness:
 
 | Table | Rows |
 |-------|------|
-| creature_queststarter | 31,338 |
+| creature_queststarter | 32,458 |
 | creature_questender | 33,806 |
-| gameobject_queststarter | 1,876 |
+| gameobject_queststarter | 1,933 |
 | gameobject_questender | 1,624 |
 
 ### 4.5 Hero's Call / Warchief's Command Board Dedup
@@ -619,7 +624,7 @@ Over 50 Python scripts, MCP servers, audit tools, and SQL generators were built 
 | gameobject | 175,368 | World object spawn instances |
 | creature_loot_template | 2,904,341 | NPC loot tables (deduplicated, with PKs) |
 | smart_scripts | 294,416 | NPC AI behavior scripts (validated â€” see [Section 6.3](#63-post-import-cleanup-47478-rows)) |
-| npc_vendor | 172,436 | Vendor inventory entries |
+| npc_vendor | 173,855 | Vendor inventory entries |
 | waypoint_path_node | 130,654 | NPC patrol path nodes |
 | quest_template_addon | 47,164 | Quest chain/config data |
 | quest_poi | 134,856 | Quest map markers |
@@ -875,7 +880,7 @@ LW import places old-framework quest boards (entries 206294/206116) at exact coo
 | **Mar 1** | 11-12 | Transmog confirmed working in-game, PR cleanup, cross-repo PR #760 |
 | **Mar 3** | 13-30 | Wowhead mega-audit (54,571 ops), Raidbots/Wago pipeline (locales + quests), LW import #2 (665K rows), post-import cleanup (47K rows), hotfix repair build 66220, MySQL tuning, build diff audit (5 builds), hotfix pipeline crash fix, transmog multi-bug fixes |
 | **Mar 4** | 31-38 | Hotfix redundancy audit rounds 1-3 (10.8M â†’ 244K content rows), WTL DBC pipeline, world DB cleanup (NPC/portal fixes, SmartAI orphans), transmog client wiki, auth key update |
-| **Mar 5** | 39-58 | Report updates, transmog diagnostics, TACT pipeline, ATT parser, website, Wowhead gap scraper (5,653 pages, 10K+ rows applied) |
+| **Mar 5** | 39-64 | Report updates, transmog diagnostics, TACT pipeline, ATT parser, website, Wowhead gap scraper (5,653 pages, 10K+ rows applied), Midnight data import, BtWQuests parse, vendor scrape R2, transmog 5-agent audit, auth 66263 |
 
 </details>
 
@@ -1023,7 +1028,7 @@ Specialized agents defined in `.claude/agents/`:
 
 
 <details>
-<summary><strong>16.10 Data Sources & Pipelines</strong> (5 sources)</summary>
+<summary><strong>16.10 Data Sources & Pipelines</strong> (7 sources)</summary>
 
 | Source | Pipeline | Output |
 |--------|----------|--------|
@@ -1031,7 +1036,9 @@ Specialized agents defined in `.claude/agents/`:
 | wow.tools.local | WTL â†’ DBC2CSV â†’ CSV | Complete DBC baselines from client CASC |
 | Raidbots | `run_all_imports.py --regenerate` | Item names (171K x 7 locales), quest chains, POI |
 | LoreWalkerTDB | `import_all.py` + `validate_import.py` | World spawns, loot, SmartAI, hotfixes |
-| Wowhead | `wowhead_scraper.py` (216K NPCs) | NPC cross-reference data |
+| Wowhead | `wowhead_scraper.py` (216K NPCs) + gap scraper | NPC cross-reference, vendor items, quest links |
+| AllTheThings | `att_parser.py` + `att_to_sqlite.py` | Quest starters, chains, vendor items (60 SQLite tables) |
+| BtWQuests | `btwquests_parser.py` | Quest starter/ender NPC + GO links |
 
 </details>
 
@@ -1052,7 +1059,7 @@ Specialized agents defined in `.claude/agents/`:
 </details>
 
 <details>
-<summary><strong>Appendix A: Data Sources</strong> &mdash; <em>6 data sources with volume estimates</em></summary>
+<summary><strong>Appendix A: Data Sources</strong> &mdash; <em>8 data sources with volume estimates</em></summary>
 
 | Source | Data Type | Volume |
 |--------|----------|--------|
@@ -1060,7 +1067,9 @@ Specialized agents defined in `.claude/agents/`:
 | **Wago.tools DB2 CSVs** | 1,097 client DB2 tables, 5 builds | ~5.5K CSV files |
 | **wow.tools.local** | DB2 baselines from client CASC (build 66220) | ~1,097 DB2 tables |
 | **Raidbots** | Item names (171K x 7 locales), talents | 168 MB JSON |
-| **Wowhead** | 216K NPC tooltips, names, types, levels | 218K JSON files |
+| **Wowhead** | 216K NPC tooltips + gap scraper (vendor/quest data) | 218K JSON files + 6.4K scraped pages |
+| **AllTheThings** | Quest starters, chains, vendor items | 60 SQLite tables from 1,635 Lua files |
+| **BtWQuests** | Quest starter/ender NPC + GO links | Addon data parse |
 | **TrinityCore upstream** | Periodic merge + SQL updates | Git merge |
 
 </details>
