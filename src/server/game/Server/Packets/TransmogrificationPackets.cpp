@@ -612,9 +612,12 @@ void TransmogOutfitUpdateSituations::Read()
         TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SITUATIONS diag: setId={} npc={} rposAfterGuid={} count={}",
             SetID, Npc.ToString(), rposAfterGuid, count);
 
-        if (count > 256)
+        if (count > MaxTransmogOutfitSlotCount)
         {
-            TC_LOG_ERROR("network.opcode.transmog", "TransmogOutfitUpdateSituations: excessive count {} from client", count);
+            ParseError = Trinity::StringFormat("excessive situation count ({} > {})", count, MaxTransmogOutfitSlotCount);
+            DiagnosticReadTrace = BuildDiagnosticReadTrace("CMSG_TRANSMOG_OUTFIT_UPDATE_SITUATIONS", _worldPacket);
+            TC_LOG_ERROR("network.opcode.transmog", "TransmogOutfitUpdateSituations: {}", ParseError);
+            _worldPacket.rfinish();
             return;
         }
 
