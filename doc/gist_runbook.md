@@ -24,10 +24,12 @@ Complete reference for every tool, pipeline, and command in the project. Organiz
 14. [Database Snapshots & Health](#14-database-snapshots--health)
 15. [Build Diff Audit](#15-build-diff-audit)
 16. [Content Tuning Enrichment](#16-content-tuning-enrichment)
-17. [C:/Tools Reference](#17-ctools-reference)
-18. [GitHub Repos & Gists](#18-github-repos--gists)
-19. [One-Time Setup SQL](#19-one-time-setup-sql)
-20. [Quick Reference One-Liners](#20-quick-reference-one-liners)
+17. [TACT DB2 Extraction](#17-tact-db2-extraction)
+18. [DB2 Query Tools](#18-db2-query-tools)
+19. [C:/Tools Reference](#19-ctools-reference)
+20. [GitHub Repos & Gists](#20-github-repos--gists)
+21. [One-Time Setup SQL](#21-one-time-setup-sql)
+22. [Quick Reference One-Liners](#22-quick-reference-one-liners)
 
 ---
 
@@ -192,14 +194,16 @@ mysql -u root -padmin world < coord_transformer_output.sql
 
 ## 7. Hotfix Repair
 
-**What**: Repair hotfix tables by comparing Wago DB2 CSVs against MySQL. Run after every WoW client build update.
+**What**: Repair hotfix tables by comparing DB2 CSVs against MySQL. Run after every WoW client build update.
 
 ```bash
 cd C:/Users/atayl/source/wago
 
 # Step 1: Edit CURRENT_BUILD in wago_common.py
 
-# Step 2: Download fresh CSVs
+# Step 2: Extract fresh CSVs (preferred — ground truth from local CASC)
+C:\Python314\python.exe tact_extract.py
+# OR download from Wago (fallback)
 C:\Python314\python.exe wago_db2_downloader.py --tables-file tables_all.txt
 
 # Step 3: Run repair (5 batches)
@@ -225,14 +229,16 @@ C:\Python314\python.exe hotfix_audit/cleanup_hotfix_data_orphans.py
 ```bash
 cd C:/Users/atayl/source/wago
 
-# Full pipeline
-C:\Python314\python.exe run_all_imports.py --regenerate
+# Full pipeline (downloads JSON + generates SQL)
+C:\Python314\python.exe raidbots/run_all_imports.py --regenerate
 
 # Apply all generated SQL
-for f in raidbots/sql_output/*.sql; do
-  db=$(echo $f | grep -q "item_s" && echo "hotfixes" || echo "world")
-  mysql -u root -padmin $db < "$f"
-done
+mysql -u root -padmin world < raidbots/sql_output/quest_chains.sql
+mysql -u root -padmin world < raidbots/sql_output/quest_poi_import.sql
+mysql -u root -padmin world < raidbots/sql_output/quest_poi_points_import.sql
+mysql -u root -padmin world < raidbots/sql_output/quest_objectives_import.sql
+mysql -u root -padmin hotfixes < raidbots/sql_output/item_sparse_locale.sql
+mysql -u root -padmin hotfixes < raidbots/sql_output/item_search_name_locale.sql
 ```
 
 **Tables**: `quest_template_addon`, `quest_poi`, `quest_poi_points`, `quest_objectives`, `item_sparse_locale`, `item_search_name_locale`
@@ -406,14 +412,68 @@ mysql -u root -padmin world < sql_output/enrich_content_tuning.sql
 
 ---
 
-## 17. C:/Tools Reference
+## 17. TACT DB2 Extraction (ground truth CSVs)
+
+**What**: Extract all 1,097 DB2 tables from local WoW CASC install via TACTSharp + DBC2CSV. Produces ground-truth CSVs (no Wago oscillation artifacts). ~50 seconds.
+
+```bash
+cd C:/Users/atayl/source/wago
+
+# Full extraction (CASC -> DB2 -> CSV)
+C:\Python314\python.exe tact_extract.py
+
+# Verify against Wago CSVs (shows row count diffs)
+C:\Python314\python.exe tact_extract.py --verify
+
+# Extract DB2 files only (skip CSV conversion)
+C:\Python314\python.exe tact_extract.py --db2-only --keep-db2
+
+# From Blizzard CDN instead of local install
+C:\Python314\python.exe tact_extract.py --cdn
+```
+
+**Output**: `tact_csv/12.0.1.XXXXX/enUS/*.csv` (772 MB for 1,097 tables)
+**Dependencies**: `C:/Tools/TACTSharp/` + `C:/Tools/DBC2CSV/`
+**When to run**: After WoW client updates, before hotfix repair
+
+---
+
+## 18. DB2 Query Tools
+
+**What**: Interactive query tools for browsing WoW DB2 data.
+
+```bash
+# MCP Server (used by Claude automatically — 6 tools)
+# Already configured in .claude/settings.json, no manual start needed
+
+# Interactive CLI query tool
+cd C:/Tools/DB2Query && dotnet run -c Release
+# Commands: load, get, search, filter, head, cols, dump, export, tables
+
+# wow.tools.local web UI (visual DB2 browser)
+C:/Tools/WoW.tools/start_wtl.bat
+# Opens http://localhost:5000
+
+# Cross-ref DBCache.bin vs server hotfixes
+cd C:/Users/atayl/source/wago
+C:\Python314\python.exe xref_dbcache.py
+
+# Decode DBCache.bin to human-readable
+C:\Python314\python.exe decode_dbcache.py
+```
+
+---
+
+## 19. C:/Tools Reference (all external tools)
 
 | Tool | Path | Purpose |
 |------|------|---------|
 | **wow.tools.local** | `C:/Tools/WoW.tools/start_wtl.bat` | Web UI: DB2 browser, hotfix viewer, build diffs (`http://localhost:5000`) |
 | **WowPacketParser** | `C:/Tools/WowPacketParser/WowPacketParser.exe` | Parse .pkt packet captures |
-| **DBC2CSV** | `C:/Tools/DBC2CSV/DBC2CSV.exe` | Convert DBC files to CSV |
-| **TACTTool** | `C:/Tools/TACTTool-Release-win-x64/TACTTool.exe` | Download game files from Blizzard CDN |
+| **TACTSharp** | `C:/Tools/TACTSharp/` | CASC bulk extractor (C#). Used by `tact_extract.py`. Build: `dotnet build TACTTool -c Release` |
+| **DBC2CSV** | `C:/Tools/DBC2CSV/DBC2CSV.exe` | Convert DB2 files to CSV. 1,315 .dbd definitions. ~0.5% non-deterministic drops in large batches |
+| **DB2Query** | `C:/Tools/DB2Query/` | Interactive DB2 CLI: load, search, filter, export. Run: `dotnet run -c Release` |
+| **DBCD** | `C:/Tools/DBCD-2.2.0/` | C# library for reading DB2 files (WDC5). Used by DBC2CSV and DB2Query |
 | **Ymir** | `C:/Tools/ymir_retail_12.0.1.66220/ymir_retail.exe` | Retail DBC extraction (does NOT work with private server) |
 | **Lua LSP** | `C:/Tools/lua-language-server/bin/lua-language-server.exe` | Lua language server for IDE |
 | **LoreWalkerTDB** | `C:/Tools/LoreWalkerTDB/` | Reference SQL dumps (world 941MB, hotfixes 337MB) |
@@ -423,7 +483,7 @@ mysql -u root -padmin world < sql_output/enrich_content_tuning.sql
 
 ---
 
-## 18. GitHub Repos & Gists
+## 20. GitHub Repos & Gists
 
 ### Repositories
 
@@ -450,7 +510,7 @@ mysql -u root -padmin world < sql_output/enrich_content_tuning.sql
 
 ---
 
-## 19. One-Time Setup SQL
+## 21. One-Time Setup SQL
 
 Located in `C:/Dev/RoleplayCore/sql/RoleplayCore/`:
 
@@ -465,7 +525,7 @@ Located in `C:/Dev/RoleplayCore/sql/RoleplayCore/`:
 
 ---
 
-## 20. Quick Reference One-Liners
+## 22. Quick Reference One-Liners
 
 ```bash
 # === Coverage checks ===
