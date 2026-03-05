@@ -18218,6 +18218,22 @@ void Player::_SyncTransmogOutfitsToActivePlayerData(char const* caller)
             else if (mapping.equipSlot == EQUIPMENT_SLOT_OFFHAND)
                 enchant = equipmentSet->Enchants[1] > 0 ? uint32(equipmentSet->Enchants[1]) : 0;
 
+            // Bootstrap illusion from equipped weapon when outfit doesn't define one.
+            // Without this, the paperdoll loses weapon enchant visuals after outfit apply/relog.
+            if (enchant == 0 && (mapping.equipSlot == EQUIPMENT_SLOT_MAINHAND || mapping.equipSlot == EQUIPMENT_SLOT_OFFHAND))
+            {
+                if (Item* weapon = GetItemByPos(INVENTORY_SLOT_BAG_0, mapping.equipSlot))
+                {
+                    uint32 itemIllusion = weapon->GetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_ALL_SPECS);
+                    if (itemIllusion)
+                    {
+                        enchant = itemIllusion;
+                        TC_LOG_DEBUG("network.opcode.transmog", "fillOutfitData [{}]: bootstrapped illusion for equipSlot={} enchantID={}",
+                            GetGUID().ToString(), mapping.equipSlot, enchant);
+                    }
+                }
+            }
+
             slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::SpellItemEnchantmentID).SetValue(enchant);
             slotSetter.ModifyValue(&UF::TransmogOutfitSlotData::IllusionDisplayType).SetValue(uint8(0));
 

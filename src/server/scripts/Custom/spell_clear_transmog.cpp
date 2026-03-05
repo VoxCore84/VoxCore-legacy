@@ -81,6 +81,27 @@ class spell_clear_current_transmogrifications : public SpellScript
             TC_LOG_DEBUG("spells.effect", "spell_clear_current_transmogrifications [{}]: cleared slot {}",
                 player->GetGUID().ToString(), slot);
         }
+
+        // Sync cleared state to the active transmog outfit so ViewedOutfit
+        // doesn't show stale appearances on the paperdoll after casting.
+        uint32 activeOutfitID = player->GetActiveTransmogOutfitID();
+        if (activeOutfitID)
+        {
+            if (EquipmentSetInfo::EquipmentSetData* outfit = player->GetMutableTransmogOutfitBySetID(activeOutfitID))
+            {
+                for (uint8 s = EQUIPMENT_SLOT_START; s < EQUIPMENT_SLOT_END; ++s)
+                    outfit->Appearances[s] = 0;
+                outfit->SecondaryShoulderApparanceID = 0;
+                for (auto& enchant : outfit->Enchants)
+                    enchant = 0;
+
+                player->SetEquipmentSet(*outfit);
+
+                TC_LOG_DEBUG("spells.effect",
+                    "spell_clear_current_transmogrifications [{}]: synced cleared state to active outfit {} + rebuilt ViewedOutfit",
+                    player->GetGUID().ToString(), activeOutfitID);
+            }
+        }
     }
 
     void Register() override
