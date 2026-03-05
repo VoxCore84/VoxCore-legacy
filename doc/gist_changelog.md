@@ -1,4 +1,23 @@
-# RoleplayCore — Session Changelog
+RoleplayCore â€” Session Changelog (WoW 12.x private server)
+
+## 2026-03-05 — ATT Mega-Parser (Session 54)
+
+### AllTheThings Complete Data Extraction
+- **`att_to_sqlite.py`** — comprehensive SQLite extractor for ALL AllTheThings data
+- **60 normalized tables** from 30 data loaders, 52.6 MB database, 27s full rebuild
+- Phase 1: Lua AST parse of 1,635 files -> quests (47K), NPCs (6.3K), items (175K), encounters (946), coords (54K), timelines (32K), costs (19K)
+- Phase 2: 30 supplementary loaders covering:
+  - Core DBs: Objects (22K), Mounts (1.5K), Pets (1K), Flight Paths (1.3K), Reagents (31K), Achievements (13K)
+  - Item enrichment: itemDB.json (157K), .dynamic per-expansion metadata (310K), auto-sources (99K)
+  - Transmog: Sets (3.6K), Set Items (57K), Illusions (86), Missing Transmog audit (76K)
+  - Professions: 15 profession files (5.6K recipes), Glyphs (690)
+  - Expansion systems: Runeforge powers (261), Conduits (286), Blueprints (68)
+  - Filters: FilterDB (58), Item Filters RWP (136K), ClassInfo specs (57), Instances (207)
+  - Audit: Missing Items (29K), Missing Quests (3.1K)
+  - Collectibles: Mount Mods, Music Rolls, Pepe, Pocopoc (490 total)
+- Commit `b1f0bd0` (wago-tooling repo)
+
+# RoleplayCore â€” Session Changelog
 
 Chronological log of all database, code, and infrastructure changes. Each entry includes the session number, what changed, and the commit hash where applicable.
 
@@ -6,69 +25,90 @@ Chronological log of all database, code, and infrastructure changes. Each entry 
 
 ## Mar 5, 2026
 
-### Session 50 — AllTheThings Database Parser
+### 2026-03-05 — Website QA Round 2
+- Cross-page sidebar, back-to-top, accuracy audit (30/30 stats verified, 7 stale values fixed)
+- Architecture diagram, Konami easter egg
+- Commit: `068c81c`
+
+### 2026-03-05 â€” Transmog: Retail Sniffer-Informed Fix Pass
+- Decoded Ymir retail packet capture (build 66220, 2.77M lines) â€” ground truth for transmog packet analysis
+- **Retail discovery**: 30 entries per outfit (12 armor + 18 weapon options), DT=3 = hidden visual IMA (not "remove transmog")
+- Reverted wrong DT=3 assignment (DT=3+IMA=0 doesn't exist on retail) â†’ simple (imaID > 0) ? 1 : 0
+- Reverted last-group-only merge (growing packets were wrong diagnosis) â†’ restored first-non-zero-wins
+- Added IgnoreMask repair pass in fillOutfitData
+- Found 11 hidden visual IMA IDs (77343-198608 range)
+- Commit: `fae00afb86`
+
+### 2026-03-05 â€” DBCD Audit + Broadcast Text Fill
+- Built DB2Query CLI tool using DBCD 2.2.0 for retail DB2 binary cross-reference
+- Removed 363 redundant hotfix rows across 13 tables (verified identical to retail DB2)
+- Filled 393 missing broadcast_text entries from Wago DB2
+- creature_text broadcast_text coverage: 335 missing â†’ 0 (100% complete)
+- Commit: `faec6435de`
+
+### Session 50 â€” AllTheThings Database Parser
 - **ATT Database parser built** (`att_parser.py`): Full Lua tokenizer + parser for the AllTheThings Database repo (1,576 files, 47K quests extracted)
 - **Validated SQL generator** (`att_generate_sql.py`): Cross-references ATT data against TC MySQL, filters deprecated/DNT quests, validates all IDs
 - **8,950 new rows ready to apply**:
-  - 4,359 `creature_queststarter` — quest-giver NPC assignments
-  - 3,081 `quest_template_addon` PrevQuestID — quest chain prerequisite links
-  - 1,510 `npc_vendor` — vendor inventory items
+  - 4,359 `creature_queststarter` â€” quest-giver NPC assignments
+  - 3,081 `quest_template_addon` PrevQuestID â€” quest chain prerequisite links
+  - 1,510 `npc_vendor` â€” vendor inventory items
 - Tools committed to `VoxCore84/wago-tooling`: `81cf71a`
 
-### Session 49 — TDB Delta + Scraper Hardening
-- **TDB 1200.26021 delta applied**: quest_offer_reward 18,054 → 20,022 (+1,967), quest_request_items +69
-- **Wowhead 403 resolved** — expired on its own, scraper upgraded with curl_cffi Chrome131 TLS
+### Session 49 â€” TDB Delta + Scraper Hardening
+- **TDB 1200.26021 delta applied**: quest_offer_reward 18,054 â†’ 20,022 (+1,967), quest_request_items +69
+- **Wowhead 403 resolved** â€” expired on its own, scraper upgraded with curl_cffi Chrome131 TLS
 - **27,328 quests** ready for reward text scrape (~2 hours via two-phase approach)
 - Commits: `e6b44edab3` (RoleplayCore), `f594f1b`+`7a9667b`+`80d42e8` (wago-tooling)
 
-### Session 47 — Gist Accuracy Audit + hotfix_data R3 Cleanup
-- **hotfix_data orphan cleanup**: `cleanup_hotfix_data_orphans.py` removed 608,401 orphaned entries. 226,984 remaining (was 835,385). Hotfixes DB 637→535 MB
+### Session 47 â€” Gist Accuracy Audit + hotfix_data R3 Cleanup
+- **hotfix_data orphan cleanup**: `cleanup_hotfix_data_orphans.py` removed 608,401 orphaned entries. 226,984 remaining (was 835,385). Hotfixes DB 637â†’535 MB
 - **Gist accuracy audit**: Verified all report numbers against live DB. Fixed 6 critical errors:
-  - smart_scripts: 792K→294,425 (imports cleaned by validation scripts)
+  - smart_scripts: 792Kâ†’294,425 (imports cleaned by validation scripts)
   - Part 11 hotfix tables: pre-audit numbers replaced with post-audit actuals
-  - hotfix_data: 835K→227K (R3 registry cleanup applied)
+  - hotfix_data: 835Kâ†’227K (R3 registry cleanup applied)
   - DB sizes: world 1,267 MB, hotfixes 535 MB (previously stale)
 - **OPTIMIZE/ANALYZE** on hotfix_data + 8 tables with stale InnoDB statistics
 - Commit: `21fa23b0d1`
 
-### Session 46 — WPP Script Hardening
+### Session 46 â€” WPP Script Hardening
 - **20-bug QA** across 4 files: `start-worldserver.sh`, `extract_transmog_packets.py`, `wpp-inspect.sh`, `opcode_analyzer.py`
 - Root cause: runtime `start-worldserver.sh` had stale WPP path (`out/` subdir)
 - EXIT trap for bnetserver, `$WPP` full path, `cd` error guards, `set -o pipefail`, streaming packet extraction
 - Commit: `8584c3c2e0` + tc-packet-tools `821e74f`
 
-### Session 45 — DB Report Update
+### Session 45 â€” DB Report Update
 - **Hotfix audit tools committed**: `hotfix_differ_r3.py`, `gen_practical_sql_r3.py`, `build_table_info_r3.py`, `merge_results.py` + README.md + .gitignore
-- **Gist created**: `528e801b53f6c62ce2e5c2ffe7e63e29` — comprehensive database report (Parts 1-16)
+- **Gist created**: `528e801b53f6c62ce2e5c2ffe7e63e29` â€” comprehensive database report (Parts 1-16)
 - Commit: `9ae9d40788`
 
-### Session 44 — Tools Consolidation
-- Moved `C:\Users\atayl\OneDrive\Desktop\Excluded\` → `C:\Tools\`
+### Session 44 â€” Tools Consolidation
+- Moved `C:\Users\atayl\OneDrive\Desktop\Excluded\` â†’ `C:\Tools\`
 - Fixed WPP path in 13 files across 4 repos
 - Added 7 missing tools to inventory
 - Pushed: wago-tooling `b56bfb0`, tc-packet-tools `d956a5a`, trinitycore-claude-skills `25967f7`
 
-### Session 43 — CTD Fix + SmartAI Cleanup
-- **Missing CTD rows**: 26,745 creatures missing DifficultyID=0 → 0 remaining
-  - Step 1a: 24,070 Diff2→Diff0 copies
+### Session 43 â€” CTD Fix + SmartAI Cleanup
+- **Missing CTD rows**: 26,745 creatures missing DifficultyID=0 â†’ 0 remaining
+  - Step 1a: 24,070 Diff2â†’Diff0 copies
   - Step 1b: 68 from other difficulties
   - Step 2: 2,607 default Diff0 rows
-- **SmartAI orphans**: 5,894 creatures with AIName='SmartAI' but no scripts → cleared
+- **SmartAI orphans**: 5,894 creatures with AIName='SmartAI' but no scripts â†’ cleared
   - +181 GUID-based script creatures restored (missed by entry-only check)
 - **AIName fixes**: 3 data errors ('0', 'CombaAI' typo)
-- **ContentTuning enrichment**: 4,820 spawned CT=0 creatures → zone/neighbor lookup
+- **ContentTuning enrichment**: 4,820 spawned CT=0 creatures â†’ zone/neighbor lookup
 - Commit: `f0782d5030`, `9536a248b6`
 
 ## Mar 4, 2026
 
-### Sessions 37-38 — Phased Cleanup
+### Sessions 37-38 â€” Phased Cleanup
 - 3 SQL fixes, 11 Stormwind CTD rows
 - Hotfix R2 cleanup: 204K redundant rows removed
 - Companion hotfix_data cleanup: 174,799 orphaned entries
 - `.gitignore` updates
 - Commit: `22d3f83d57`
 
-### Sessions 35-36 — Hotfix R3 Audit + Transmog Diagnostics
+### Sessions 35-36 â€” Hotfix R3 Audit + Transmog Diagnostics
 - **R3 type-aware audit**: 109 tables, 768K redundant rows removed
   - Float32 IEEE 754 bit-level comparison
   - Signed/unsigned int32 pattern matching
@@ -76,64 +116,64 @@ Chronological log of all database, code, and infrastructure changes. Each entry 
 - **Transmog diagnostic build**: secondary shoulder fix, deleted set skip, caller tracing
 - Commit: `c1e9a53c84`
 
-### Session 34 — Auth Key Update
+### Session 34 â€” Auth Key Update
 - Reverted auth bypass at WorldSocket.cpp
 - Applied TC build 66220 auth keys (7 keys)
 - Commit: `8bbd610fc7`
 
-### Session 33 — Creature DB2 Orphans
+### Session 33 â€” Creature DB2 Orphans
 - 137 orphaned hotfix_data entries for Creature DB2 (hash 0xC9D6B6B3) removed
 - Commit: `319c2781cb`
 
-### Session 32 — Repo Cleanup
-- docs → `doc/`, tools → `tools/`, batch scripts → `tools/build/`
+### Session 32 â€” Repo Cleanup
+- docs â†’ `doc/`, tools â†’ `tools/`, batch scripts â†’ `tools/build/`
 - Deleted 1.4 GB hotfix_audit output + junk from repo root
 - Commit: `a7cf01b4ba`
 
-### Session 31 — Transmog Client Wiki
+### Session 31 â€” Transmog Client Wiki
 - 3,487-line reference wiki + 119-line cheatsheet from 15 Blizzard Lua/XML source files
 - Commit: `ad8f9eaa9f`
 
 ## Mar 3, 2026
 
-### Sessions 13-30 — Major Data Pipeline Day
+### Sessions 13-30 â€” Major Data Pipeline Day
 - **Wowhead mega-audit**: 216,284 NPCs scraped, 54,571 operations across 3 tiers
 - **Raidbots/Wago pipeline**: 1.6M item locale entries, 21K quest chains, 135K quest POI
 - **LW import #2**: 665,658 net new rows across 21 tables (5-phase dependency ordering)
 - **Post-import cleanup**: 47,478 rows cleaned, 627K error lines resolved
 - **Hotfix repair build 66220**: 388 tables, 103K inserts, 1.8K column fixes
-- **MySQL tuning**: tmp_table_size 1KB→256MB, buffer pool 16GB, warm restarts
+- **MySQL tuning**: tmp_table_size 1KBâ†’256MB, buffer pool 16GB, warm restarts
 - **Build diff audit**: 5 builds diffed, Wago oscillation detected, zero breaking changes
 - **Hotfix pipeline crash fix**: 6 bugs across 3 C++ files (chunked delivery, ByteBuffer assert)
 - **Transmog 4-bug fix**: Commit `272c373105`
 
 ## Mar 1, 2026
 
-### Sessions 11-12 — Transmog Confirmed Working
+### Sessions 11-12 â€” Transmog Confirmed Working
 - 14/14 manual clicks, 13/14 outfit loading (secondary shoulder gap)
 - PR cleanup and cross-repo PR #760 on KamiliaBlow/RoleplayCore
 
 ## Feb 28, 2026
 
-### Sessions 8-10 — Quest/GO Audits + TransmogBridge
+### Sessions 8-10 â€” Quest/GO Audits + TransmogBridge
 - GO/quest audit tools + 2,279 DB fixes
 - TransmogBridge addon implementation (3-layer hybrid merge)
 - Creature/GO placement audits vs LoreWalkerTDB
 
 ## Feb 27, 2026
 
-### Sessions 2-7 — Foundation
+### Sessions 2-7 â€” Foundation
 - 5-database audit: 148 checks, 412K dead rows removed
 - LW import #1: 385,823 rows across 17 tables
 - NPC audit tool (27 checks), 3-batch NPC fixes (23,904 operations)
 - Placement audit tools built
 - Loot table PK discovery + deduplication (193K pre-existing dupes + 3M import dupes)
 - Backup table cleanup: 101 tables dropped, 382 MB reclaimed
-- MyISAM→InnoDB migration (7 tables)
+- MyISAMâ†’InnoDB migration (7 tables)
 
 ## Feb 26, 2026
 
-### Session 1 — Initial Setup
+### Session 1 â€” Initial Setup
 - Companion AI fix
 - Transmog wireDT fix
 - Initial hotfix repair v1
@@ -154,10 +194,10 @@ Chronological log of all database, code, and infrastructure changes. Each entry 
 
 | Repo | Latest Commit | Purpose |
 |------|--------------|---------|
-| VoxCore84/RoleplayCore | `21fa23b0d1` | Main server |
+| VoxCore84/RoleplayCore | `fae00afb86` | Main server |
 | VoxCore84/wago-tooling | `b56bfb0` | Wago/LW/hotfix tools |
 | VoxCore84/tc-packet-tools | `821e74f` | WPP + packet analysis |
-| VoxCore84/code-intel | — | C++ MCP server |
+| VoxCore84/code-intel | â€” | C++ MCP server |
 | VoxCore84/trinitycore-claude-skills | `25967f7` | Claude Code skills |
 
 *Updated March 5, 2026*
