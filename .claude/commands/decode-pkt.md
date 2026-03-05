@@ -16,9 +16,9 @@ Decode a `.pkt` packet capture file using WowPacketParser (WPP).
 
 ### Setup
 
-- **WPP executable**: `C:/Tools/WowPacketParser/out/WowPacketParser.exe`
+- **WPP executable**: `C:/Tools/WowPacketParser/WowPacketParser.exe`
 - **Default .pkt location**: `C:/Dev/RoleplayCore/out/build/x64-RelWithDebInfo/bin/RelWithDebInfo/PacketLog/World.pkt`
-- **Config**: `C:/Tools/WowPacketParser/out/WowPacketParser.dll.config` (TargetedDatabase=10 Midnight, all SQL outputs enabled, SplitSQLFile=true)
+- **Config**: `C:/Tools/WowPacketParser/WowPacketParser.dll.config` (TargetedDatabase=10 Midnight, all SQL outputs enabled, SplitSQLFile=true)
 
 ### Procedure
 
@@ -28,7 +28,7 @@ Decode a `.pkt` packet capture file using WowPacketParser (WPP).
 4. **Remove stale output files**: Delete any existing `*_parsed.txt`, `*_errors.txt`, and `*.sql` files in the same directory as the input .pkt to avoid "file in use" errors
 5. **Run WPP**:
    ```
-   cd "C:/Tools/WowPacketParser/out" && ./WowPacketParser.exe "<path_to_pkt>" 2>&1
+   cd "C:/Tools/WowPacketParser" && ./WowPacketParser.exe "<path_to_pkt>" 2>&1
    ```
    Use a 5-minute timeout (300000ms) — large sniffs take time
 6. **List output files**: Show all generated files with sizes:
@@ -42,5 +42,5 @@ Decode a `.pkt` packet capture file using WowPacketParser (WPP).
 - **"being used by another process"** on input: Worldserver is running. Stop it or copy .pkt first
 - **"Save file ... is in use"** on output: A text editor has the output file open. Close it or delete the file
 - **NullReferenceException in LoadBroadcastText**: The `wpp` database may be missing — non-fatal, parsing still works
-- **"DBC folder not found"**: DBC/DB2 files not extracted to `C:/Tools/WowPacketParser/out/dbc/enUS/` — non-fatal, just means no DBC name resolution
+- **"DBC folder not found"**: DBC/DB2 files not extracted to `C:/Tools/WowPacketParser/dbc/enUS/` — non-fatal, just means no DBC name resolution
 - **Empty output**: The sniff may have been captured while idle — need actual gameplay packets

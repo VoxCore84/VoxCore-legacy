@@ -29,6 +29,12 @@ src/server/scripts/Custom/custom_commandscrip.cpp
 .clangd
 .opcode_cache.json
 sql/dumps/
+sql/exports/locale/
+sql/exports/lw_imports/
+sql/exports/existing_smartai_entries.txt
+sql/exports/missing_smartai_entries.txt
 __pycache__/
 .cache/
 hotfix_audit/
+tools/build/
+Claude Code Prompts.txt
