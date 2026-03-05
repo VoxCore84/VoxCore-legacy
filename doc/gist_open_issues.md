@@ -142,6 +142,8 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 ---
 
 ## Recently Completed
+- ~~Transmog 5-Agent Audit Phases 1–4 (session 63)~~: All 26 action items implemented — 4 server bugs, 4 Bridge cleanup, TransmogSpy v2, Phase 4 hardening, EffectEquipTransmogOutfit fix. Awaiting in-game testing
+- ~~Transmog Bugs A–E (sessions 36–63)~~: All 5 original bugs fixed + 3 medium bugs. Awaiting in-game testing
 - ~~Wowhead Gap Scrape (session 58)~~: 5,653 pages scraped, 592+683 quest starters/enders, 202+208 GO starters/enders, 8,799 vendor items applied
 - ~~ATT Data Import~~: 4,630 quest starters, 3,081 chains, 1,510 vendor items applied
 - ~~Missing Spawns Critical~~: 1,541 quest NPC spawns + 207 phase-aware re-inserts applied
@@ -167,5 +169,5 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 
 ---
 
-*Updated March 5, 2026 (session 60)*
+*Updated March 5, 2026 (session 63)*
 
