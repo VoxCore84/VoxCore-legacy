@@ -112,7 +112,7 @@ def generate_cleanup_sql(results):
     lines = []
     lines.append("-- HOTFIX REDUNDANCY CLEANUP")
     lines.append(f"-- Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    lines.append("-- BEFORE RUNNING: python C:/Users/atayl/source/wago/db_snapshot.py snapshot hotfixes")
+    lines.append("-- BEFORE RUNNING: python C:/Users/atayl/VoxCore/wago/db_snapshot.py snapshot hotfixes")
     lines.append("--")
     lines.append("SET autocommit=0;")
     lines.append("START TRANSACTION;")

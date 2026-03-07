@@ -6,9 +6,9 @@ description: Look up SoundKit IDs from Wago DB2 CSV to validate they exist
 ## Context
 
 The user wants to look up or validate WoW SoundKit IDs. The source is the Wago DB2 export:
-- In Python, first: `import sys, os; sys.path.insert(0, os.path.expanduser('~/source/wago')); from wago_common import WAGO_CSV_DIR`
+- In Python, first: `import sys, os; sys.path.insert(0, os.path.expanduser('~/VoxCore/wago')); from wago_common import WAGO_CSV_DIR`
 - Then use: `str(WAGO_CSV_DIR / 'SoundKit-enUS.csv')`
-- For bash/grep: use `$(python3 -c "import sys; sys.path.insert(0,'C:/Users/atayl/source/wago'); from wago_common import WAGO_CSV_DIR; print(WAGO_CSV_DIR / 'SoundKit-enUS.csv')")`
+- For bash/grep: use `$(python3 -c "import sys; sys.path.insert(0,'C:/Users/atayl/VoxCore/wago'); from wago_common import WAGO_CSV_DIR; print(WAGO_CSV_DIR / 'SoundKit-enUS.csv')")`
 - Columns: `ID`, `SoundType`, `VolumeFloat`, `Flags`, `MinDistance`, `DistanceCutoff`, `EAXDef`, `SoundKitAdvancedID`, `DialogType`, ...
 - ~315k rows. No human-readable name column — SoundKit names are internal Blizzard filenames not in the DB2.
 

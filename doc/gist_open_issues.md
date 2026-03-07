@@ -9,7 +9,7 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 ### VoxCore Website â€” "Arcane Codex" Asset Pipeline (NEW)
 - **Phase 0**: Extract WoW visuals via wow-export for website
   - 83 assets curated: 30 dungeon journal art, 21 boss portraits, 32 creature models (SL/DF/TWW/Midnight)
-  - wow-export auto-configured (WebP, GLB, no bloat). Scripts at `C:\Tools\website-assets\`
+  - wow-export auto-configured (WebP, GLB, no bloat). Scripts at `~/VoxCore/ExtTools/website-assets\`
   - Priority: Enchanted Tome (mascot), Xal'atath, Alleria, Khadgar, Midnight raid journal art
 - **Phases 1â€“5**: Arcane visual refresh, animated pipeline, tool explorer, before/after slider, interactive timeline
 

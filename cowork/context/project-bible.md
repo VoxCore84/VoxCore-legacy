@@ -8,15 +8,15 @@ TrinityCore-based WoW private server targeting the 12.x/Midnight retail client, 
 
 | Location | What |
 |---|---|
-| `C:\Dev\RoleplayCore\` | Main repo (git, branch: master) |
-| `C:\Dev\RoleplayCore\src\server\game\` | Core game C++ source |
-| `C:\Dev\RoleplayCore\src\server\scripts\Custom\` | ALL custom script systems |
-| `C:\Dev\RoleplayCore\sql\updates\` | Incremental SQL patches (by DB name) |
-| `C:\Dev\RoleplayCore\doc\` | Project documentation (wikis, specs, gist mirrors) |
-| `C:\Dev\RoleplayCore\cowork\` | This Cowork workspace |
-| `C:\Users\atayl\.claude\projects\C--Dev-RoleplayCore\memory\` | Claude Code memory files (15+ topic files) |
-| `C:\Users\atayl\source\wago\` | 50+ Python data pipeline tools, scrapers, audits |
-| `C:\Tools\` | Third-party tools (WPP, WTL, TACTSharp, DBC2CSV, ATT, wow-export, etc.) |
+| `C:\Users\atayl\VoxCore\` | Main repo (git, branch: master) |
+| `C:\Users\atayl\VoxCore\src\server\game\` | Core game C++ source |
+| `C:\Users\atayl\VoxCore\src\server\scripts\Custom\` | ALL custom script systems |
+| `C:\Users\atayl\VoxCore\sql\updates\` | Incremental SQL patches (by DB name) |
+| `C:\Users\atayl\VoxCore\doc\` | Project documentation (wikis, specs, gist mirrors) |
+| `C:\Users\atayl\VoxCore\cowork\` | This Cowork workspace |
+| `C:\Users\atayl\.claude\projects\C--Users-atayl-VoxCore\memory\` | Claude Code memory files (15+ topic files) |
+| `C:\Users\atayl\VoxCore\wago\` | 50+ Python data pipeline tools, scrapers, audits |
+| `C:\Users\atayl\VoxCore\ExtTools\` | Third-party tools (WPP, WTL, TACTSharp, DBC2CSV, ATT, wow-export, etc.) |
 | `C:\WoW\_retail_\` | 12.x WoW client (build 66263) |
 
 ## Build Environment
@@ -81,7 +81,7 @@ Claude Code has access to these tools that Cowork does NOT have:
 
 **If a task needs any of the above, flag it as "hand off to Claude Code" in your output.**
 
-## Python Tooling Highlights (at C:\Users\atayl\source\wago\)
+## Python Tooling Highlights (at C:\Users\atayl\VoxCore\wago\)
 - `npc_audit.py` — 27-audit NPC tool (levels, flags, faction, type, duplicates, phases)
 - `go_audit.py` — 15-audit GameObject tool
 - `quest_audit.py` — 15-audit Quest tool
@@ -104,7 +104,7 @@ Claude Code has access to these tools that Cowork does NOT have:
 | `CLAUDE.md` | ~120 | Project guide (copied to cowork/context/) |
 
 ## Memory Files (Claude Code persistent memory)
-Located at `C:\Users\atayl\.claude\projects\C--Dev-RoleplayCore\memory\`:
+Located at `C:\Users\atayl\.claude\projects\C--Users-atayl-VoxCore\memory\`:
 
 | File | What |
 |---|---|

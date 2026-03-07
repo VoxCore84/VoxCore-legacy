@@ -20,9 +20,9 @@ import time
 from collections import defaultdict
 
 MYSQL = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
-ROLES_CSV = r"C:\Users\atayl\source\wago\wowhead_data\npc\npc_roles.csv"
-CC_CSV = r"C:\Users\atayl\source\wago\wowhead_data\npc\npc_completion_category.csv"
-SQL_OUT = r"C:\Dev\RoleplayCore\sql\exports\cleanup\npc_flag_fixes.sql"
+ROLES_CSV = r"C:\Users\atayl\VoxCore\wago\wowhead_data\npc\npc_roles.csv"
+CC_CSV = r"C:\Users\atayl\VoxCore\wago\wowhead_data\npc\npc_completion_category.csv"
+SQL_OUT = r"C:\Users\atayl\VoxCore\sql\exports\cleanup\npc_flag_fixes.sql"
 
 # Role -> npcflag bit mapping
 ROLE_FLAG_MAP = {

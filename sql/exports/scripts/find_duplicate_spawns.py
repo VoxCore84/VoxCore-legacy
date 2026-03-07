@@ -65,7 +65,7 @@ def chunk_list(lst, size=500):
         yield lst[i:i+size]
 
 def main():
-    output_file = r"C:\Dev\RoleplayCore\sql\exports\cleanup_duplicate_spawns.sql"
+    output_file = r"C:\Users\atayl\VoxCore\sql\exports\cleanup_duplicate_spawns.sql"
 
     # ── Export gameobject data ──
     print("Exporting gameobject spawns...")

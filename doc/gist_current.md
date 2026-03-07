@@ -862,7 +862,7 @@ LW import places old-framework quest boards (entries 206294/206116) at exact coo
 
 | Tool | Location | Purpose |
 |------|----------|---------|
-| `repair_hotfix_tables.py` | `C:/Users/atayl/source/wago/` | 5-batch hotfix DB repair against Wago DB2 baselines |
+| `repair_hotfix_tables.py` | `~/VoxCore/wago/` | 5-batch hotfix DB repair against Wago DB2 baselines |
 | `repair_scene_scripts.py` | same | Scene script hex-encoded Lua repair |
 | `wago_db2_downloader.py` | same | Download 1,097 DB2 CSVs from Wago.tools |
 | `diff_builds.py` | same | Row-by-row CSV diffing with oscillation detection |
@@ -871,12 +871,12 @@ LW import places old-framework quest boards (entries 206294/206116) at exact coo
 | `validate_import.py` | same | 15-check post-import integrity validator |
 | `fix_column_mismatch.py` | same | Fix column count differences between TC forks |
 | `run_all_imports.py` | `raidbots/` | Master 8-step Raidbots/Wago orchestrator with --dry-run and --regenerate |
-| `db_snapshot.py` | `C:/Users/atayl/source/wago/` | MySQL backup/rollback (snapshot/check/list/rollback/prune) |
+| `db_snapshot.py` | `~/VoxCore/wago/` | MySQL backup/rollback (snapshot/check/list/rollback/prune) |
 | `import_item_names.py` | `raidbots/` | Raidbots → 10-locale item name import |
 | `quest_chain_gen.py` | `raidbots/` | Wago QuestLineXQuest → quest chain generation with DFS cycle detection |
 | `gen_quest_poi_sql.py` | `raidbots/` | Wago → quest POI import |
 | `quest_objectives_import.py` | `raidbots/` | Wago → quest objective import |
-| `extract_lw_world.py` | `C:/Users/atayl/source/wago/` | Parse 897MB LW dump into per-table SQL |
+| `extract_lw_world.py` | `~/VoxCore/wago/` | Parse 897MB LW dump into per-table SQL |
 | `validate_transmog.py` | same | Transmog data integrity check (155K appearances, 4.8K sets) |
 | `transmog_lookup.py` | same | Transmog DB2 cross-reference (IMAID → item name, display) |
 | `transmog_debug.py` | same | Transmog state debugger |
@@ -893,8 +893,8 @@ LW import places old-framework quest boards (entries 206294/206116) at exact coo
 | `gen_practical_sql_r3.py` | same | Cleanup SQL generator — TRUNCATE + batched DELETEs |
 | `build_table_info_r3.py` | same | Column mapping builder — array index, coordinate, rename resolution |
 | `merge_results.py` | same | Result aggregator and report generator |
-| DBC2CSV | `C:\Tools\DBC2CSV\` | Converts WTL DB2 binaries to CSV |
-| wow.tools.local (WTL) | `C:\Tools\WoW.tools\` | Local CASC browser — extracts DB2 baselines from game files |
+| DBC2CSV | `~/VoxCore/ExtTools/DBC2CSV\` | Converts WTL DB2 binaries to CSV |
+| wow.tools.local (WTL) | `~/VoxCore/ExtTools/WoW.tools\` | Local CASC browser — extracts DB2 baselines from game files |
 
 </details>
 
@@ -964,7 +964,7 @@ Specialized agents defined in `.claude/agents/`:
 | `opcode_analyzer.py` | TC opcode parser, cross-ref with WPP captures |
 | `start-worldserver.sh` | Session lifecycle with auto-archiving and WPP |
 | `wpp-add-build.sh` / `wpp-inspect.sh` | WowPacketParser utilities |
-| WowPacketParser (WPP) | `C:\Tools\WowPacketParser\` — retail packet parser |
+| WowPacketParser (WPP) | `~/VoxCore/ExtTools/WowPacketParser\` — retail packet parser |
 
 </details>
 

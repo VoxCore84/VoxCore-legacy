@@ -4,8 +4,8 @@
     "allow": [
       "Bash(*)",
       "Read(*)",
-      "Edit(C:/Dev/RoleplayCore/**)",
-      "Write(C:/Dev/RoleplayCore/**)",
+      "Edit(C:/Users/atayl/VoxCore/**)",
+      "Write(C:/Users/atayl/VoxCore/**)",
       "Glob(*)",
       "Grep(*)",
       "Agent(*)",

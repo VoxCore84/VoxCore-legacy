@@ -286,7 +286,7 @@ Chronological log of all database, code, and infrastructure changes. Each entry 
 - Commit: `9ae9d40788`
 
 ### Session 44 â€” Tools Consolidation
-- Moved `C:\Users\atayl\OneDrive\Desktop\Excluded\` â†’ `C:\Tools\`
+- Moved `C:\Users\atayl\OneDrive\Desktop\Excluded\` â†’ `~/VoxCore/ExtTools/`
 - Fixed WPP path in 13 files across 4 repos
 - Added 7 missing tools to inventory
 - Pushed: wago-tooling `b56bfb0`, tc-packet-tools `d956a5a`, trinitycore-claude-skills `25967f7`

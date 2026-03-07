@@ -22,7 +22,7 @@ import time
 import pymysql
 
 
-CSV_DIR = "C:/Tools/WoW.tools/dbcs/12.0.1.66220/dbfilesclient"
+CSV_DIR = "C:/Users/atayl/VoxCore/ExtTools/WoW.tools/dbcs/12.0.1.66220/dbfilesclient"
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results_r3")
 
 INT_TYPES = {"int", "smallint", "tinyint", "bigint", "mediumint"}

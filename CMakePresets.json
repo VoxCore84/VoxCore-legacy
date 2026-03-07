@@ -13,7 +13,11 @@
                 "SCRIPTS": "static",
                 "ELUNA": "ON",
                 "TOOLS": "OFF",
-                "SERVERS": "ON"
+                "SERVERS": "ON",
+                "OPENSSL_CRYPTO_LIBRARY": "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD/libcrypto.lib",
+                "OPENSSL_SSL_LIBRARY": "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD/libssl.lib",
+                "LIB_EAY_RELEASE": "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD/libcrypto.lib",
+                "SSL_EAY_RELEASE": "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD/libssl.lib"
             }
         },
         {
@@ -28,7 +32,11 @@
                 "SCRIPTS": "static",
                 "ELUNA": "ON",
                 "TOOLS": "OFF",
-                "SERVERS": "ON"
+                "SERVERS": "ON",
+                "OPENSSL_CRYPTO_LIBRARY": "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD/libcrypto.lib",
+                "OPENSSL_SSL_LIBRARY": "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD/libssl.lib",
+                "LIB_EAY_RELEASE": "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD/libcrypto.lib",
+                "SSL_EAY_RELEASE": "C:/Program Files/OpenSSL-Win64/lib/VC/x64/MD/libssl.lib"
             }
         }
     ],

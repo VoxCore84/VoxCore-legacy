@@ -90,7 +90,7 @@
 - Could be invoked by future server-side transmog operations. LOW priority cleanup
 
 ### DB2Query Tool Enhancements
-- DB2Query at `C:\Tools\DB2Query\` — working CLI, used for DBCD audit
+- DB2Query at `C:\Users\atayl\VoxCore\ExtTools\DB2Query\` — working CLI, used for DBCD audit
 - Could add: batch ID lookup from file, direct SQL INSERT generation, hotfix_data auto-registration
 - Potential: periodic re-audit when Wago updates (fills TWW-era broadcast_text gaps)
 
@@ -133,7 +133,7 @@
 - 17 NPCs with zero npc_vendor entries, 337 items ready
 - Blocked: scrape doesn't include ExtendedCost data (items would be free without it)
 - Need: cross-ref NpcVendor DB2 or ItemExtendedCost DB2 for currency costs
-- Data: `C:/Users/atayl/source/wago/midnight_data/midnight_vendor_items.json`
+- Data: `C:/Users/atayl/VoxCore/wago/midnight_data/midnight_vendor_items.json`
 
 ## DEFERRED / BLOCKED
 

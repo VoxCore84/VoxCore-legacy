@@ -3,7 +3,7 @@
 Cross-reference Wowhead NPC names against world.creature_template to find mismatches.
 
 Reads:
-  - Wowhead CSV: C:/Users/atayl/source/wago/wowhead_data/npc/npc_export.csv
+  - Wowhead CSV: C:/Users/atayl/VoxCore/wago/wowhead_data/npc/npc_export.csv
   - MySQL: world.creature_template (entry, name) WHERE entry < 500000
 
 Outputs a report of name mismatches, excluding trivial whitespace/encoding differences.
@@ -18,7 +18,7 @@ from collections import Counter
 
 # ── 1. Load Wowhead CSV ─────────────────────────────────────────────────────
 
-CSV_PATH = "C:/Users/atayl/source/wago/wowhead_data/npc/npc_export.csv"
+CSV_PATH = "C:/Users/atayl/VoxCore/wago/wowhead_data/npc/npc_export.csv"
 
 print("Loading Wowhead CSV...")
 wowhead = {}
@@ -244,7 +244,7 @@ print(f"\nTotal substantive mismatches: {len(substantive_list):,}")
 
 # ── 8. Generate SQL fix for substantive mismatches ──────────────────────────
 
-SQL_OUT = "C:/Dev/RoleplayCore/sql/exports/scripts/npc_name_fixes.sql"
+SQL_OUT = "C:/Users/atayl/VoxCore/sql/exports/scripts/npc_name_fixes.sql"
 
 print(f"\nWriting SQL fixes to: {SQL_OUT}")
 with open(SQL_OUT, "w", encoding="utf-8") as f:

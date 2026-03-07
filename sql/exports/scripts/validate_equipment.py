@@ -19,7 +19,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-sys.path.insert(0, os.path.expanduser("~/source/wago"))
+sys.path.insert(0, os.path.expanduser("~/VoxCore/wago"))
 from wago_common import WAGO_CSV_DIR
 
 # --- Configuration ---
@@ -29,8 +29,8 @@ MYSQL_PASS = "admin"
 
 ITEMSPARSE_CSV = WAGO_CSV_DIR / "ItemSparse-enUS.csv"
 
-REPORT_PATH = Path(r"C:/Dev/RoleplayCore/sql/exports/cleanup/equipment_validation_report.txt")
-SQL_PATH = Path(r"C:/Dev/RoleplayCore/sql/exports/cleanup/npc_equipment_fixes.sql")
+REPORT_PATH = Path(r"C:/Users/atayl/VoxCore/sql/exports/cleanup/equipment_validation_report.txt")
+SQL_PATH = Path(r"C:/Users/atayl/VoxCore/sql/exports/cleanup/npc_equipment_fixes.sql")
 
 # InventoryType enum (relevant subset)
 INV_TYPE = {

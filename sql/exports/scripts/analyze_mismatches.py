@@ -9,7 +9,7 @@ import re
 from collections import Counter
 
 # Load the mismatch data by re-reading the SQL file
-SQL_PATH = "C:/Dev/RoleplayCore/sql/exports/scripts/npc_name_fixes.sql"
+SQL_PATH = "C:/Users/atayl/VoxCore/sql/exports/scripts/npc_name_fixes.sql"
 
 mismatches = []
 try:

@@ -10,8 +10,8 @@ TrinityCore-based WoW private server targeting the **12.x / Midnight** client, s
 | `x64-Debug` | `out/build/x64-Debug/` | Compilation, debugging |
 | **`x64-RelWithDebInfo`** | `out/build/x64-RelWithDebInfo/` | **Primary runtime** (17s startup vs 60s Debug) |
 
-- **Build**: `cd /c/Dev/RoleplayCore/out/build/x64-Debug && ninja -j16 2>&1`
-- **Scripts only**: `cd /c/Dev/RoleplayCore/out/build/x64-Debug && ninja -j16 scripts 2>&1`
+- **Build**: `cd /c/Users/atayl/VoxCore/out/build/x64-Debug && ninja -j16 2>&1`
+- **Scripts only**: `cd /c/Users/atayl/VoxCore/out/build/x64-Debug && ninja -j16 scripts 2>&1`
 - **CMake reconfigure**: `cmake -B out/build/x64-Debug -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`
 - **Key CMake options**: `SCRIPTS=static`, `ELUNA=ON`, `TOOLS=ON`
 - **Compiler**: MSVC (VS 2022), Generator: Ninja, C++20
@@ -112,7 +112,7 @@ sql/
 - **MCP servers**: `wago-db2` (DB2 CSV queries), `mysql` (direct DB access), `codeintel` (C++ symbol lookup)
 - **LSP plugins**: `clangd-lsp` (C++), `lua-lsp` (Lua), `github` (PRs/issues)
 - **17 slash commands**: `/build-loop`, `/check-logs`, `/parse-errors`, `/apply-sql`, `/soap`, `/lookup-spell`, `/lookup-item`, `/lookup-creature`, `/lookup-area`, `/lookup-faction`, `/lookup-emote`, `/lookup-sound`, `/decode-pkt`, `/parse-packet`, `/new-script`, `/new-sql-update`, `/smartai-check`
-- **External repos**: wago tooling (`C:/Users/atayl/source/wago/`), tc-packet-tools, code-intel, trinitycore-claude-skills
+- **External repos**: wago tooling (`C:/Users/atayl/VoxCore/wago/`), tc-packet-tools, code-intel, trinitycore-claude-skills
 - **GitHub**: `VoxCore84/RoleplayCore` (private), `gh` CLI authenticated
 - Full inventory: auto-memory `tooling-inventory.md`
 

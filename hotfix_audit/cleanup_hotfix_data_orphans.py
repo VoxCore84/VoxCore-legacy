@@ -14,7 +14,7 @@ import os
 import argparse
 from datetime import datetime
 
-sys.path.insert(0, "C:/Users/atayl/source/wago")
+sys.path.insert(0, "C:/Users/atayl/VoxCore/wago")
 from table_hashes import TABLE_HASHES
 
 try:

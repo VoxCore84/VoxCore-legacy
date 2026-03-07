@@ -10,8 +10,8 @@ TrinityCore-based WoW private server targeting the **12.x / Midnight** client, s
 | `x64-Debug` | `out/build/x64-Debug/` | Compilation, debugging |
 | **`x64-RelWithDebInfo`** | `out/build/x64-RelWithDebInfo/` | **Primary runtime** (17s startup vs 60s Debug) |
 
-- **Build**: `cd /c/Dev/RoleplayCore/out/build/x64-Debug && ninja -j16 2>&1`
-- **Scripts only**: `cd /c/Dev/RoleplayCore/out/build/x64-Debug && ninja -j16 scripts 2>&1`
+- **Build**: `cd ~/VoxCore/out/build/x64-Debug && ninja -j20 2>&1`
+- **Scripts only**: `cd ~/VoxCore/out/build/x64-Debug && ninja -j20 scripts 2>&1`
 - **CMake reconfigure**: `cmake -B out/build/x64-Debug -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`
 - **Key CMake options**: `SCRIPTS=static`, `ELUNA=ON`, `TOOLS=ON`
 - **Compiler**: MSVC (VS 2026), Generator: Ninja, C++20
@@ -85,7 +85,7 @@ sql/
 2. Define `void AddSC_<name>()` at the bottom
 3. Add the declaration + call in `custom_script_loader.cpp`
 4. If it needs new RBAC perms, add to `RBAC.h` and `sql/RoleplayCore/1. auth db.sql`
-5. Build with `ninja -j16 scripts`
+5. Build with `ninja -j20 scripts`
 
 ## Key Files
 
@@ -112,7 +112,8 @@ sql/
 - **MCP servers**: `wago-db2` (DB2 CSV queries), `mysql` (direct DB access), `codeintel` (C++ symbol lookup)
 - **LSP plugins**: `clangd-lsp` (C++), `lua-lsp` (Lua), `github` (PRs/issues)
 - **17 slash commands**: `/build-loop`, `/check-logs`, `/parse-errors`, `/apply-sql`, `/soap`, `/lookup-spell`, `/lookup-item`, `/lookup-creature`, `/lookup-area`, `/lookup-faction`, `/lookup-emote`, `/lookup-sound`, `/decode-pkt`, `/parse-packet`, `/new-script`, `/new-sql-update`, `/smartai-check`
-- **External repos**: wago tooling (`C:/Users/atayl/source/wago/`), tc-packet-tools, code-intel, trinitycore-claude-skills
+- **External repos**: wago tooling (`wago/`), tc-packet-tools (`tools-dev/tc-packet-tools/`), code-intel (`tools-dev/code-intel/`), claude-skills (`tools-dev/claude-skills/`)
+- **External tools**: `ExtTools/` (WowPacketParser, wow.tools.local, DBC2CSV, Arctium, etc. — was C:\Tools)
 - **GitHub**: `VoxCore84/RoleplayCore` (private), `gh` CLI authenticated
 - Full inventory: auto-memory `tooling-inventory.md`
 

@@ -4,7 +4,7 @@ Cross-reference Wowhead NPC zone data against actual spawn locations in the data
 to find NPCs spawned in the wrong zone.
 
 Data sources:
-  - Wowhead spawn summary: C:/Users/atayl/source/wago/wowhead_data/npc/npc_spawn_summary.csv
+  - Wowhead spawn summary: C:/Users/atayl/VoxCore/wago/wowhead_data/npc/npc_spawn_summary.csv
   - MySQL world.creature table (zoneId, areaId columns)
   - AreaTable DB2 CSV for zone name resolution + hierarchy
   - creature_template for NPC names and flags
@@ -22,7 +22,7 @@ from datetime import datetime
 
 import pymysql
 
-sys.path.insert(0, os.path.expanduser("~/source/wago"))
+sys.path.insert(0, os.path.expanduser("~/VoxCore/wago"))
 from wago_common import WAGO_CSV_DIR
 
 # ── Configuration ────────────────────────────────────────────────────────────
@@ -31,11 +31,11 @@ MYSQL_USER = "root"
 MYSQL_PASS = "admin"
 MYSQL_DB = "world"
 
-WOWHEAD_CSV = r"C:\Users\atayl\source\wago\wowhead_data\npc\npc_spawn_summary.csv"
+WOWHEAD_CSV = r"C:\Users\atayl\VoxCore\wago\wowhead_data\npc\npc_spawn_summary.csv"
 AREA_TABLE_CSV = WAGO_CSV_DIR / "AreaTable-enUS.csv"
 
-REPORT_PATH = r"C:\Dev\RoleplayCore\sql\exports\cleanup\zone_mismatch_report.txt"
-SQL_PATH = r"C:\Dev\RoleplayCore\sql\exports\cleanup\npc_zone_fixes.sql"
+REPORT_PATH = r"C:\Users\atayl\VoxCore\sql\exports\cleanup\zone_mismatch_report.txt"
+SQL_PATH = r"C:\Users\atayl\VoxCore\sql\exports\cleanup\npc_zone_fixes.sql"
 
 # NPC flag constants for identifying high-value NPCs
 NPCFLAG_GOSSIP        = 0x0000001

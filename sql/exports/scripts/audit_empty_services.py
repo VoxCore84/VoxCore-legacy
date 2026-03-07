@@ -22,11 +22,11 @@ MYSQL_USER = "root"
 MYSQL_PASS = "admin"
 MYSQL_DB = "world"
 
-WOWHEAD_ROLES_CSV = r"C:/Users/atayl/source/wago/wowhead_data/npc/npc_roles.csv"
-WOWHEAD_SUBTITLES_CSV = r"C:/Users/atayl/source/wago/wowhead_data/npc/npc_subtitles.csv"
+WOWHEAD_ROLES_CSV = r"C:/Users/atayl/VoxCore/wago/wowhead_data/npc/npc_roles.csv"
+WOWHEAD_SUBTITLES_CSV = r"C:/Users/atayl/VoxCore/wago/wowhead_data/npc/npc_subtitles.csv"
 
-REPORT_PATH = r"C:/Dev/RoleplayCore/sql/exports/cleanup/empty_services_report.txt"
-SQL_FIX_PATH = r"C:/Dev/RoleplayCore/sql/exports/cleanup/npc_empty_service_fixes.sql"
+REPORT_PATH = r"C:/Users/atayl/VoxCore/sql/exports/cleanup/empty_services_report.txt"
+SQL_FIX_PATH = r"C:/Users/atayl/VoxCore/sql/exports/cleanup/npc_empty_service_fixes.sql"
 
 # npcflag bits
 VENDOR_FLAG = 128     # 0x80

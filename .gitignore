@@ -1,14 +1,29 @@
 
+# =============================================================================
+# VoxCore .gitignore
+# =============================================================================
+
+# -- Build output -------------------------------------------------------------
 build*/
+out/
+cmake-build-*/*
+tools/build/
+
+# -- IDE / editor -------------------------------------------------------------
+.vs
+.vscode
+.idea/*
+.browse.VC*
+nbproject/*
+CMakeLists.txt.user
+*.user
 .directory
-.mailmap
+.DS_Store
+*.kdev*
+
+# -- Merge / patch artifacts --------------------------------------------------
 *.orig
 *.rej
-*~
-.hg/
-*.kdev*
-.DS_Store
-CMakeLists.txt.user
 *.bak
 *.patch
 *.diff
@@ -16,24 +31,43 @@ CMakeLists.txt.user
 *.BACKUP.*
 *.BASE.*
 *.LOCAL.*
-nbproject/*
-.idea/*
-.browse.VC*
-.vscode
-cmake-build-*/*
-.vs
-*.user
-src/server/scripts/Custom/cs_custom.cpp
-src/server/scripts/Custom/custom_commandscrip.cpp
-.claude.json
-.clangd
+*~
+
+# -- External tools & data (own repos, large binaries) ------------------------
+ExtTools/
+wago/
+wago-pipeline/
+tools-dev/
+website/
+addons/
+archive/
+
+# -- In-tree addon dev branches (own repos) -----------------------------------
+TransmogBridge_vNext/
+TransmogSpy_vNext/
+
+# -- Caches & generated data --------------------------------------------------
+cache/
+.cache/
+__pycache__/
 .opcode_cache.json
+
+# -- SQL exports (generated, not source) --------------------------------------
 sql/dumps/
 sql/exports/locale/
 sql/exports/existing_smartai_entries.txt
 sql/exports/missing_smartai_entries.txt
-__pycache__/
-.cache/
-tools/build/
+
+# -- Legacy / one-off files ---------------------------------------------------
+src/server/scripts/Custom/cs_custom.cpp
+src/server/scripts/Custom/custom_commandscrip.cpp
 Claude Code Prompts.txt
 build_cli.bat
+
+# -- Claude config (local-only) -----------------------------------------------
+.claude.json
+.clangd
+
+# -- VCS artifacts ------------------------------------------------------------
+.hg/
+.mailmap

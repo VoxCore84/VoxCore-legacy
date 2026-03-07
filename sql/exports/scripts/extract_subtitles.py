@@ -24,8 +24,8 @@ import time
 from collections import Counter
 from pathlib import Path
 
-RAW_DIR = Path("C:/Users/atayl/source/wago/wowhead_data/npc/raw")
-OUTPUT_CSV = Path("C:/Users/atayl/source/wago/wowhead_data/npc/npc_subtitles.csv")
+RAW_DIR = Path("C:/Users/atayl/VoxCore/wago/wowhead_data/npc/raw")
+OUTPUT_CSV = Path("C:/Users/atayl/VoxCore/wago/wowhead_data/npc/npc_subtitles.csv")
 
 # Creature type names (used for type-row detection)
 CREATURE_TYPES = {

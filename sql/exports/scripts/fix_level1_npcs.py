@@ -25,8 +25,8 @@ import os
 from collections import defaultdict
 
 # Paths
-WOWHEAD_CSV = r"C:\Users\atayl\source\wago\wowhead_data\npc\npc_export.csv"
-OUTPUT_DIR = r"C:\Dev\RoleplayCore\sql\exports\cleanup"
+WOWHEAD_CSV = r"C:\Users\atayl\VoxCore\wago\wowhead_data\npc\npc_export.csv"
+OUTPUT_DIR = r"C:\Users\atayl\VoxCore\sql\exports\cleanup"
 MYSQL_BIN = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
 
 # ContentTuningID assignments by level range

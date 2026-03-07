@@ -14,11 +14,11 @@ import json
 import os
 import re
 
-WTL_DIR = "C:/Tools/WoW.tools/dbcs/12.0.1.66220/dbfilesclient"
-R1_INFO = "C:/Dev/RoleplayCore/hotfix_audit/table_info.json"
-R2_TABLES = "C:/Dev/RoleplayCore/hotfix_audit/tables_r2.json"
-COL_TYPES = "C:/Dev/RoleplayCore/hotfix_audit/col_types.json"
-OUTPUT = "C:/Dev/RoleplayCore/hotfix_audit/table_info_r3.json"
+WTL_DIR = "C:/Users/atayl/VoxCore/ExtTools/WoW.tools/dbcs/12.0.1.66220/dbfilesclient"
+R1_INFO = "C:/Users/atayl/VoxCore/hotfix_audit/table_info.json"
+R2_TABLES = "C:/Users/atayl/VoxCore/hotfix_audit/tables_r2.json"
+COL_TYPES = "C:/Users/atayl/VoxCore/hotfix_audit/col_types.json"
+OUTPUT = "C:/Users/atayl/VoxCore/hotfix_audit/table_info_r3.json"
 
 # R1 manual mappings (DB col -> CSV col)
 MANUAL_MAPS = {
@@ -374,7 +374,7 @@ def main():
         print("All tables >= 80% coverage")
 
     # Compare vs R2 to see what changed
-    with open("C:/Dev/RoleplayCore/hotfix_audit/table_info_r2.json") as f:
+    with open("C:/Users/atayl/VoxCore/hotfix_audit/table_info_r2.json") as f:
         r2_info = json.load(f)
     r2_map = {e["table"]: e for e in r2_info}
 

@@ -1,7 +1,7 @@
 """
 Extract ALL spawn coordinates from raw Wowhead NPC JSON files.
 
-Reads: C:/Users/atayl/source/wago/wowhead_data/npc/raw/*.json (excluding *_parsed.json)
+Reads: C:/Users/atayl/VoxCore/wago/wowhead_data/npc/raw/*.json (excluding *_parsed.json)
 Writes:
   - npc_all_coords.csv: id,zone_id,floor_id,coord_x,coord_y
   - npc_spawn_summary.csv: id,zone_id,total_coords
@@ -16,8 +16,8 @@ import sys
 import time
 from collections import defaultdict
 
-RAW_DIR = "C:/Users/atayl/source/wago/wowhead_data/npc/raw"
-OUT_DIR = "C:/Users/atayl/source/wago/wowhead_data/npc"
+RAW_DIR = "C:/Users/atayl/VoxCore/wago/wowhead_data/npc/raw"
+OUT_DIR = "C:/Users/atayl/VoxCore/wago/wowhead_data/npc"
 COORDS_CSV = os.path.join(OUT_DIR, "npc_all_coords.csv")
 SUMMARY_CSV = os.path.join(OUT_DIR, "npc_spawn_summary.csv")
 

@@ -5,7 +5,7 @@ import re
 import sys
 from collections import defaultdict, Counter
 
-LOG_PATH = r"C:\Dev\RoleplayCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\DBErrors.log"
+LOG_PATH = r"C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\DBErrors.log"
 
 # Define regex patterns with named groups for categorization
 # Each entry: (compiled_regex, pattern_template, system_category, addressed_by_cleanup, fix_description)

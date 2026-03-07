@@ -24,15 +24,15 @@ import sys
 import time
 from collections import defaultdict
 
-sys.path.insert(0, os.path.expanduser("~/source/wago"))
+sys.path.insert(0, os.path.expanduser("~/VoxCore/wago"))
 from wago_common import WAGO_CSV_DIR
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 MYSQL = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
 FACTION_TEMPLATE_CSV = WAGO_CSV_DIR / "FactionTemplate-enUS.csv"
 FACTION_CSV = WAGO_CSV_DIR / "Faction-enUS.csv"
-REPORT_OUT = r"C:\Dev\RoleplayCore\sql\exports\cleanup\faction_validation_report.txt"
-SQL_OUT = r"C:\Dev\RoleplayCore\sql\exports\cleanup\npc_faction_fixes.sql"
+REPORT_OUT = r"C:\Users\atayl\VoxCore\sql\exports\cleanup\faction_validation_report.txt"
+SQL_OUT = r"C:\Users\atayl\VoxCore\sql\exports\cleanup\npc_faction_fixes.sql"
 
 # ── NPC flag bits for service NPCs ─────────────────────────────────────────────
 SERVICE_FLAGS = {

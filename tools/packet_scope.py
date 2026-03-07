@@ -23,7 +23,7 @@ from pathlib import Path
 from collections import defaultdict
 
 # --- Default config ---
-DEFAULT_PKT_DIR = Path(r"C:\Dev\RoleplayCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\PacketLog")
+DEFAULT_PKT_DIR = Path(r"C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\PacketLog")
 
 # Patterns
 PACKET_HEADER_RE = re.compile(r'^(ClientToServer|ServerToClient): (\S+)')

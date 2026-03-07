@@ -28,7 +28,7 @@ import subprocess
 import sys
 from collections import defaultdict
 
-sys.path.insert(0, os.path.expanduser("~/source/wago"))
+sys.path.insert(0, os.path.expanduser("~/VoxCore/wago"))
 from wago_common import WAGO_CSV_DIR
 
 # =============================================================================
@@ -36,7 +36,7 @@ from wago_common import WAGO_CSV_DIR
 # =============================================================================
 
 CDI_CSV = WAGO_CSV_DIR / "CreatureDisplayInfo-enUS.csv"
-OUTPUT_DIR = r"C:\Dev\RoleplayCore\sql\exports\cleanup"
+OUTPUT_DIR = r"C:\Users\atayl\VoxCore\sql\exports\cleanup"
 MYSQL_BIN = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
 MYSQL_USER = "root"
 MYSQL_PASS = "admin"

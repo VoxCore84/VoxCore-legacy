@@ -18,7 +18,7 @@ Parse the user's argument (if any) to pick the build directory:
 
 ### Loop procedure
 
-1. **Build**: Run `cd /c/Dev/RoleplayCore/<build-dir> && ninja -j20 2>&1` (or `ninja -j20 scripts` for scripts-only)
+1. **Build**: Run `cd /c/Users/atayl/VoxCore/<build-dir> && ninja -j20 2>&1` (or `ninja -j20 scripts` for scripts-only)
 2. **Parse**: Extract compiler errors from the output. Ignore warnings unless the user asked to fix them.
 3. **Fix**: For each error:
    - Read the source file at the reported line

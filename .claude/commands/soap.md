@@ -20,7 +20,7 @@ The user provides a GM command as the argument, e.g.:
 
 **Primary method** — helper script:
 ```
-bash C:/Users/atayl/source/wago/tc_soap.sh "<command>"
+bash C:/Users/atayl/VoxCore/wago/tc_soap.sh "<command>"
 ```
 
 **Fallback** — if the helper script doesn't exist, use curl directly:

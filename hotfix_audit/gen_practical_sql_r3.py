@@ -10,7 +10,7 @@ from datetime import datetime
 RESULTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results_r3")
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-sys.path.insert(0, "C:/Users/atayl/source/wago")
+sys.path.insert(0, "C:/Users/atayl/VoxCore/wago")
 from table_hashes import TABLE_HASHES
 
 NAME_FIXUPS = {
@@ -68,7 +68,7 @@ def main():
     lines = []
     lines.append("-- HOTFIX REDUNDANCY CLEANUP — ROUND 3 (Type-Aware R3 Audit)")
     lines.append(f"-- Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    lines.append("-- BEFORE RUNNING: python C:/Users/atayl/source/wago/db_snapshot.py snapshot --db hotfixes --label pre-round3-cleanup")
+    lines.append("-- BEFORE RUNNING: python C:/Users/atayl/VoxCore/wago/db_snapshot.py snapshot --db hotfixes --label pre-round3-cleanup")
     lines.append("--")
     lines.append("-- R3 fixes: float32 relative tolerance, unsigned/signed int32,")
     lines.append("-- broadcast_text_duration logical PK, corrected array index mapping")

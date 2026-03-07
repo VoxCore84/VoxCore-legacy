@@ -19,16 +19,16 @@ import os
 from collections import defaultdict
 from pathlib import Path
 
-sys.path.insert(0, os.path.expanduser("~/source/wago"))
+sys.path.insert(0, os.path.expanduser("~/VoxCore/wago"))
 from wago_common import WAGO_CSV_DIR
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
-WOWHEAD_DIR = "C:/Users/atayl/source/wago/wowhead_data/npc"
+WOWHEAD_DIR = "C:/Users/atayl/VoxCore/wago/wowhead_data/npc"
 SPAWN_SUMMARY_CSV = os.path.join(WOWHEAD_DIR, "npc_spawn_summary.csv")
 ROLES_CSV = os.path.join(WOWHEAD_DIR, "npc_roles.csv")
 SUBTITLES_CSV = os.path.join(WOWHEAD_DIR, "npc_subtitles.csv")
 AREA_TABLE_CSV = str(WAGO_CSV_DIR / "AreaTable-enUS.csv")
-REPORT_PATH = "C:/Dev/RoleplayCore/sql/exports/cleanup/missing_spawns_report.txt"
+REPORT_PATH = "C:/Users/atayl/VoxCore/sql/exports/cleanup/missing_spawns_report.txt"
 MYSQL_BIN = "C:/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe"
 MYSQL_USER = "root"
 MYSQL_PASS = "admin"

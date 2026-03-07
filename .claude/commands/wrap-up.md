@@ -56,9 +56,9 @@ Do NOT auto-push gist updates without confirmation. Just report which ones look 
 ### Step 5: Update memory files (unless user said "quick")
 
 Read these memory files and check if anything from this session should be updated:
-- `C:\Users\atayl\.claude\projects\C--Dev-RoleplayCore\memory\MEMORY.md` (main index)
-- `C:\Users\atayl\.claude\projects\C--Dev-RoleplayCore\memory\recent-work.md` (work log)
-- `C:\Users\atayl\.claude\projects\C--Dev-RoleplayCore\memory\todo.md` (task list)
+- `C:\Users\atayl\.claude\projects\C--Users-atayl-VoxCore\memory\MEMORY.md` (main index)
+- `C:\Users\atayl\.claude\projects\C--Users-atayl-VoxCore\memory\recent-work.md` (work log)
+- `C:\Users\atayl\.claude\projects\C--Users-atayl-VoxCore\memory\todo.md` (task list)
 
 For **recent-work.md**: Add an entry for this session if meaningful work was done. Follow the existing format (date, session number, title, description, commit hash). Determine the session number by incrementing the highest number found in recent-work.md.
 

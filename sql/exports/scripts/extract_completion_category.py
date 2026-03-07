@@ -18,8 +18,8 @@ import time
 from multiprocessing import Pool, cpu_count
 from html.parser import HTMLParser
 
-RAW_DIR = r"C:\Users\atayl\source\wago\wowhead_data\npc\raw"
-OUT_DIR = r"C:\Users\atayl\source\wago\wowhead_data\npc"
+RAW_DIR = r"C:\Users\atayl\VoxCore\wago\wowhead_data\npc\raw"
+OUT_DIR = r"C:\Users\atayl\VoxCore\wago\wowhead_data\npc"
 
 # Role detection rules: (keyword_in_subtitle, role_name, npcflag_bit)
 ROLE_RULES = [

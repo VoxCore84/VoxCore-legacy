@@ -15,7 +15,7 @@ import sys
 import os
 
 LW_DUMP = r"C:\Users\atayl\OneDrive\Desktop\Excluded\LoreWalkerTDB\LoreWalkerTDB\world.sql"
-OUTPUT = r"C:\Dev\RoleplayCore\sql\exports\lw_smartai_remaining.sql"
+OUTPUT = r"C:\Users\atayl\VoxCore\sql\exports\lw_smartai_remaining.sql"
 MYSQL = r"C:/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe"
 BATCH_SIZE = 500
 

@@ -41,8 +41,8 @@ PACKET_LOG_CANDIDATES = [
 
 # WPP opcode map locations (newest first)
 WPP_OPCODE_CANDIDATES = [
-    r"C:\Tools\WowPacketParser\WowPacketParser\Enums\Version\V12_0_1_65818\Opcodes.cs",
-    r"C:\Tools\WowPacketParser\WowPacketParser\Enums\Version\V12_0_0_65390\Opcodes.cs",
+    r"C:\Users\atayl\VoxCore\ExtTools\WowPacketParser\WowPacketParser\Enums\Version\V12_0_1_65818\Opcodes.cs",
+    r"C:\Users\atayl\VoxCore\ExtTools\WowPacketParser\WowPacketParser\Enums\Version\V12_0_0_65390\Opcodes.cs",
 ]
 
 

@@ -39,9 +39,9 @@ from collections import defaultdict
 # Configuration
 # =============================================================================
 
-WOWHEAD_RAW_DIR = r"C:\Users\atayl\source\wago\wowhead_data\npc\raw"
-OUTPUT_DIR = r"C:\Dev\RoleplayCore\sql\exports\cleanup"
-ZONE_CT_MAPPING = r"C:\Dev\RoleplayCore\sql\exports\scripts\zone_ct_mapping.txt"
+WOWHEAD_RAW_DIR = r"C:\Users\atayl\VoxCore\wago\wowhead_data\npc\raw"
+OUTPUT_DIR = r"C:\Users\atayl\VoxCore\sql\exports\cleanup"
+ZONE_CT_MAPPING = r"C:\Users\atayl\VoxCore\sql\exports\scripts\zone_ct_mapping.txt"
 MYSQL_BIN = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
 
 # MaxLevelType=2 means "current expansion cap". In 12.x / Midnight the cap is

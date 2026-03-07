@@ -6,7 +6,7 @@ description: Look up area/zone IDs or search area names from Wago AreaTable DB2 
 ## Context
 
 The user wants to look up WoW area/zone data. The source is the Wago DB2 export:
-- In Python, first: `import sys, os; sys.path.insert(0, os.path.expanduser('~/source/wago')); from wago_common import WAGO_CSV_DIR`
+- In Python, first: `import sys, os; sys.path.insert(0, os.path.expanduser('~/VoxCore/wago')); from wago_common import WAGO_CSV_DIR`
 - Then use: `str(WAGO_CSV_DIR / 'AreaTable-enUS.csv')`
 - Key columns: `ID`, `ZoneName` (internal name), `AreaName_lang` (display name), `ContinentID`, `ParentAreaID`, `ContentTuningID`, `Flags_0`, `Flags_1`
 - ~9848 rows
