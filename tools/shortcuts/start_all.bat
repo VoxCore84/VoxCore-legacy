@@ -3,6 +3,7 @@ setlocal
 set "RUNTIME=C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo"
 set "MYSQL_DIR=%RUNTIME%\UniServerZ\core\mysql"
 set "ARCTIUM=C:\WoW\_retail_\Arctium Game Launcher.exe"
+set "CC_DIR=C:\Users\atayl\VoxCore\tools\command-center"
 
 echo ============================================
 echo   VoxCore — Starting All Servers
@@ -21,7 +22,7 @@ if %ERRORLEVEL%==0 (
         "--datadir=%MYSQL_DIR%\data" ^
         --port=3306 ^
         --console
-    timeout /t 5 /nobreak >nul
+    %SYSTEMROOT%\system32\timeout.exe /t 5 /nobreak >nul
     netstat -ano | findstr ":3306 " | findstr "LISTENING" >nul 2>&1
     if %ERRORLEVEL%==0 (
         echo        UniServerZ MySQL started.
@@ -36,7 +37,7 @@ echo.
 :: 2. Start bnetserver
 echo [2/4] Starting bnetserver...
 start "bnetserver" /D "%RUNTIME%" "%RUNTIME%\bnetserver.exe"
-timeout /t 3 /nobreak >nul
+%SYSTEMROOT%\system32\timeout.exe /t 3 /nobreak >nul
 echo        bnetserver launched.
 echo.
 
@@ -56,7 +57,18 @@ if exist "%ARCTIUM%" (
 )
 echo.
 
+:: 5. Start Command Center
+echo [5/5] Starting Command Center...
+netstat -ano | findstr ":5050 " | findstr "LISTENING" >nul 2>&1
+if %ERRORLEVEL%==0 (
+    echo        Command Center already running on port 5050.
+) else (
+    start "VoxCore CC" /D "%CC_DIR%" /MIN python app.py
+    echo        Command Center started — http://localhost:5050
+)
+echo.
+
 echo ============================================
 echo   All servers started. You can close this.
 echo ============================================
-timeout /t 5
+%SYSTEMROOT%\system32\timeout.exe /t 5

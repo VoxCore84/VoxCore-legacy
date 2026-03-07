@@ -1,4 +1,4 @@
-# RoleplayCore â€” Open Issues & Roadmap
+# VoxCore -- Open Issues & Roadmap
 
 Prioritized list of known issues, planned work, and blocked items. Updated as items are resolved.
 
@@ -45,18 +45,21 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 
 ---
 
-### Talent Spell Audit (session 58)
-- `audit_talent_spells.py` identified 183 critical + 242 high priority broken talent spells
-- Critical: talent spells referenced in DB but missing C++ ScriptName bindings
-- High: spells with effects that may need custom handlers
-- Needs C++ script implementation to function correctly
+### Talent Spell Audit -- PIPELINE COMPLETE, STUBS APPLIED
+- **1,842 C++ spell script stubs** generated across 13 per-class files (session 88)
+- **SQL applied**: 114 serverside_spell stubs, 18 spell_proc entries, 1,888 spell_script_names (session 98)
+- **DB state**: 5,467 spell_script_names, 4,503 serverside_spells
+- **Next**: Implement actual spell logic in the generated stub files
 
-### Midnight Data Processing (NEW — scraped, ready for SQL import)
-- **13,491 NPC pages** scraped → vendor items, teaches, quests started/ended, gossip
-- **555 object pages** → quest starts/ends, loot tables
-- **1,022 trainer pages** → spell teach lists (server-wide)
-- **27 quest pages** → start/end NPCs/GOs, reward text
-- **Next**: Parse into SQL for creature_queststarter, npc_vendor, creature_trainer, gameobject_queststarter, quest_offer_reward
+### Companion Squad -- `companion_roster` Table Missing
+- `characters.companion_roster` table does NOT exist yet
+- **Companion system SQL** (`sql/RoleplayCore/5.1 companion characters.sql`) needs to be applied
+- Companion system code compiles but can't persist data without this table
+
+### Midnight Data Processing -- PARTIALLY IMPORTED
+- **Imported** (sessions 61-67): 58+226 quest starters, 60+181 quest enders, 819 loot entries, 526 creature spells, 174 vendor items
+- **310K NPC pipeline** (sessions 73-74): Full Wowhead NPC database in SQLite (309,996 NPCs, 338 MB), coordinate converter built
+- **Remaining**: 38,119 gap NPCs identified, 15K vendor items (blocked on ExtendedCost), 402K loot drops (need reference_loot mapping), 32K trainer spells
 
 ## MEDIUM Priority
 
@@ -136,8 +139,8 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 - **Session 67**: Stormwind retail sniff — 152 creature spawns, 21 GO spawns, 9 equipment templates, 161 enrichment updates; Hero's Call Board dedup
 - **Remaining**: 68 vendor NPCs still have zero items after scrape (Wowhead has no data for them)
 - **Gossip text broken**: Scraper picks up user comments instead of NPC dialogue — gossip import reverted for 56 NPCs
-- **Current counts**: creature_queststarter 34,647 | creature_questender 37,026 | gameobject_queststarter 2,066 | gameobject_questender 1,625 | npc_vendor 176,853 | PrevQuestID set 25,609
-- **Remaining gaps**: 16,552 quests without starter, 13,165 without ender, 68 empty vendors, 420 gossip NPCs without menus
+- **Current counts (Mar 7)**: creature_queststarter 30,659 | creature_questender 37,698 | gameobject_queststarter 1,857 | gameobject_questender 1,413 | npc_vendor 174,364
+- **Remaining gaps**: quests without starters/enders, 68 empty vendors, 420 gossip NPCs without menus
 - **Loot data**: 402K drops extracted but not yet imported (need reference_loot_template mapping)
 - **Trainer data**: 32K spells extracted but not yet imported
 
@@ -161,31 +164,40 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 ---
 
 ## Recently Completed
-- ~~Stormwind NPC Scripting (session 69)~~: 37 SmartAI entries, ~426 spawns, phase cleanup (139 ghosts gated), 19 combat NPCs equipped
-- ~~Stormwind Retail Sniff + Hero's Call Board Dedup (session 67)~~: 152 creature spawns, 21 GO spawns, 9 equipment templates, 161 enrichment updates from retail ground truth. Old GO 206111 removed (Hero's Call Board dedup)
-- ~~Midnight Scrape R2 + BtWQuests Enrichment (session 66)~~: 226 queststarters, 181 questenders, 174 vendor items, 11 GO quest links, 228 CT fills, 252 vendor items, 426 exclusive groups
-- ~~Transmog Hidden Appearance + DT=4 (session 67)~~: Hidden appearance detection, paired weapon display type, PacketScope improvements, addon QA fixes
-- ~~NPC Mega-Scrape + ATT + Quest Chains (session 65)~~: 80,943 pages scraped (120 Tor workers), 1,727+2,979 quest starters/enders, 2,535 vendor items, 170+124 ATT QS/GO, 572+2,008 quest chains from BtWQuests. Scraper v2 built
-- ~~BtWQuests + Vendor Scrape R2 (session 64)~~: 1,062 creature_queststarter + 57 gameobject_queststarter from BtWQuests, 1,435 npc_vendor entries from Wowhead scrape R2
-- ~~Midnight Data Import (session 61/64)~~: 58 quest starters, 60 quest enders, 819 loot entries, 526 creature spells
-- ~~Transmog 5-Agent Audit Phases 1–4 (session 63)~~: All 26 action items implemented — 4 server bugs, 4 Bridge cleanup, TransmogSpy v2, Phase 4 hardening, EffectEquipTransmogOutfit fix. Awaiting in-game testing
-- ~~Transmog Bugs A–E (sessions 36–63)~~: All 5 original bugs fixed + 3 medium bugs. Awaiting in-game testing
-- ~~Wowhead Gap Scrape (session 58)~~: 5,653 pages scraped, 592+683 quest starters/enders, 202+208 GO starters/enders, 8,799 vendor items applied
-- ~~ATT Data Import~~: 4,630 quest starters, 3,081 chains, 1,510 vendor items applied
-- ~~Missing Spawns Critical~~: 1,541 quest NPC spawns + 207 phase-aware re-inserts applied
-- ~~Quest Reward Text Scrape~~: 21,533 pages scraped via Tor, 13,494 offer_reward + 6,792 request_items imported. 14,278 still missing (mostly modern expansion quests)
-- ~~Wowhead 403 Block~~: Expired on its own, scraper upgraded with curl_cffi
-- ~~DBCD Audit~~: 363 redundant hotfix rows removed, 393 missing broadcast_text filled
-- ~~Silvermoon Portals~~: All portals redirected from BC Map 530 to Midnight Map 0
+
+### March 7, 2026 (sessions 88-99)
+- ~~**Code Quality Pass** (session 94)~~: 39 fixes across 19 files -- 7 critical crash fixes, 8 high, 12 medium, 12 low. Memory leaks, nullptr guards, O(n)-->O(1) optimizations
+- ~~**Spell Audit Pipeline** (session 88)~~: 1,842 C++ stubs generated, SQL applied (5,467 spell_script_names, 4,503 serverside_spells)
+- ~~**Spell Creator** (session 95)~~: Python CLI tool with 11 templates, wago CSV clone, hotfix SQL gen, SOAP reload
+- ~~**VoxCore Command Center** (sessions 93-96)~~: Flask dashboard with 48 tiles, desktop shortcuts synced, path bugs fixed, integrations added
+- ~~**SQL Directory Audit** (session 90)~~: 12 issues fixed, 19,416 old TDB files pruned (3.8 GB), tracked files 19,820-->399
+- ~~**Doc Audit** (session 91)~~: `doc/` 20-->13 files, 7 obsolete deleted
+- ~~**Grand Consolidation** (sessions 83-86)~~: Everything moved to `~/VoxCore/`, 200+ path refs fixed, .gitignore 39-->73, README rewritten
+- ~~**Windows Performance Tuning** (session 84)~~: 30+ registry tweaks, NVIDIA MSI mode, Spectre mitigations off
+- ~~**Mega Data Mining** (session 77)~~: 316K SQL statements -- 161K creature spells, 105K loot, 28K safe spawns generated
+- ~~**Hotfix Repair 66263** (session 97b)~~: 2.7M missing rows inserted, 496 zeroed columns fixed, full DB2 restore
+- ~~**MySQL QA** (session 98)~~: UniServerZ configured, my.ini optimized, all SQL updates applied, InnoDB stats refreshed
+- ~~**Stormwind Cleanup** (session 82)~~: Wickerman Revelers removed, broken Hero's Call Boards deleted, Silvermoon portal displayId fixed
+
+### March 5-6, 2026 (sessions 58-74)
+- ~~Stormwind NPC Scripting (session 69)~~: 37 SmartAI entries, ~426 spawns, phase cleanup
+- ~~Stormwind Retail Sniff (session 67)~~: 152 creature spawns, 21 GO spawns, 9 equipment templates
+- ~~Midnight Scrape R2 + BtWQuests (session 66)~~: 226 queststarters, 181 questenders, 174 vendor items
+- ~~Transmog Hidden Appearance + DT=4 (session 67)~~: Hidden detection, paired weapon DT=4
+- ~~NPC Mega-Scrape + ATT + Quest Chains (session 65)~~: 80,943 pages, 1,727+2,979 quest starters/enders
+- ~~Transmog 5-Agent Audit Phases 1-4 (session 63)~~: All 26 items implemented
+- ~~Transmog Bugs A-E (sessions 36-63)~~: All 5 fixed + 3 medium
+- ~~310K NPC Pipeline (sessions 73-74)~~: SQLite DB (338 MB), coord converter, 38K gap NPCs identified
+- ~~Wowhead Gap Scrape, ATT Import, Missing Spawns, Quest Reward Text, DBCD Audit, Silvermoon Portals~~ -- all complete
 
 ---
 
-## Code Quality Debt (session 24 audit)
-- `.gitignore` for build artifacts
+## Code Quality Debt (session 24 audit -- mostly resolved)
+- ~~`.gitignore` for build artifacts~~ -- DONE (session 86, 39-->73 lines)
 - Cross-faction `AllowTwoSide.*` audit
-- `MinPetitionSigns=0` â€” verify intended
-- Dead code: Hoff class, RotationAxis enum, marker system
-- Non-idempotent setup SQL in `sql/RoleplayCore/`
+- `MinPetitionSigns=0` -- verify intended
+- ~~Dead code: Hoff class~~ -- DONE (session 94, dead methods removed)
+- ~~Non-idempotent setup SQL~~ -- DONE (session 90, 5 idempotency fixes)
 - RelWithDebInfo `/Ob2` + LTO investigation
 
 ## Future Audit Passes
@@ -195,5 +207,5 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 
 ---
 
-*Updated March 5, 2026 (session 72)*
+*Updated March 7, 2026 (session 99)*
 

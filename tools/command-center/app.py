@@ -12,7 +12,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_from_directory
 from PIL import Image
 
 # ═══════════════════════════════════════════════════════════════════
@@ -43,18 +43,21 @@ app = Flask(__name__, static_folder=str(STATIC_DIR))
 # ═══════════════════════════════════════════════════════════════════
 
 def prepare_icon(png_name: str) -> str:
-    """Ensure a web-sized icon exists, return the web filename."""
+    """Ensure a web-sized icon exists in both PNG and WebP, return the web filename."""
     ICON_WEB_DIR.mkdir(parents=True, exist_ok=True)
-    out = ICON_WEB_DIR / png_name
-    if out.exists():
+    out_png = ICON_WEB_DIR / png_name
+    out_webp = ICON_WEB_DIR / png_name.replace(".png", ".webp")
+    if out_png.exists() and out_webp.exists():
         return png_name
     src = ICON_SRC / png_name
     if not src.exists():
         return png_name
     try:
         img = Image.open(src).convert("RGBA")
-        img = img.resize((ICON_WEB_SIZE, ICON_WEB_SIZE), Image.LANCZOS)
-        img.save(out, "PNG", optimize=True)
+        img_full = img.resize((ICON_WEB_SIZE, ICON_WEB_SIZE), Image.LANCZOS)
+        img_full.save(out_png, "PNG", optimize=True)
+        img_web = img.resize((64, 64), Image.LANCZOS)
+        img_web.save(out_webp, "WEBP", quality=85, method=6)
     except Exception as e:
         print(f"  WARN: Failed to convert icon {png_name}: {e}")
     return png_name
@@ -313,6 +316,21 @@ def index():
     return render_template("index.html", categories=CATEGORIES)
 
 
+@app.route("/sw.js")
+def service_worker():
+    return send_from_directory(str(STATIC_DIR), "sw.js", mimetype="application/javascript")
+
+
+@app.route("/manifest.json")
+def manifest():
+    return send_from_directory(str(STATIC_DIR), "manifest.json", mimetype="application/manifest+json")
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(str(STATIC_DIR), "favicon.ico", mimetype="image/x-icon")
+
+
 @app.route("/api/launch", methods=["POST"])
 def launch():
     data = request.get_json(silent=True)
@@ -385,18 +403,23 @@ def status():
 # ═══════════════════════════════════════════════════════════════════
 
 def prepare_all_assets():
-    """Pre-generate web-sized icons and art."""
-    print("Preparing assets...")
-    prepare_art()
-
+    """Pre-generate web-sized icons and art. Skips if cache is warm."""
     all_icons = set()
     for cat in CATEGORIES:
         all_icons.add(cat["icon"])
         for item in cat["shortcuts"]:
             all_icons.add(item["icon"])
 
-    print(f"  Converting {len(all_icons)} icons to {ICON_WEB_SIZE}px...")
-    for icon in sorted(all_icons):
+    # Fast check: if all WebP icons exist, skip everything
+    ICON_WEB_DIR.mkdir(parents=True, exist_ok=True)
+    missing = [i for i in all_icons if not (ICON_WEB_DIR / i.replace(".png", ".webp")).exists()]
+    if not missing and (ART_WEB_DIR / "bg-midnight.webp").exists():
+        print("  Assets cached — skipping prep.")
+        return
+
+    print(f"Preparing assets ({len(missing)} icons to convert)...")
+    prepare_art()
+    for icon in missing:
         prepare_icon(icon)
     print("  Assets ready.")
 

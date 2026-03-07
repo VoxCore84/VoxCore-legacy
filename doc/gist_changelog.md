@@ -2,6 +2,143 @@ RoleplayCore â€” Session Changelog (WoW 12.x private server)
 
 
 
+## Mar 7 2026
+
+### Session 99 -- Shortcut & Command Center QA Mega-Pass
+- **5-agent QA sweep**: 48 desktop shortcuts, 48 CC tiles fully audited and synced
+- **Bnetserver/worldserver shortcuts**: Fixed to use `cmd.exe /k` wrappers
+- **start-worldserver.sh**: Fixed `$SCRIPT_DIR` vs `$RUNTIME` path bug
+- **opcode_analyzer.py**: Fixed `DEFAULT_PROJECT_ROOT` pointing to wrong directory
+- **CC fixes**: URL guard, unused imports, cmd.exe wrapping, larger logo (180px)
+- **Bat files**: Deleted obsolete `start_mysql.bat`, cleaned vestigial MySQL80 refs
+- Commits `48c9d4f9b7`, `01aaf028e9`, pushed
+
+### Session 98 -- MySQL QA + DB Health Audit + Spell Audit SQL
+- **UniServerZ MySQL**: Fixed skip-name-resolve TCP blocking, procs_priv charset corruption, IP grants
+- **Spell audit SQL applied**: 114 serverside_spell stubs, 18 spell_proc entries, 1,888 spell_script_names
+- **MySQL QA (5 agents)**: my.ini optimized (8GB buffer pool, 20K IO), batch files updated
+- **DB event cleanup**: Disabled broken Panda event, deleted collecting_battle_pets
+- **Discovered ~70 unapplied SQL updates** from consolidation -- handed off for bulk apply
+- Commit `039df2a6af`, pushed
+
+### Session 97b -- Hotfix Repair + Bulk SQL Restore
+- **Hotfix repair build 66263**: 2,727,115 missing rows inserted, 496 zeroed columns fixed across 28 tables (339 MB SQL)
+- **Bulk SQL restore**: Applied ~200 SQL files across all databases after fresh DB rebuild
+- DB restored to: creature_template_spell 172K, creature 611K, npc_vendor 174K, spell_name 400K
+
+### Session 97 -- WT Font Config + Shortcut Regen
+- **Windows Terminal**: JetBrains Mono 14pt font for Claude profile
+- **Desktop shortcuts regenerated**: 47 shortcuts across 8 folders
+- Commit `0c02d75803`, pushed
+
+### Session 96 -- Command Center Integrations + Path Fix
+- **Systemic path fix**: 15 subprocess.Popen commands -- removed absolute path doubling
+- **New integrations**: GitHub Repo, Discord, Wago.tools, GitHub Pages (URL cards)
+- **2 new pipelines**: Wago DB2 Download, DB Snapshot List-Rollback
+- **Desktop sync tool**: `sync_from_desktop.py` diffs VC desktop folders vs CC cards
+- Commit `bf877e0e0f`, pushed
+
+### Session 95 -- Spell Creator + SpellAudit Fix
+- **New tool: `tools/spell_creator.py`**: Python CLI replacing old .NET SpellCreator
+  - 11 templates, full clone from wago CSV, hotfix SQL generation, SOAP reload
+  - Icon search (32K+), enum reference, clipboard/SQL/DB/SOAP output modes
+- **SpellAudit generator fix**: Regenerated 13 class files (1,842 scripts) -- zero warnings
+- **SOAP enabled**: worldserver.conf `SOAP.Enabled = 1`
+- Commit `68dcea8161`, pushed
+
+### Session 94 -- Comprehensive Code Quality Pass
+- **Full source audit**: 11 agents, **39 fixes across 19 files**
+- 7 critical crash fixes (bounds checks, nullptr guards, assert-->if)
+- 8 high (EffectsHandler memory leaks, CompanionAI O(n)-->O(1), GM logging)
+- 12 medium (strtok/atoi-->StringTo, scale bounds, SpellVisualKit validation)
+- 12 low (typos, help text, dead methods, #pragma once, NULL-->nullptr)
+- Config optimizations: worldserver.conf + MySQL my.ini tuned
+- Commit `f3f5e015a1`, pushed
+
+### Session 93 -- Command Center QA Fixes
+- 6 bug fixes for VoxCore Command Center (icon crop, missing pipeline cards, index validation, null guard, Jinja2 stepper, image try-except)
+- Commit `f0ee73d7f1`, pushed
+
+### Session 92 -- Archive Cleanup + Shortcut Audit
+- Deleted `archive/` (287 MB orphaned files), audited all 44 desktop shortcuts -- 44/44 OK
+
+### Session 91 -- Doc Audit
+- `doc/` directory: 20 --> 13 files, deleted 7 obsolete, renamed gist_current --> gist_db_report
+- Commit `1a49d90996`
+
+### Session 90 -- SQL Directory Audit
+- **12 issues fixed**: 5 idempotency (INSERT IGNORE, CREATE IF NOT EXISTS, etc.), roleplay DB in create_mysql, sql/old pruned
+- **Pruned 19,416 old TDB files** from git tracking (3.8 GB saved)
+- Tracked files: 19,820 --> 399
+- Commit `e15eb622c6`
+
+### Session 89 -- Archive Cleanup
+- Deleted `archive/` directory (287 MB) -- orphaned pre-consolidation files
+
+### Session 88 -- Spell Audit Pipeline
+- **QA'd class_spell_audit.py**: Fixed 3 classification bugs
+- **Generated 1,842 C++ spell script stubs** across 13 per-class files
+- **Generated SQL**: 114 serverside_spell stubs, 18 spell_proc entries, 1,888 spell_script_names
+- All 13 C++ files compile cleanly, 38,695 lines added
+- Commit `27c2d7d04e`, pushed
+
+### Session 87 -- Scenic Art Upscaling Pass 2
+- Upscaled 154 images across 6 categories using Real-ESRGAN 4x (622 MB output)
+
+## Mar 6 2026
+
+### Session 86 -- Grand Consolidation QA
+- 200+ old path refs fixed, memory files consolidated (28-->23), .gitignore (39-->73 lines)
+- Windows Defender hardened, GitHub repo/gists cleaned, README rewritten
+- Commit `37ce2554f8`
+
+### Session 85 -- Grand Consolidation
+- Moved everything to `~/VoxCore/`, organized personal docs, rebuilt entire project
+- Commit `95eb139ee2`
+
+### Session 84 -- Windows System Performance Tuning
+- **30+ registry tweaks**: Hyper-V/VBS/HVCI off, Spectre mitigations off, NVIDIA MSI mode, GameDVR off
+- **Network**: Nagle's disabled, TCP window scaling, 65K ports, 30s TIME_WAIT
+- **Boot**: useplatformtick + disabledynamictick (0.5ms timer)
+
+### Session 83 -- Grand Consolidation Plan
+- Full C: drive audit, 757-line consolidation plan across 8 phases
+
+### Session 82 -- Stormwind Cleanup: Event NPCs, Boards, Portals
+- 6 SQL fixes: Wickerman Revelers, Argent Crusade stationary, broken Hero's Call Boards, stale Dalaran portal, invisible Silvermoon portal (displayId fix)
+- Commit `b0c1dd07ce`
+
+### Session 81 -- DB Optimization + Claude Code Tuning
+- 69 fragmented tables optimized (~150 MB reclaimed), MySQL buffer pool 4-->8 GB
+- Claude Code permissions pre-allowed, MEMORY.md diet (175-->76 lines, -70%)
+- Commit `b0c1dd07ce`
+
+### Session 80 -- Community Listfile + Scenic Art + Transmog DeepDive
+- 2.1M-entry community listfile downloaded, 6 new scenic art categories (217 files)
+- Transmog DeepDive: 35 source Lua/XML, 3 new 12.x DB2 CSVs, Blizzard_DebugTools addon
+
+### Session 79 -- Transmog QA Audit: 1 HIGH, 10 MEDIUM, 10 LOW
+- Full two-pass QA audit (10 agents), H1: stored outfit Slots array accumulation bug identified
+
+### Session 78 -- Cowork Symlink Network
+- 19 symlinks created, confirmed symlinks don't work in Cowork (Linux sandbox limitation)
+
+### Session 77 -- Mega Data Mining: 316K SQL statements across 7 files
+- Quest integrity compiler, BtWQuests untapped, ATT mega extract, quest metadata
+- Wowhead NPC mining: 161K creature spells, 105K loot, 4K trainers
+- Safe spawns: 28,665 creature spawns generated
+- DB impact: creature 665K-->694K, creature_template_spell 10K-->171K
+- Commit `194a596ca0`
+
+### Session 76 -- Claude Customization + Wrap-Up QA
+- Claude.ai profile updated, `/wrap-up` QA (6 fixes), VS 2022-->2026 refs updated
+
+### Session 75 -- WebTerm + VoxCore Rebrand + Transmog IDT Fix
+- **WebTerm**: Python web terminal (Flask+SocketIO+xterm.js) replacing ttyd
+- **VoxCore rebrand**: RoleplayCore --> VoxCore across skills + CLAUDE.md
+- **Transmog IDT fix**: Armor slots use IDT=0 for assigned appearances
+- Commit `d1a3060e6e`, pushed
+
 ### Session 74 — Wowhead 310K QA Pipeline + Coord Converter + SQLite DB (Mar 6 2026)
 - **310K NPC reparse**: Fixed models/displayID extractor (3 regex patterns: ModelViewer.showLightbox, dataset.displayId, data-mv-display-id). 204,136 model entries extracted (up from 0%). 3,345s, 0 errors
 - **Coordinate converter** (`coord_convert.py`): Wowhead UI-map percentages → TrinityCore world coordinates via UiMapAssignment DB2 (1,909 maps, 22,494 assignments). Key discovery: axes SWAPPED + INVERTED. Validated <10 unit accuracy across 4 zones
@@ -383,25 +520,26 @@ Chronological log of all database, code, and infrastructure changes. Each entry 
 
 ---
 
-## Database State (March 5, 2026)
+## Database State (March 7, 2026)
 
-| Database | Tables | Size | Key Metric |
-|----------|--------|------|------------|
-| world | 259 | 1,267 MB | 666K creatures, 294K SmartAI scripts |
-| hotfixes | 517 | 535 MB | 227K hotfix_data, ~244K content rows |
-| characters | 151 | 7.6 MB | |
-| auth | 50 | 1.9 MB | |
-| roleplay | 5 | 0.1 MB | |
+| Database | Size | Key Metric |
+|----------|------|------------|
+| world | 1,054 MB | 611K creatures, 226K templates, 286K SmartAI, 5.5K spell scripts |
+| hotfixes | 273 MB | 400K spell_name, 234K broadcast_text, 176K item_sparse (full 66263 restore) |
+| characters | 4 MB | 5 characters, transmog outfits table ready |
+| auth | 1.2 MB | 2 accounts |
+| roleplay | 0.1 MB | 4 tables (creature_extra, template_extra, custom_npcs, server_settings) |
 
 ## Repositories
 
 | Repo | Latest Commit | Purpose |
 |------|--------------|---------|
-| VoxCore84/RoleplayCore | `152178ffcc` | Main server |
-| VoxCore84/wago-tooling | `ca37060` | Wago/LW/hotfix tools |
+| VoxCore84/RoleplayCore | `01aaf028e9` | Main server (154 commits this week) |
+| VoxCore84/wago-tooling | `2351879` | Wago/LW/hotfix tools |
 | VoxCore84/tc-packet-tools | `821e74f` | WPP + packet analysis |
-| VoxCore84/code-intel | â€” | C++ MCP server |
+| VoxCore84/code-intel | -- | C++ MCP server (416K symbols) |
 | VoxCore84/trinitycore-claude-skills | `25967f7` | Claude Code skills |
+| VoxCore84/roleplaycore-report | `9ead780` | GitHub Pages documentation site |
 
-*Updated March 5, 2026*
+*Updated March 7, 2026*
 

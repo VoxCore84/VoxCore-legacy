@@ -24,7 +24,7 @@ start "UniServerZ MySQL" "%MYSQL_DIR%\bin\mysqld_z.exe" ^
     --port=3306 ^
     --console
 
-timeout /t 5 /nobreak >nul
+%SYSTEMROOT%\system32\timeout.exe /t 5 /nobreak >nul
 echo.
 echo Checking connection...
 "%MYSQL_DIR%\bin\mysql.exe" -u root -padmin -h 127.0.0.1 -P 3306 -e "SELECT 'MySQL ready!' AS status, VERSION() AS version;" 2>nul

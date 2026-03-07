@@ -1,7 +1,7 @@
 # RoleplayCore Database Report
 ## Data Quality & Optimization Summary
 **Prepared for CaptainCore (LoreWalkerTDB)**
-**March 5, 2026 | RoleplayCore Project — WoW 12.x / Midnight**
+**March 7, 2026 | VoxCore Project — WoW 12.x / Midnight**
 
 > **TL;DR** — Imported ~1M rows from LoreWalkerTDB, repaired 103K hotfix entries, removed 10.6M redundant rows (97.8%), fixed 78K NPCs, added 1.6M item locale translations, and cut server startup from 3m24s → 17s. All tooling is open and reproducible.
 
@@ -26,7 +26,7 @@
 | 12 | [What It All Means for Players](#part-12-what-it-all-means-for-players) | Before / After |
 | 13 | [Hotfix Redundancy Audit](#part-13-hotfix-redundancy-audit-complete) | 10.8M → 244K (97.8%) |
 | 14 | [Discoveries & Lessons](#part-14-discoveries-lessons-useful-for-the-community) | 9 community findings |
-| 15 | [Timeline](#part-15-timeline) | Feb 26 – Mar 5 |
+| 15 | [Timeline](#part-15-timeline) | Feb 26 – Mar 7 |
 | 16 | [Complete Tooling Catalog](#part-16-complete-tooling-infrastructure-catalog) | Full inventory |
 | A | [Data Sources](#appendix-a-data-sources) | 6 sources |
 | B | [Reproducibility](#appendix-b-reproducibility) | 6 pipelines |
@@ -594,58 +594,60 @@ Over 50 Python scripts, MCP servers, audit tools, and SQL generators were built 
 </details>
 
 <details>
-<summary><strong>Part 11: Final Database State</strong> &mdash; <em>Row counts and database sizes as of March 5</em></summary>
+<summary><strong>Part 11: Final Database State</strong> &mdash; <em>Row counts and database sizes as of March 7</em></summary>
 
-### 11.1 Table Counts (March 5, 2026)
+### 11.1 Table Counts (March 7, 2026)
 
 **World database:**
 
 | Table | Rows | Notes |
 |-------|------|-------|
-| creature | 662,536 | NPC spawn instances |
-| gameobject | 175,368 | World object spawn instances |
-| creature_loot_template | 2,904,341 | NPC loot tables (deduplicated, with PKs) |
-| smart_scripts | 294,425 | NPC AI behavior scripts (validated — see [Section 6.3](#63-post-import-cleanup-47478-rows)) |
-| npc_vendor | 165,802 | Vendor inventory entries |
-| waypoint_path_node | 160,784 | NPC patrol path nodes |
-| quest_template_addon | 47,164 | Quest chain/config data |
-| quest_poi | 134,856 | Quest map markers |
-| quest_poi_points | 292,977 | Quest map marker geometry |
-| quest_objectives | 60,199 | Quest objective definitions |
+| creature_template | 225,968 | NPC definitions |
+| creature | 611,359 | NPC spawn instances |
+| creature_template_difficulty | 532,346 | Per-difficulty NPC stats (0 missing DifficultyID=0) |
+| creature_template_spell | 171,590 | NPC spell assignments |
+| creature_model_info | 109,198 | NPC model data |
+| creature_equip_template | 37,183 | NPC equipment loadouts |
+| creature_text | 52,700 | NPC dialogue/emote text |
+| smart_scripts | 286,436 | NPC AI behavior scripts |
+| gameobject_template | 83,195 | World object definitions |
+| gameobject | 188,069 | World object spawn instances |
+| npc_vendor | 174,364 | Vendor inventory entries |
+| quest_template | 47,536 | Quest definitions |
+| quest_template_addon | 47,084 | Quest chain/config data |
+| quest_poi | 133,026 | Quest map markers |
+| creature_queststarter | 30,659 | NPC quest associations |
+| creature_questender | 37,698 | NPC quest turn-in associations |
+| conditions | 25,566 | Conditional logic entries |
+| trainer | 1,147 | Trainer definitions |
+| trainer_spell | 40,305 | Trainer spell listings |
+| spell_script_names | 5,467 | C++ spell script bindings (inc. 1,888 SpellAudit stubs) |
+| serverside_spell | 4,503 | Server-side spell definitions (inc. 114 audit stubs) |
+| spell_target_position | 3,407 | Spell teleport targets |
+| game_event_creature | 2,889 | Event-gated NPC spawns |
 
-**Hotfixes database (post-audit):**
+**Hotfixes database (post-repair, build 66263):**
 
 | Table | Rows | Notes |
 |-------|------|-------|
-| hotfix_data | 835,385 | Client correction registry |
-| broadcast_text | 224,233 | TC community + custom text entries |
-| hotfix_blob | 6,766 | Binary hotfix data |
-| phase | 5,714 | Phase definitions |
-| chr_customization_choice | 2,837 | Custom character options |
-| broadcast_text_duration | 1,593 | Text timing data |
-| item_sparse | 1,418 | Custom/override item data |
-| spell_item_enchantment | 1,181 | Enchant effect overrides |
-| spell_effect | 176 | Spell effect overrides |
-| spell_name | 15 | Custom/override spell entries |
+| spell_misc | 403,631 | Spell misc data (full DB2 restore) |
+| spell_name | 400,104 | Spell name registry (full DB2 restore) |
+| broadcast_text | 234,089 | TC community + custom text entries |
+| item_sparse | 175,670 | Item data (full DB2 restore) |
+| hotfix_blob | 60,471 | Binary hotfix data |
+| hotfix_data | 22,532 | Client correction registry |
 
-> **Note**: Most hotfix tables (spell_name, spell_effect, creature_display_info, content_tuning, area_table, etc.) were nearly emptied by the redundancy audit — their data matched the client's DBC baseline and was unnecessary. The tables above show only genuine overrides and custom content. Pre-audit counts were 10-1,000x larger (see [Part 2.3](#23-results-build-66220--march-3-2026)).
-
-**Locale tables:**
-
-| Table | Rows |
-|-------|------|
-| item_sparse_locale | 1,020,264 |
-| item_search_name_locale | 608,480 |
+> **Note**: Hotfix repair (build 66263) restored full DB2 content — 2.7M missing rows inserted, 496 zeroed columns fixed across 28 tables. Pre-repair counts were near zero for most content tables after the redundancy audit (see [Part 13](#part-13-hotfix-redundancy-audit-complete)). Current counts reflect full content + custom overrides.
 
 ### 11.2 Database Sizes
 
-| Database | Tables | Size |
-|----------|--------|------|
-| world | 259 | 1,267 MB |
-| hotfixes | 517 | 637 MB |
-| characters | 151 | 7.6 MB |
-| auth | 50 | 1.9 MB |
-| roleplay | 5 | 0.1 MB |
+| Database | Size |
+|----------|------|
+| world | 1,054 MB |
+| hotfixes | 273 MB |
+| characters | 4 MB |
+| auth | 1.2 MB |
+| roleplay | 0.1 MB |
 
 </details>
 
