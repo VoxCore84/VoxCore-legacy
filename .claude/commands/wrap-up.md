@@ -71,7 +71,7 @@ For **MEMORY.md**: Only update if something structural changed (new system, conf
 
 ### Step 6: Update todo.md with next-session suggestions
 
-After completing Steps 1-5, review the current state and add a `## Next Session` section at the top of `todo.md` (after the title, before `## Completed`). This section should contain 3-5 actionable items for the next session, based on:
+After completing Steps 1-5, review the current state and add a `## Next Session` section at the top of `todo.md` (after the title, before `## Completed`). This section should contain up to 10 actionable items for the next session, based on:
 
 1. **Uncommitted changes** — if `git status` still shows modified/deleted files not committed this session, list them as "Review and commit outstanding changes (N files)"
 2. **Blocked items unblocked** — scan DEFERRED/BLOCKED for anything that may now be actionable

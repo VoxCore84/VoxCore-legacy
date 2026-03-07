@@ -367,6 +367,12 @@ def create_all():
         "GitHub issue/PR tracker dashboard for VoxCore84/RoleplayCore. Shows open issues, recent PRs, task status. Opens in a clean Chrome window.",
         "achievement_guildperk_workingovertime.png")
 
+    make_shortcut(d, "Spell Audit Tracker",
+        CHROME, '--app="file:///C:/Users/atayl/VoxCore/wago/audit_reports/spell_audit_report.html"',
+        None,
+        "Class/spec spell implementation tracker — 4,965 spells classified across 40 specs. Shows C++ stubs, fix categories, SimC cross-refs.",
+        "spell_holy_prayerofhealing02.png")
+
     make_shortcut(d, "ATT Browser",
         "cmd.exe", '/k python app.py --port 5051',
         os.path.join(WAGO, "att_browser"),

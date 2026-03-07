@@ -66,8 +66,8 @@ def prepare_art():
     """Downscale art assets to web-friendly sizes."""
     ART_WEB_DIR.mkdir(parents=True, exist_ok=True)
     conversions = [
-        (ART_SRC / "dungeon_backgrounds" / "midnight.png", "bg-midnight.jpg", 1920),
-        (ART_SRC / "z_expansion_logos" / "Logo_MN.png", "logo-midnight.png", 400),
+        (ART_SRC / "loading_screens" / "assaultonqueldanas.png", "bg-midnight.jpg", 1920),
+        (ART_SRC / "z_expansion_logos" / "Logo_MN.png", "logo-midnight.png", 600),
     ]
     for src, dst_name, max_w in conversions:
         dst = ART_WEB_DIR / dst_name
@@ -114,8 +114,11 @@ CATEGORIES = [
             {"name": "Bnetserver (solo)", "icon": "spell_nature_lightning.png",
              "desc": "Launch ONLY bnetserver.exe. Handles account auth and realm list. Must be running before worldserver.",
              "cmd": [os.path.join(RUNTIME, "bnetserver.exe")], "cwd": RUNTIME},
-            {"name": "Start MySQL (solo)", "icon": "inv_datacrystal06.png",
-             "desc": "Start the MySQL80 Windows service only. Needs admin. Use when you want the database without starting game servers.",
+            {"name": "Start MySQL (UniServerZ)", "icon": "inv_datacrystal06.png",
+             "desc": "Start UniServerZ MySQL 9.5.0 with game databases (world, auth, characters, hotfixes, roleplay). Listens on port 3306.",
+             "cmd": ["cmd.exe", "/k", f"{SC_DIR}\\start_mysql_uniserverz.bat"], "cwd": RUNTIME},
+            {"name": "Start MySQL (Service)", "icon": "inv_datacrystal04.png",
+             "desc": "Start MySQL80 Windows service (8.0.45, system databases only). Needs admin.",
              "cmd": ["cmd.exe", "/k", f"{SC_DIR}\\start_mysql.bat"], "cwd": ROOT},
         ]
     },
@@ -151,7 +154,7 @@ CATEGORIES = [
             {"name": "2. TACT Extract", "icon": "inv_datacrystal01.png", "step": 2,
              "desc": "Extracts raw DB2 files from local WoW CASC install → converts to CSV via DBC2CSV. --verify compares row counts. Takes ~50s.",
              "cmd": ["cmd.exe", "/k", "python tact_extract.py --verify"], "cwd": WAGO},
-            {"name": "3. Merge CSVs", "icon": "inv_datacrystal03.png", "step": 3,
+            {"name": "3. Merge CSV Sources", "icon": "inv_datacrystal03.png", "step": 3,
              "desc": "Combines TACT CSVs (client ground truth) with Wago CSVs (CDN hotfix content). Output: merged_csv/{build}/enUS/ — single source of truth.",
              "cmd": ["cmd.exe", "/k", "python merge_csv_sources.py"], "cwd": WAGO},
             {"name": "4. Hotfix Repair", "icon": "ability_repair.png", "step": 4,
@@ -160,10 +163,10 @@ CATEGORIES = [
             {"name": "5. Raidbots Import", "icon": "inv_misc_coin_02.png", "step": 5,
              "desc": "8-step pipeline: quest chains → fix chains → objectives → POI → item locale (6 languages) → fix orphans. Verifies zero quest chain cycles. Use --regenerate after new JSONs.",
              "cmd": ["cmd.exe", "/k", "python raidbots\\run_all_imports.py"], "cwd": WAGO},
-            {"name": "6. Health Check", "icon": "spell_holy_divinepurpose.png", "step": 6,
+            {"name": "6. World Health Check", "icon": "spell_holy_divinepurpose.png", "step": 6,
              "desc": "Validates referential integrity of the world DB after imports. Checks for orphaned references, missing templates, broken loot chains.",
              "cmd": ["cmd.exe", "/k", "python world_health_check.py"], "cwd": WAGO},
-            {"name": "7. DB Errors", "icon": "ability_creature_cursed_01.png", "step": 7,
+            {"name": "7. DB Error Parser", "icon": "ability_creature_cursed_01.png", "step": 7,
              "desc": "Parses DBErrors.log and categorizes ALL error patterns by system with counts and fix descriptions. Run after server startup.",
              "cmd": ["cmd.exe", "/k", "python tools\\parse_dberrors.py"], "cwd": ROOT},
             {"name": "8. Optimize DB", "icon": "ability_rogue_sprint.png", "step": 8,
@@ -243,6 +246,9 @@ CATEGORIES = [
             {"name": "Task Tracker", "icon": "achievement_guildperk_workingovertime.png",
              "desc": "GitHub issue/PR tracker dashboard for VoxCore84/RoleplayCore. Shows open issues, recent PRs, task status.",
              "cmd": [CHROME, "--app=file:///C:/Users/atayl/cowork/outputs/roleplaycore-tracker.html"]},
+            {"name": "Spell Audit Tracker", "icon": "spell_holy_prayerofhealing02.png",
+             "desc": "Class/spec spell implementation tracker — 4,965 spells classified GREEN/YELLOW/RED/MISSING across 40 specs. Shows C++ stubs, fix categories, SimC cross-refs.",
+             "cmd": [CHROME, "--app=file:///C:/Users/atayl/VoxCore/wago/audit_reports/spell_audit_report.html"]},
             {"name": "ATT Browser", "icon": "achievement_guildperk_mobilebanking.png",
              "desc": "AllTheThings database browser — Flask web UI backed by SQLite. Tree navigation, search, detail views. Opens on localhost:5051.",
              "cmd": ["cmd.exe", "/k", "python app.py --port 5051"],
@@ -355,11 +361,18 @@ def status():
 
     def mysql_running():
         try:
+            # Check UniServerZ mysqld_z.exe first (primary), then MySQL80 service
             r = subprocess.run(
+                ["tasklist", "/FI", "IMAGENAME eq mysqld_z.exe"],
+                capture_output=True, text=True, timeout=5
+            )
+            if "mysqld_z.exe" in r.stdout.lower():
+                return True
+            r2 = subprocess.run(
                 ["sc", "query", "MySQL80"],
                 capture_output=True, text=True, timeout=5
             )
-            return "RUNNING" in r.stdout
+            return "RUNNING" in r2.stdout
         except Exception:
             return False
 
