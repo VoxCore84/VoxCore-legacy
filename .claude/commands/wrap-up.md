@@ -43,7 +43,7 @@ If the script doesn't exist or fails, note it and continue.
 ### Step 4: Update gists (unless user said "skip gists" or "quick")
 
 Check if gist source files have changed since last push by running `git log --oneline -1 -- doc/gist_*.md` to see recent touches. If stale, remind the user which gists need updating:
-- **DB Report** (`528e801b53f6c62ce2e5c2ffe7e63e29`) — from `doc/gist_current.md` and `doc/gist_db_report.md`
+- **DB Report** (`528e801b53f6c62ce2e5c2ffe7e63e29`) — from `doc/gist_db_report.md`
 - **Changelog** (`4c63baf8154753d2a89475d9a4f5b2cc`) — from `doc/gist_changelog.md`
 - **Open Issues** (`2b69757faa2a53172c7acb5bfa3ad3c4`) — from `doc/gist_open_issues.md`
 - **Runbook** (`84656ef0960c699927e3a555e8248f7b`) — from `doc/gist_runbook.md`
@@ -62,11 +62,33 @@ Read these memory files and check if anything from this session should be update
 
 For **recent-work.md**: Add an entry for this session if meaningful work was done. Follow the existing format (date, session number, title, description, commit hash). Determine the session number by incrementing the highest number found in recent-work.md.
 
-For **todo.md**: Mark any completed items, add any new items discovered during the session.
+For **todo.md**:
+- Mark any completed items with `~~strikethrough~~ DONE (session N)`
+- Add any new items discovered during the session to the appropriate priority section (HIGH/MEDIUM/LOW)
+- If the session uncovered blocked work or open questions, add them to DEFERRED/BLOCKED
 
 For **MEMORY.md**: Only update if something structural changed (new system, config change, new tool, etc.). Don't update for routine work.
 
-### Step 6: Final report
+### Step 6: Update todo.md with next-session suggestions
+
+After completing Steps 1-5, review the current state and add a `## Next Session` section at the top of `todo.md` (after the title, before `## Completed`). This section should contain 3-5 actionable items for the next session, based on:
+
+1. **Uncommitted changes** — if `git status` still shows modified/deleted files not committed this session, list them as "Review and commit outstanding changes (N files)"
+2. **Blocked items unblocked** — scan DEFERRED/BLOCKED for anything that may now be actionable
+3. **Natural follow-ups** — work that logically continues from this session's changes
+4. **HIGH priority items** — pull the top 1-2 non-DONE items from the HIGH section
+
+Format:
+```markdown
+## Next Session
+- [ ] Item 1 — brief description
+- [ ] Item 2 — brief description
+- [ ] Item 3 — brief description
+```
+
+If a `## Next Session` section already exists, **replace it entirely** with fresh suggestions. Stale next-session items are worse than none.
+
+### Step 7: Final report
 
 Output a summary:
 ```
@@ -87,8 +109,10 @@ Output a summary:
 ### Memory
 - [what was updated, or "no changes needed"]
 
-### Next session suggestions
-- [1-2 items based on todo.md or discovered during wrap-up]
+### Next Session (written to todo.md)
+- [ ] item 1
+- [ ] item 2
+- [ ] item 3
 ```
 
 ### Rules
@@ -98,3 +122,4 @@ Output a summary:
 - If any step fails, continue with remaining steps and report the failure
 - Keep commit messages concise (1-2 lines)
 - If the user passes specific instructions in $ARGUMENTS, respect them (e.g., "just commit", "skip gists", "no push", "quick")
+- The `## Next Session` section in todo.md must always be fresh — replace it every wrap-up, never append
