@@ -1,4 +1,4 @@
-TRUNCATE hotfixes.chr_customization_choice;
+DELETE FROM hotfixes.chr_customization_choice;
 
 -- ----------------------------
 -- Records of chr_customization_choice

@@ -17,3 +17,7 @@ GRANT ALL PRIVILEGES ON `characters` . * TO 'trinity'@'localhost' WITH GRANT OPT
 GRANT ALL PRIVILEGES ON `auth` . * TO 'trinity'@'localhost' WITH GRANT OPTION;
 
 GRANT ALL PRIVILEGES ON `hotfixes` . * TO 'trinity'@'localhost' WITH GRANT OPTION;
+
+CREATE DATABASE `roleplay` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+GRANT ALL PRIVILEGES ON `roleplay` . * TO 'trinity'@'localhost' WITH GRANT OPTION;
