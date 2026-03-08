@@ -147,6 +147,29 @@ Full recipes, data source tables, and anti-patterns: auto-memory `debugging-meth
 4. **Multiple errors → one agent per error category**
 5. **Builds, long queries, server restarts → always background**
 
+### Multi-Tab Delegation (ALWAYS CONSIDER)
+
+**Separate Claude Code tabs in Windows Terminal produce better results than one tab doing everything.** A single tab doing too much gets lost in loops, burns context, and loses focus. Multiple tabs each doing one focused job finish faster and with higher quality.
+
+**When to suggest opening another tab:**
+- Task has 2+ independent workstreams (e.g., transmog bugs + Draconic diff + spell audit)
+- Current task is getting complex and a subtask could run independently
+- A domain has its own skill (`/transmog-implement`, `/transmog-correct`) that another tab can just run
+- Investigation + implementation could be split (one tab researches, writes a plan; another implements)
+- Any time you notice the current tab's scope is growing beyond one focused objective
+
+**How to suggest it:** Proactively tell the user: *"This has N independent parts — want me to write instructions for a second tab to handle X while we focus on Y?"* Then:
+1. Write clear instructions to `doc/session_state.md` (update Active Tabs table)
+2. Specify exactly what the other tab should read first and what skill/command to run
+3. Note which files each tab owns (prevent conflicts)
+
+**Coordination file:** `doc/session_state.md` is the multi-tab war room. Every tab reads it first, claims assignments, and updates status when done. If it doesn't exist or is stale, recreate it.
+
+**Never do these in a single tab when they could be split:**
+- Transmog fixes + world DB cleanup + spell audit (3 separate tabs)
+- Deep investigation + code implementation (research tab + implement tab)
+- Multiple bug fixes touching different subsystems
+
 ## Transmog UI / Midnight 12.x — Authoritative Rules
 
 These rules are derived from retail 66263 packet captures and audit pass 2 findings.
