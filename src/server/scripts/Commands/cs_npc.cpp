@@ -825,11 +825,6 @@ public:
 
             creature->SetDefaultMovementType(move_type);
             creature->GetMotionMaster()->Initialize();
-            if (creature->IsAlive())                            // dead creature will reset movement generator at respawn
-            {
-                creature->setDeathState(JUST_DIED);
-                creature->Respawn();
-            }
             creature->SaveToDB();
         }
         if (doNotDelete == false)
@@ -922,11 +917,6 @@ public:
         creature->SetWanderDistance((float)option);
         creature->SetDefaultMovementType(mtype);
         creature->GetMotionMaster()->Initialize();
-        if (creature->IsAlive())                                // dead creature will reset movement generator at respawn
-        {
-            creature->setDeathState(JUST_DIED);
-            creature->Respawn();
-        }
 
         WorldDatabasePreparedStatement* stmt = WorldDatabase.GetPreparedStatement(WORLD_UPD_CREATURE_WANDER_DISTANCE);
 

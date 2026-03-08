@@ -19,14 +19,18 @@
 
 ---
 
-## DisplayType Decision Tree
+## DisplayType Decision Tree (CORRECTED — Session 105)
 
 ```
 displayType == 0 (Unassigned)?  → SKIP slot, don't touch existing transmog
 displayType == 1 (Assigned)?    → APPLY transmogID to slot
-displayType == 2 (Hidden)?      → APPLY hidden appearance (slot invisible)
-displayType == 3 (Equipped)?    → REMOVE transmog, show real gear
+displayType == 2 (Equipped)?    → Show equipped item (passthrough)
+displayType == 3 (Hidden)?      → APPLY hidden appearance (slot invisible)
+displayType == 4 (Disabled)?    → Paired placeholder, skip
 ```
+
+> **FIX**: Previous version had Hidden=2, Equipped=3. Client enum is Hidden=3, Equipped=2.
+> Source: `TransmogOutfitConstantsDocumentation.lua` (build 66263, DeepDive)
 
 **Common bug**: Treating Unassigned as Equipped strips transmogs from undefined slots.
 

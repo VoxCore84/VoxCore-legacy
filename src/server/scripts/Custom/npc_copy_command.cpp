@@ -53,7 +53,11 @@ public:
         uint32 entry = source->GetEntry();
         CreatureTemplate const* cInfo = sObjectMgr->GetCreatureTemplate(entry);
         if (!cInfo)
+        {
+            handler->PSendSysMessage("Creature template %u not found.", entry);
+            handler->SetSentErrorMessage(true);
             return false;
+        }
 
         Map* map = player->GetMap();
 
