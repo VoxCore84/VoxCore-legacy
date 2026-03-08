@@ -69,6 +69,13 @@ For **todo.md**:
 
 For **MEMORY.md**: Only update if something structural changed (new system, config change, new tool, etc.). Don't update for routine work.
 
+### Step 5b: Update session_state.md (unless user said "quick")
+
+If `doc/session_state.md` exists, update it:
+1. Mark this tab's row as COMPLETE in the Active Tabs table (add commit hash)
+2. Move any completed Tier items to the Recently Completed table
+3. Update any status fields that changed during this session
+
 ### Step 6: Update todo.md with next-session suggestions
 
 After completing Steps 1-5, review the current state and add a `## Next Session` section at the top of `todo.md` (after the title, before `## Completed`). This section should contain up to 10 actionable items for the next session, based on:
