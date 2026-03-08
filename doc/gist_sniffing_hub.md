@@ -31,9 +31,7 @@ That's it. You don't need to know anything about programming, databases, or netw
 
 ## Quick Start Checklist
 
-If you're ready to jump in:
-
-- [ ] Read the **[Ymir Setup Guide](https://gist.github.com/VoxCore84/14a47790f63a6f97042a6301210579ea)** and follow every step (one-time install)
+- [ ] Read the **[Ymir Setup Guide](https://gist.github.com/VoxCore84/14a47790f63a6f97042a6301210579ea)** and follow every step — it starts with a [**"Heads Up"**](https://gist.github.com/VoxCore84/14a47790f63a6f97042a6301210579ea#heads-up--5-things-that-trip-up-first-timers) section covering the 5 most common gotchas (one-time install)
 - [ ] Before each session: delete WoW's `Cache` folder, start Ymir, then start WoW
 - [ ] Play normally — the more you interact with NPCs, vendors, and quests, the better
 - [ ] When done: close WoW, compress the `.pkt` file from Ymir's `dump` folder, share on Discord

@@ -8,15 +8,58 @@
 
 ## Table of Contents
 
-1. [What You're Installing](#what-youre-installing)
-2. [Step 1: Install Npcap (Network Driver)](#step-1-install-npcap-network-driver)
-3. [Step 2: Download Ymir](#step-2-download-ymir)
-4. [Step 3: Your First Sniff Session](#step-3-your-first-sniff-session)
-5. [Step 4: Find Your Sniff File](#step-4-find-your-sniff-file)
-6. [Step 5: Compress and Share](#step-5-compress-and-share)
-7. [Every Session After the First](#every-session-after-the-first)
-8. [Optional: Automation Script](#optional-automation-script)
-9. [Troubleshooting](#troubleshooting)
+1. [Heads Up — 5 Things That Trip Up First-Timers](#heads-up--5-things-that-trip-up-first-timers)
+2. [What You're Installing](#what-youre-installing)
+3. [Step 1: Install Npcap (Network Driver)](#step-1-install-npcap-network-driver)
+4. [Step 2: Download Ymir](#step-2-download-ymir)
+5. [Step 3: Your First Sniff Session](#step-3-your-first-sniff-session)
+6. [Step 4: Find Your Sniff File](#step-4-find-your-sniff-file)
+7. [Step 5: Compress and Share](#step-5-compress-and-share)
+8. [Every Session After the First](#every-session-after-the-first)
+9. [Optional: Automation Script](#optional-automation-script)
+10. [Troubleshooting](#troubleshooting)
+
+---
+
+## Heads Up — 5 Things That Trip Up First-Timers
+
+Before you start, read these five gotchas. They're the most common reasons people think something is broken when everything is actually fine:
+
+### 1. Your antivirus will probably freak out
+
+This is the **#1 issue** people hit. Ymir is a packet capture tool, and antivirus software tends to flag anything that touches network traffic — even though Ymir is completely safe and open-source. What usually happens: you extract the zip, and your antivirus **silently deletes `ymir_retail.exe`** before you even get to run it. You open the folder and the file just... isn't there.
+
+**Do this BEFORE you extract Ymir:**
+- Open your antivirus settings (Windows Security → Virus & threat protection → Manage settings)
+- Scroll down to **Exclusions** and click **"Add or remove exclusions"**
+- Click **"Add an exclusion"** → **"Folder"** → select the folder where you'll put Ymir (e.g., `C:\Tools\Ymir\`)
+- Now extract the zip — the `.exe` will survive
+
+If your antivirus already ate the file, restore it from quarantine (Windows Security → Protection history → find the item → Actions → Restore), then add the exclusion so it doesn't happen again.
+
+---
+
+### 2. There's one critical checkbox during Npcap install
+
+When installing Npcap (the network driver), there's a screen with several checkboxes. **You MUST check "Install Npcap in WinPcap API-compatible Mode."** It's easy to speed-click through the installer and miss this. If you skip it, Ymir will fail with a confusing error and you'll have no idea why. If that happens, just re-run the Npcap installer and check the box this time.
+
+---
+
+### 3. Start Ymir FIRST, then WoW — every time
+
+The order matters. Ymir needs to be listening **before** WoW connects to Blizzard's servers. If you launch WoW first out of habit and then start Ymir, it will either capture nothing or produce a tiny useless file. Think of it like pressing Record before you start talking.
+
+---
+
+### 4. On GitHub, click "Assets" — not "Source code"
+
+When you go to download Ymir from GitHub, you'll see a release with some text and then a section called **"Assets"** at the bottom (you may need to click it to expand it). Download the `.zip` or `.7z` file from Assets. Do **NOT** click "Source code (zip)" or "Source code (tar.gz)" — those are the raw programming files, not the program you need.
+
+---
+
+### 5. If your `.pkt` file is tiny, you probably forgot to clear WoW's cache
+
+After a session, if your `.pkt` file is under ~1 MB, something went wrong. The most common cause: you forgot to delete WoW's `Cache` folder before playing. When the cache exists, WoW uses old stored data instead of requesting fresh data from the server — so Ymir has almost nothing to capture. Delete the cache, run a new session, and the file will be much bigger.
 
 ---
 
