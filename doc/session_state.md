@@ -3,7 +3,7 @@
 **Read this FIRST in any new Claude Code tab.**
 This is the single source of truth for what all tabs are doing, what's done, what's blocked, and what to pick up next. Updated by whichever tab finishes work.
 
-**Last updated**: March 8, 2026 — Session 115b (Transmog Tooling Phase 1 — DT maps unified, enriched CSVs regenerated)
+**Last updated**: March 8, 2026 — Session 121 (VoxPlacer polish — undo, face, favorites, minimap, ghost aura, QA)
 
 ---
 
@@ -21,6 +21,8 @@ This is the single source of truth for what all tabs are doing, what's done, wha
 | Main (116) | Sniffing pipeline + accumulated commit | COMPLETE | `7ecad9990d`, `1419293a01`, `0808414a7e` |
 | Commit Tab (117) | Commit coordination + transmog handoff | COMPLETE | No new commits. Recovered 3 reset commits from reflog. Generated transmog handoff prompt |
 | Import Tab (118) | LoreWalker TDB import — write & apply 7 SQL files + fix _00_ | COMPLETE | `0997d17565`. Wrote 01-07, applied all 8 files (00-07). Fixed _00_ gameobject_template column count bug (32→35 Data zeros). ~502K inserts + 7.7K updates landed. QA clean. |
+| Main (120) | NotebookLM knowledge base + tooling evaluation | COMPLETE | `b36bbb5811`. Created `doc/notebooklm/` (97 files). Evaluated Antigravity IDE. Reviewed 12 claude-code issues. |
+| Main (121) | VoxPlacer polish — undo, face, favorites, minimap, ghost aura, QA | COMPLETE | `4fc562e404`. 4 features (undo stack, face-toward, favorites list, minimap button), ghost preview aura (37800), 6 QA fixes (keybinds, memory leak, false-positive state, fragile clone ref, GO clone props/orientation) |
 | — | — | — | Add rows as tabs are opened |
 
 **Rule**: Before starting work, check this file. If another tab owns a file or task, don't touch it. Update your row when you start and when you finish.
@@ -163,6 +165,10 @@ Each zone produces a SQL file in `sql/exports/` and findings for review.
 
 | Session | What | Key Output |
 |---------|------|-----------|
+| 121 | VoxPlacer Polish | 4 features (undo 10-deep stack, face-toward, favorites list, minimap button), ghost preview aura (spell 37800), 6 QA fixes. ~1140 lines C++, ~930 lines Lua |
+| 120 | NotebookLM Knowledge Base | 97 files in `doc/notebooklm/` (docs, source as .txt, SQL, Lua addons). Evaluated Antigravity IDE, reviewed 12 claude-code issues |
+| 119 | Anti-Theater Protocol | Completion Integrity rules in CLAUDE.md. 6 prohibitions, mandatory checklist, 5 memory files updated |
+| 118 | LoreWalker TDB Import | 7 SQL files applied, 502K inserts + 7.7K updates, _00_ column bug fixed, QA clean |
 | 115b | Transmog Tooling Phase 1 | Created `transmog_common_maps.py`, fixed DT maps in 3 tools (DT 12/14 added, lookup.py wrong numbering fixed), regenerated enriched CSVs for 66263, annotated bridge v3 spec |
 | 113 | Transmog Resource Audit | 3-pass QA of all transmog tools/CSVs/bridge. Key: bridge v3 implemented, lookup.py wrong DT numbering, enriched CSVs stale. `doc/transmog_resource_audit.md` |
 | 112 | Sniffing Guide Polish | Hub gist cleanup, generic branding, Heads Up section |
