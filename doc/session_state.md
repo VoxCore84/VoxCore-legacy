@@ -29,6 +29,7 @@ This is the single source of truth for what all tabs are doing, what's done, wha
 | Main (127) | AI Studio + full sync + commit | COMPLETE | `9ee8c2bb55`. AI Studio hub (junctions for 3 projects), .agentrules, gitignore hardening (discord exports, transmog export, session logs), discord analytics script, DevOps prompts. 21 files, 855 insertions |
 | Main (128) | VoxTip v1.0 + idTip rewrite + Triad handoff | COMPLETE | `97dd4ee6a2`. VoxTip debug toolkit (3 files), handoff to Antigravity, Central Brain + Triad workflow adopted. System pause acknowledged |
 | Transmog (130) | Transmog bridge fail-open + MINI-BRIDGE sender | PAUSED | C++ `4f2512f29d`. Lua MINI-BRIDGE in TransmogSpy (slots 0/2/12/13, option-aware). Awaiting acceptance test |
+| TQ (131) | TongueAndQuill v2.2 — page numbers, batch, 13 fixes | PAUSED | Code complete. Awaiting: AUDIT_PROMPT update, Z_Global fix, exe build, git init, Antigravity audit |
 | — | — | — | Add rows as tabs are opened |
 
 **Rule**: Before starting work, check this file. If another tab owns a file or task, don't touch it. Update your row when you start and when you finish.
