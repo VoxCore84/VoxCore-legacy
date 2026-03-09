@@ -670,6 +670,11 @@ void WorldSession::HandleChatAddonMessage(ChatMsg type, std::string prefix, std:
         TC_LOG_DEBUG("network.opcode.transmog", "TransmogBridge [{}]: received {} overrides",
             GetPlayerInfo(), _transmogBridgeOverrides.size());
 
+        TC_LOG_DEBUG("network.opcode.transmog",
+            "TransmogBridge [{}]: received TMOG_BRIDGE payload bytes={} overrides={} pending={}",
+            GetPlayerInfo(), payload.size(), _transmogBridgeOverrides.size(), _transmogBridgePendingOutfit ? 1 : 0);
+        _transmogBridgeWaitOneUpdate = false;
+
         // The outfit packet (CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS) always arrives before
         // this addon message due to FIFO packet ordering. It defers finalization so we
         // can merge overrides now.

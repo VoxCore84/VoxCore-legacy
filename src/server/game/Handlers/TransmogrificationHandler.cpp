@@ -858,6 +858,7 @@ void WorldSession::HandleTransmogOutfitUpdateSlots(WorldPackets::Transmogrificat
     // If no addon message arrives (addon not installed), the safety net in
     // WorldSession::Update() finalizes without overrides — backward compatible.
     _transmogBridgePendingOutfit.emplace(TransmogBridgePendingOutfit{std::move(updatedSet), hasAnyAppearance});
+    _transmogBridgeWaitOneUpdate = true;
     TC_LOG_DEBUG("network.opcode.transmog", "CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS [{}]: deferred finalization (waiting for TransmogBridge addon message)",
         GetPlayerInfo());
 }
@@ -1013,13 +1014,20 @@ void WorldSession::FinalizeTransmogBridgePendingOutfit()
         _transmogBridgeOverrides.clear();
     }
 
-    // Use server's saved outfit as baseline for non-bridge slots.
-    // The client's packet data is unreliable for ALL slots (sends stale cached IMAIDs).
-    // Only bridge-overridden slots have correct user-intended values.
+    // Determine whether the bridge addon contributed any usable override data.
+    // When bridge data is present, we trust bridge slots and restore saved baseline
+    // for non-bridge slots. When bridge data is absent, the CMSG-parsed data
+    // (built by HandleTransmogOutfitUpdateSlots) is already the best we have.
+    bool hasUsableBridgeData = bridgeOverriddenMask
+        || bridgeClearedMask
+        || bridgeOverrodeSecondary
+        || bridgeClearedSecondary
+        || bridgeIllusionOverriddenMask;
+
     if (Player* player = GetPlayer())
     {
         EquipmentSetInfo::EquipmentSetData const* savedOutfit = player->GetTransmogOutfitBySetID(pending.Outfit.SetID);
-        if (savedOutfit)
+        if (savedOutfit && hasUsableBridgeData)
         {
             for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)
             {
@@ -1063,6 +1071,12 @@ void WorldSession::FinalizeTransmogBridgePendingOutfit()
             TC_LOG_DEBUG("network.opcode.transmog",
                 "TransmogBridge [{}]: restored server baseline (bridgeMask=0x{:X}, {} bridge slots, IgnoreMask=0x{:X})",
                 GetPlayerInfo(), bridgeOverriddenMask, bridgeSlotCount, pending.Outfit.IgnoreMask);
+        }
+        else if (savedOutfit)
+        {
+            TC_LOG_DEBUG("network.opcode.transmog",
+                "TransmogBridge [{}]: no usable bridge overrides; preserving parsed CMSG slot data (IgnoreMask=0x{:X})",
+                GetPlayerInfo(), pending.Outfit.IgnoreMask);
         }
         else
         {

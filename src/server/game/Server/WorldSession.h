@@ -1853,6 +1853,7 @@ class TC_GAME_API WorldSession
         std::vector<TransmogBridgeOverride> _transmogBridgeOverrides;
         std::string _transmogBridgePartialPayload;
         Optional<TransmogBridgePendingOutfit> _transmogBridgePendingOutfit;
+        bool _transmogBridgeWaitOneUpdate = false;
 
         // Miscellaneous
         void HandleSpellClick(WorldPackets::Spells::SpellClick& spellClick);
