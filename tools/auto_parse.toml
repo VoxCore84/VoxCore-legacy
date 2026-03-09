@@ -1,0 +1,37 @@
+# VoxCore Auto-Parse Configuration
+# All keys are optional — defaults are used for any missing value.
+# Paths use backslashes (Windows) or forward slashes (both work).
+
+[paths]
+runtime_dir = 'C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo'
+adb_cache_dir = 'C:\WoW\_retail_\Cache\ADB\enUS'
+wago_dir = 'C:\Users\atayl\VoxCore\wago'
+tools_dir = 'C:\Users\atayl\VoxCore\tools'
+wpp_exe = 'C:\Users\atayl\VoxCore\ExtTools\WowPacketParser\WowPacketParser.exe'
+
+[watch]
+interval = 5              # Base poll interval (seconds)
+idle_multiplier = 3       # Multiply interval when idle
+idle_threshold = 20       # Polls with no changes before entering idle
+max_interval = 30         # Cap on adaptive interval
+
+[notifications]
+enabled = true            # Master toggle for Windows toast notifications
+on_fatal = true           # Notify on FATAL/CRASH
+on_crash = true           # Notify on new crash dump detected
+on_error = false          # Notify on ERROR (can be noisy)
+
+[dashboard]
+enabled = true            # Generate dashboard.html
+refresh_seconds = 5       # Auto-refresh interval for dashboard
+
+[alerts]
+suppress_known = true     # Only show truly new error patterns
+max_seen = 10000          # Max fingerprints to remember
+
+[tray]
+enabled = false           # System tray icon (opt-in)
+
+[output]
+verbose = false           # Extra detail in output files
+timeline_limit = 500      # Max entries shown in timeline (0 = unlimited)
