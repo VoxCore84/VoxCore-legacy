@@ -16,43 +16,43 @@ log = logging.getLogger(__name__)
 # Category patterns (from Discord analysis of 30K messages)
 CATEGORIES = [
     ("Quest Bug", re.compile(
-        r"quest\s*(?:(?:not|doesn.?t|can.?t|won.?t)\s*(?:work|complet|start|finish|turn|accept|show|update|progress)|bug|broken|stuck|issue|missing)",
+        r"quest\s*(?:(?:not|doesn.?t|can.?t|won.?t)\s*(?:work|complet|start|finish|turn|accept|show|update|progress)|bug|broken|stuck|issue|missing|glitch|fail)",
         re.I)),
     ("Missing NPC", re.compile(
-        r"(?:npc|creature|mob|vendor|trainer|flightmaster)\s*(?:not\s*(?:spawn|there|exist|show|appear|found)|missing|gone|disappear)|missing\s*(?:npc|creature|mob|vendor)",
+        r"(?:npc|creature|mob|vendor|trainer|flightmaster)\s*(?:not\s*(?:spawn|there|exist|show|appear|found)|missing|gone|disappear|dead|invisible)|missing\s*(?:npc|creature|mob|vendor)",
         re.I)),
     ("Spell / Ability Bug", re.compile(
-        r"(?:spell|ability|talent|skill|aura|buff|proc)\s*(?:not\s*(?:work|cast|function|apply|show|learn)|broken|bug|issue|wrong)|can.?t\s*(?:cast|use|learn)\s*(?:spell|ability)",
+        r"(?:spell|ability|talent|skill|aura|buff|proc)\s*(?:not\s*(?:work|cast|function|apply|show|learn)|broken|bug|issue|wrong|glitch)|can.?t\s*(?:cast|use|learn)\s*(?:spell|ability)",
         re.I)),
     ("Transmog / Appearance", re.compile(
-        r"transmog|transmogrif|wardrobe\s*(?:not|broken|bug|empty|missing)|appearance\s*(?:not|broken|bug|wrong)",
+        r"transmog|transmogrif|wardrobe\s*(?:not|broken|bug|empty|missing|glitch)|appearance\s*(?:not|broken|bug|wrong)",
         re.I)),
     ("Mount / Flying", re.compile(
-        r"(?:mount|flying|fly|dragonriding|skyriding)\s*(?:not\s*(?:work|function)|broken|bug|issue|can.?t)|can.?t\s*(?:fly|mount|ride)",
+        r"(?:mount|flying|fly|dragonriding|skyriding)\s*(?:not\s*(?:work|function)|broken|bug|issue|can.?t|glitch)|can.?t\s*(?:fly|mount|ride)",
         re.I)),
     ("Item / Loot", re.compile(
-        r"(?:item|loot|drop|gear)\s*(?:not\s*(?:work|drop|show|equip)|broken|bug|missing|wrong)|missing\s*(?:item|loot|drop)",
+        r"(?:item|loot|drop|gear)\s*(?:not\s*(?:work|drop|show|equip|give)|broken|bug|missing|wrong|glitch)|missing\s*(?:item|loot|drop)",
         re.I)),
     ("Server Crash", re.compile(
-        r"(?:server|worldserver)\s*(?:crash|segfault|assertion|abort|died|stopped)|crash(?:es|ed|ing)|access\s*violation|stack\s*trace",
+        r"(?:server|worldserver|bnetserver)\s*(?:crash|segfault|assertion|abort|died|stopped|down|offline)|crash(?:es|ed|ing)|access\s*violation|stack\s*trace",
         re.I)),
     ("Teleport / Phasing", re.compile(
-        r"(?:portal|teleport|phase|phasing)\s*(?:not\s*(?:work|function|teleport)|broken|bug|stuck|wrong)|stuck\s*(?:in|at)\s*(?:loading|phase|portal)|wrong\s*phase",
+        r"(?:portal|teleport|phase|phasing|hearth(?:stone)?)\s*(?:not\s*(?:work|function|teleport)|broken|bug|stuck|wrong|glitch)|stuck\s*(?:in|at)\s*(?:loading|phase|portal)|wrong\s*phase",
         re.I)),
     ("Gameobject / Interaction", re.compile(
-        r"(?:gameobject|chest|node|herb|ore|door)\s*(?:not\s*(?:work|interact|click|open)|broken|missing)|can.?t\s*(?:interact|click|open|loot|gather)",
+        r"(?:gameobject|chest|node|herb|ore|door)\s*(?:not\s*(?:work|interact|click|open|spawn)|broken|missing|glitch)|can.?t\s*(?:interact|click|open|loot|gather)",
         re.I)),
     ("Creature AI / Pathing", re.compile(
-        r"(?:creature|mob|boss)\s*(?:ai|combat|aggro|evade|path|movement)\s*(?:not|broken|bug|wrong)|evade\s*(?:bug|issue|mode|loop)",
+        r"(?:creature|mob|boss)\s*(?:ai|combat|aggro|evade|path|movement|mechanic)\s*(?:not|broken|bug|wrong|glitch)|evade\s*(?:bug|issue|mode|loop)",
         re.I)),
     ("Instance / Dungeon", re.compile(
-        r"(?:instance|dungeon|raid)\s*(?:not\s*(?:work|enter|load|teleport)|broken|bug|crash|stuck)|can.?t\s*(?:enter|queue)\s*(?:instance|dungeon|raid)",
+        r"(?:instance|dungeon|raid)\s*(?:not\s*(?:work|enter|load|teleport)|broken|bug|crash|stuck|glitch)|can.?t\s*(?:enter|queue)\s*(?:instance|dungeon|raid)",
         re.I)),
 ]
 
 # Bug-shaped messages (for misrouting detection)
 BUG_INDICATORS = re.compile(
-    r"(?:bug|broken|not\s+work|doesn.?t\s+work|crash|missing\s+(?:npc|quest|item|spell))",
+    r"(?:bug|broken|not\s+(?:work|trigger)|doesn.?t\s+(?:work|trigger)|crash|missing\s+(?:npc|quest|item|spell)|glitch|issue|stuck)",
     re.I,
 )
 

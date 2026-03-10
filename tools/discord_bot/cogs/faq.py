@@ -99,7 +99,40 @@ class FAQResponder(commands.Cog):
                     color=discord.Color.blue(),
                 )
                 embed.set_footer(text=f"{em('fix', '\U0001f527')} Automated answer \u2022 If this doesn't help, wait for a human!")
-                await message.reply(embed=embed, mention_author=False)
+                
+                view = discord.ui.View(timeout=120)
+                async def launch_dm_callback(interaction: discord.Interaction):
+                    await interaction.response.send_message("I've sent you a DM! Let's figure this out together.", ephemeral=True)
+                    try:
+                        # Grab the DMGuide cog and trigger it manually
+                        dm_cog = self.bot.get_cog("DMGuide")
+                        if dm_cog:
+                            dm_channel = await interaction.user.create_dm()
+                            
+                            # Hardcode import here to avoid circular dep, since DMStepView is in dm_guide
+                            from cogs.dm_guide import DMStepView, SETUP_STEPS
+                            
+                            step_data = SETUP_STEPS[0]
+                            icon = em("robot", "\U0001f916")
+                            dm_embed = discord.Embed(
+                                title=f"{icon} {step_data['title']}",
+                                description=step_data['desc'],
+                                color=discord.Color.blue()
+                            )
+                            await dm_channel.send(embed=dm_embed, view=DMStepView(0))
+                    except discord.Forbidden:
+                        await interaction.followup.send("I tried to DM you, but your privacy settings are blocking DMs from server members!", ephemeral=True)
+                
+                btn = discord.ui.Button(
+                    label="Still stuck? Help me!",
+                    emoji="\U0001f198", # SOS emoji
+                    style=discord.ButtonStyle.danger,
+                    custom_id="launch_dm_troubleshooter_faq"
+                )
+                btn.callback = launch_dm_callback
+                view.add_item(btn)
+
+                await message.reply(embed=embed, view=view, mention_author=False)
                 self._stats[faq_id] += 1
                 _save_stats(self._stats)
                 log.info("FAQ '%s' triggered by %s in #%s (total: %d)", faq_id, message.author, message.channel, self._stats[faq_id])

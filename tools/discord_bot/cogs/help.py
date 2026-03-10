@@ -13,22 +13,13 @@ from emojis import em
 CATEGORIES = [
     (
         "lookup", "\U0001f50d", "Lookups",
-        "Search the WoW database for spells, items, creatures, and more.",
+        "Quick Wowhead links for spells, items, creatures, and more.",
         [
-            ("/spell <query>", "Look up a spell by ID or name"),
-            ("/item <query>", "Look up an item by ID or name"),
-            ("/creature <query>", "Look up a creature/NPC by ID or name"),
-            ("/area <query>", "Look up a zone or area by ID or name"),
-            ("/faction <query>", "Look up a faction by ID or name"),
-        ],
-    ),
-    (
-        "server", "\u2699\ufe0f", "Server",
-        "Check server status, build info, and player counts.",
-        [
-            ("/server", "Check server status, uptime, and player count"),
-            ("/online", "Show current online player count"),
-            ("/buildcheck", "Show the latest TrinityCore auth SQL update"),
+            ("/spell <query>", "Look up a spell by ID or name on Wowhead"),
+            ("/item <query>", "Look up an item by ID or name on Wowhead"),
+            ("/creature <query>", "Look up a creature/NPC by ID or name on Wowhead"),
+            ("/area <query>", "Look up a zone or area by ID or name on Wowhead"),
+            ("/faction <query>", "Look up a faction by ID or name on Wowhead"),
         ],
     ),
     (
@@ -51,7 +42,7 @@ CATEGORIES = [
     ),
     (
         "fix", "\U0001f527", "Troubleshooting",
-        "Interactive guided troubleshooter for setup problems.",
+        "Interactive guided troubleshooter for setup and game issues.",
         [
             ("/troubleshoot", "Step-by-step guided troubleshooter with buttons"),
         ],
@@ -60,8 +51,8 @@ CATEGORIES = [
         "watch", "\U0001f441\ufe0f", "Passive Features",
         "Things the bot does automatically in the background.",
         [
-            ("Wowhead link resolver", "Post a wowhead.com link and the bot checks if that entity exists in our DB"),
-            ("Build watchdog", "Monitors TrinityCore GitHub for new client build updates and announces them"),
+            ("Wowhead link preview", "Post a wowhead.com link and the bot embeds a nice preview"),
+            ("Build watchdog", "Monitors TrinityCore GitHub for new client build updates"),
             ("Changelog feed", "Posts new TrinityCore commits to announcements (hourly)"),
             ("Welcome DM", "New members get a quick-start checklist via DM"),
         ],
@@ -80,9 +71,10 @@ CATEGORIES = [
     ),
     (
         "dragon", "\U0001f409", "Bot Info",
-        "About the bot.",
+        "About the bot and build tools.",
         [
             ("/about", "Bot version, uptime, and stats"),
+            ("/buildcheck", "Show the latest TrinityCore auth SQL update"),
         ],
     ),
 ]
@@ -115,16 +107,16 @@ class HelpDropdown(discord.ui.Select):
                 lines = []
                 for name, desc in cmds:
                     if name.startswith("/"):
-                        lines.append(f"{icon} `{name}` — {desc}")
+                        lines.append(f"`{name}`\n> {desc}")
                     else:
-                        lines.append(f"{icon} **{name}** — {desc}")
+                        lines.append(f"**{name}**\n> {desc}")
 
                 embed = discord.Embed(
-                    title=f"{icon} {label}",
-                    description="\n".join(lines),
+                    title=f"{icon}  {label}",
+                    description="\n\n".join(lines),
                     color=discord.Color.blue(),
                 )
-                embed.set_footer(text="Use /help to see all categories")
+                embed.set_footer(text="DraconicWoW")
                 await interaction.response.edit_message(embed=embed, view=self.view)
                 return
 
@@ -135,6 +127,12 @@ class HelpView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=120)
         self.add_item(HelpDropdown())
+
+    async def on_timeout(self):
+        # Disable the dropdown when the view times out
+        for child in self.children:
+            child.disabled = True
+        pass
 
 
 class Help(commands.Cog):
@@ -147,23 +145,18 @@ class Help(commands.Cog):
     async def help_command(self, interaction: discord.Interaction):
         icon = em("dragon", "\U0001f409")
 
-        # Build overview of all categories
+        # Build clean overview — just category + short description
         lines = []
         for emoji_name, fallback, label, description, cmds in CATEGORIES:
             cat_icon = em(emoji_name, fallback)
-            cmd_names = [c[0] for c in cmds if c[0].startswith("/")]
-            if cmd_names:
-                cmd_list = "  ".join(f"`{c}`" for c in cmd_names)
-                lines.append(f"{cat_icon} **{label}** — {cmd_list}")
-            else:
-                lines.append(f"{cat_icon} **{label}** — {description}")
+            lines.append(f"{cat_icon}  **{label}**\n> {description}")
 
         embed = discord.Embed(
-            title=f"{icon} DraconicBot — Command Guide",
-            description="\n".join(lines) + "\n\n**Select a category below for details.**",
+            title=f"{icon}  DraconicBot",
+            description="\n\n".join(lines) + "\n\n*Select a category below to see commands.*",
             color=discord.Color.blue(),
         )
-        embed.set_footer(text="DraconicBot \u2022 DraconicWoW support bot")
+        embed.set_footer(text="DraconicWoW")
 
         await interaction.response.send_message(embed=embed, view=HelpView(), ephemeral=True)
 

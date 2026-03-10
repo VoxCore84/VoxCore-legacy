@@ -4,16 +4,17 @@ from collections import Counter, defaultdict
 # Force UTF-8 output
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
-files = [
-    ('troubleshooting', 'C:/Users/atayl/VoxCore/doc/discord_export_troubleshooting.json'),
-    ('bugreport', 'C:/Users/atayl/VoxCore/doc/discord_export_bugreport.json'),
-    ('tww', 'C:/Users/atayl/VoxCore/doc/discord_export_tww.json'),
-    ('draconicwow', 'C:/Users/atayl/VoxCore/doc/discord_export_draconicwow.json'),
-    ('gettingstarted', 'C:/Users/atayl/VoxCore/doc/discord_export_gettingstarted.json'),
-    ('customoptions', 'C:/Users/atayl/VoxCore/doc/discord_export_customoptions.json'),
-    ('tools', 'C:/Users/atayl/VoxCore/doc/discord_export_tools.json'),
-    ('sqlfixes', 'C:/Users/atayl/VoxCore/doc/discord_export_sqlfixes.json'),
-]
+import glob
+import os
+
+# Automatically grab all json exports in the doc folder
+export_files = glob.glob('C:/Users/atayl/VoxCore/doc/discord_export_*.json')
+files = []
+for fp in export_files:
+    # Extract channel name from 'discord_export_channelname.json'
+    basename = os.path.basename(fp)
+    channel_name = basename.replace('discord_export_', '').replace('.json', '')
+    files.append((channel_name, fp))
 
 # Category patterns - ordered by specificity (most specific first)
 categories = [

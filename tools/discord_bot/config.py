@@ -13,11 +13,29 @@ load_dotenv(_BOT_DIR / ".env")
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN", "")
 
 # Channel IDs (populated from .env — 0 means "not configured")
-CHANNEL_TROUBLESHOOTING = int(os.getenv("CHANNEL_TROUBLESHOOTING", 0))
-CHANNEL_BUGREPORT = int(os.getenv("CHANNEL_BUGREPORT", 0))
-CHANNEL_TWW = int(os.getenv("CHANNEL_TWW", 0))
-CHANNEL_GENERAL = int(os.getenv("CHANNEL_GENERAL", 0))
-CHANNEL_ANNOUNCEMENTS = int(os.getenv("CHANNEL_ANNOUNCEMENTS", 0))
+def _int_env(key: str) -> int:
+    """Read an env var as int, defaulting to 0 for empty/missing values."""
+    val = os.getenv(key, "")
+    return int(val) if val.strip() else 0
+
+CHANNEL_TROUBLESHOOTING = _int_env("CHANNEL_TROUBLESHOOTING")
+CHANNEL_BUGREPORT = _int_env("CHANNEL_BUGREPORT")
+CHANNEL_TWW = _int_env("CHANNEL_TWW")
+CHANNEL_GENERAL = _int_env("CHANNEL_GENERAL")
+CHANNEL_ANNOUNCEMENTS = _int_env("CHANNEL_ANNOUNCEMENTS")
+
+# Expansion-specific channels (FAQ + triage auto-respond here too)
+CHANNEL_CLASSIC = _int_env("CHANNEL_CLASSIC")
+CHANNEL_BURNING_CRUSADE = _int_env("CHANNEL_BURNING_CRUSADE")
+CHANNEL_WOTLK = _int_env("CHANNEL_WOTLK")
+CHANNEL_CATACLYSM = _int_env("CHANNEL_CATACLYSM")
+CHANNEL_MOP = _int_env("CHANNEL_MOP")
+CHANNEL_WOD = _int_env("CHANNEL_WOD")
+CHANNEL_LEGION = _int_env("CHANNEL_LEGION")
+CHANNEL_BFA = _int_env("CHANNEL_BFA")
+CHANNEL_SHADOWLANDS = _int_env("CHANNEL_SHADOWLANDS")
+CHANNEL_DRAGONFLIGHT = _int_env("CHANNEL_DRAGONFLIGHT")
+CHANNEL_MIDNIGHT = _int_env("CHANNEL_MIDNIGHT")
 
 SUPPORT_CHANNEL_IDS = {
     cid for cid in [
@@ -25,14 +43,22 @@ SUPPORT_CHANNEL_IDS = {
         CHANNEL_BUGREPORT,
         CHANNEL_TWW,
         CHANNEL_GENERAL,
+        CHANNEL_CLASSIC,
+        CHANNEL_BURNING_CRUSADE,
+        CHANNEL_WOTLK,
+        CHANNEL_CATACLYSM,
+        CHANNEL_MOP,
+        CHANNEL_WOD,
+        CHANNEL_LEGION,
+        CHANNEL_BFA,
+        CHANNEL_SHADOWLANDS,
+        CHANNEL_DRAGONFLIGHT,
+        CHANNEL_MIDNIGHT,
     ] if cid
 }
 
 # --- SOAP ---
-SOAP_HOST = os.getenv("SOAP_HOST", "127.0.0.1")
-SOAP_PORT = int(os.getenv("SOAP_PORT", 7878))
-SOAP_USER = os.getenv("SOAP_USER", "1#1")
-SOAP_PASS = os.getenv("SOAP_PASS", "gm")
+# (SOAP variables removed)
 
 # --- MySQL ---
 MYSQL_HOST = os.getenv("MYSQL_HOST", "127.0.0.1")
@@ -41,21 +67,7 @@ MYSQL_USER = os.getenv("MYSQL_USER", "root")
 MYSQL_PASS = os.getenv("MYSQL_PASS", "admin")
 
 # --- Wago CSV ---
-_csv_env = os.getenv("WAGO_CSV_DIR", "")
-if _csv_env:
-    WAGO_CSV_DIR = Path(_csv_env)
-else:
-    # Auto-detect from wago_common.py
-    _wago_dir = Path(__file__).resolve().parent.parent.parent / "wago"
-    if (_wago_dir / "wago_common.py").exists():
-        sys.path.insert(0, str(_wago_dir))
-        try:
-            from wago_common import WAGO_CSV_DIR as _auto  # type: ignore
-            WAGO_CSV_DIR = Path(_auto)
-        except Exception:
-            WAGO_CSV_DIR = _wago_dir / "wago_csv"
-    else:
-        WAGO_CSV_DIR = _wago_dir / "wago_csv"
+# (WAGO_CSV_DIR removed)
 
 # --- GitHub ---
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
