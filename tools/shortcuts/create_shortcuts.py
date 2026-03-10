@@ -20,11 +20,18 @@ from PIL import Image
 #  PATHS
 # ═══════════════════════════════════════════════════════════════════
 
-ICON_SRC = r"C:\Users\atayl\VoxCore\wago\att_icons_export\8K_Format\wow_icons\large"
-ICON_DST = r"C:\Users\atayl\VoxCore\tools\shortcuts\icons"
+import sys
+try:
+    sys.path.append(str(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "scripts", "bootstrap"))))
+    from resolve_roots import find_project_root
+    ROOT = str(find_project_root())
+except ImportError:
+    ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+ICON_SRC = os.path.join(ROOT, r"wago\att_icons_export\8K_Format\wow_icons\large")
+ICON_DST = os.path.join(ROOT, r"tools\shortcuts\icons")
 DESKTOP  = os.path.join(os.environ["USERPROFILE"], "OneDrive", "Desktop")
 
-ROOT     = r"C:\Users\atayl\VoxCore"
 RUNTIME  = os.path.join(ROOT, r"out\build\x64-RelWithDebInfo\bin\RelWithDebInfo")
 TOOLS    = os.path.join(ROOT, "tools")
 SC_DIR   = os.path.join(TOOLS, "shortcuts")

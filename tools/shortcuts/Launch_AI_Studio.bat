@@ -6,16 +6,20 @@ echo   Scraping Desktop\Excluded for new ChatGPT documents...
 echo ========================================================
 echo.
 
-set "EXCLUDED=C:\Users\atayl\OneDrive\Desktop\Excluded"
-set "STUDIO=C:\Users\atayl\VoxCore\AI_Studio"
+:: Resolve VoxCore root by stepping up two directories from tools/shortcuts/
+set "ROOT=%~dp0..\.."
+for %%i in ("%ROOT%") do set "ROOT=%%~fi"
+
+set "EXCLUDED=%USERPROFILE%\OneDrive\Desktop\Excluded"
+set "STUDIO=%ROOT%\AI_Studio"
 set "INBOX=%STUDIO%\1_Inbox"
 
 if not exist "%INBOX%" mkdir "%INBOX%"
 
 set /a count=0
-for %%ext in (*.md *.txt *.json *.csv *.sql *.lua) do (
-    if exist "%EXCLUDED%\%%ext" (
-        move /Y "%EXCLUDED%\%%ext" "%INBOX%\" >nul 2>&1
+for %%e in (*.md *.txt *.json *.csv *.sql *.lua) do (
+    if exist "%EXCLUDED%\%%e" (
+        move /Y "%EXCLUDED%\%%e" "%INBOX%\" >nul 2>&1
         set /a count+=1
     )
 )

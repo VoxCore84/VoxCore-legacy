@@ -24,3 +24,8 @@ Instead of mandating the user to open multiple terminal tabs (as previously done
 - Headers are included sequentially (`#include "..."` for TC headers, `<...>` for system).
 - Do not add tables or ` broadcast_text` to the `world` DB. Use `hotfixes` when appropriate or CSV lookups.
 - Avoid modifying core `src/` modules when a Script solution in `src/server/scripts/Custom/` can hook the behavior natively.
+
+## Command Execution & System Permissions
+- **Always explicitly list new system commands** needed to complete a task.
+- Before executing a new system command, **explicitly ask the user for permission** to both run it and add it to the allow list.
+- Do not attempt to bypass this process for new commands, to ensure security and clean workflows.

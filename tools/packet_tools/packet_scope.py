@@ -23,7 +23,15 @@ from pathlib import Path
 from collections import defaultdict
 
 # --- Default config ---
-DEFAULT_PKT_DIR = Path(r"C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\PacketLog")
+# Resolve project root dynamically then append the packetlog path
+try:
+    sys.path.append(str(Path(__file__).resolve().parent.parent.parent / "scripts" / "bootstrap"))
+    from resolve_roots import find_project_root
+    _ROOT = find_project_root()
+except ImportError:
+    _ROOT = Path(__file__).resolve().parent.parent.parent
+
+DEFAULT_PKT_DIR = _ROOT / r"out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\PacketLog"
 
 # Patterns
 PACKET_HEADER_RE = re.compile(r'^(ClientToServer|ServerToClient): (\S+)')

@@ -1,0 +1,147 @@
+file_path,line_number,hardcoded_literal,proposed_alias,context
+tools\auto_parse.toml,6,C:\Users\atayl\VoxCore,VOXCORE_ROOT,runtime_dir = 'C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo'
+tools\auto_parse.toml,8,C:\Users\atayl\VoxCore,VOXCORE_ROOT,wago_dir = 'C:\Users\atayl\VoxCore\wago'
+tools\auto_parse.toml,9,C:\Users\atayl\VoxCore,VOXCORE_ROOT,tools_dir = 'C:\Users\atayl\VoxCore\tools'
+tools\auto_parse.toml,10,C:\Users\atayl\VoxCore,VOXCORE_ROOT,wpp_exe = 'C:\Users\atayl\VoxCore\ExtTools\WowPacketParser\WowPacketParser.exe'
+tools\chatgpt_studio_orientation.md,8,C:\Users\atayl\VoxCore,VOXCORE_ROOT,4. **Any other sub-project or tool** stored anywhere inside `C:\Users\atayl\VoxCore\`
+tools\chatgpt_studio_orientation.md,20,C:\Users\atayl\VoxCore,VOXCORE_ROOT,The user has a physical folder on their hard drive: `C:\Users\atayl\VoxCore\AI_Studio\`.
+tools\claude_code_handover.md,6,C:\Users\atayl\VoxCore,VOXCORE_ROOT,1. Read `C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\PacketLog\timeline.t
+tools\claude_project_bootstrap.md,4,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"The user has initialized the `/AI_Studio/Projects/` hierarchy, but the physical folders for `idTIP`,"
+tools\claude_project_bootstrap.md,13,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"2. Once you find its master folder, generate a Windows Directory Junction (`mklink /J`) inside `C:\U"
+tools\claude_project_bootstrap.md,17,C:\Users\atayl\VoxCore,VOXCORE_ROOT,2. Generate a Windows Directory Junction (`mklink /J`) inside `C:\Users\atayl\VoxCore\AI_Studio\Proj
+tools\claude_project_bootstrap.md,21,C:\Users\atayl\VoxCore,VOXCORE_ROOT,2. Generate a Windows Directory Junction (`mklink /J`) inside `C:\Users\atayl\VoxCore\AI_Studio\Proj
+tools\claude_studio_sync.md,7,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"The user is tired of hunting across `C:\Users\atayl\VoxCore\tools\`, `\wago\`, `\sql\`, and `\doc\` "
+tools\claude_studio_sync.md,20,C:\Users\atayl\VoxCore,VOXCORE_ROOT,The user is simultaneously developing dozens of projects scattered across `C:\Users\atayl\VoxCore\`.
+tools\claude_studio_sync.md,24,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"If ChatGPT gives you a spec for a project that doesn't have a folder yet, **you must create one:** `"
+tools\claude_sync_update.md,28,C:\Users\atayl\VoxCore,VOXCORE_ROOT,- **CRITICAL DIRECTIVE FOR YOU:** Whenever you establish that a SQL database patch is required fixin
+tools\gen_chatgpt_payload.py,13,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"r""C:\Users\atayl\VoxCore\tools\command-center\app.py"","
+tools\gen_chatgpt_payload.py,14,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"r""C:\Users\atayl\VoxCore\tools\command-center\templates\index.html"""
+tools\_optimize_db.bat,8,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"set ""MYSQL=C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\UniServerZ\core\my"
+tools\admin_tools\inventory_voxcore.py,30,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"log_out = generate_inventory(r""C:\Users\atayl\VoxCore"")"
+tools\admin_tools\inventory_voxcore.py,31,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"with open(r""C:\Users\atayl\VoxCore\tools\voxcore_inventory.md"", ""w"") as f:"
+tools\ai_studio\ai_studio_router.py,9,C:\Users\atayl\OneDrive\Desktop\Excluded,EXCLUDED_ROOT,"EXCLUDED_DIR = r""C:\Users\atayl\OneDrive\Desktop\Excluded"""
+tools\ai_studio\ai_studio_router.py,10,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"INBOX_DIR = r""C:\Users\atayl\VoxCore\AI_Studio\1_Inbox"""
+tools\ai_studio\ai_studio_router.py,16,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"with open(r""C:\Users\atayl\VoxCore\tools\ai_router_log.txt"", ""a"") as f:"
+tools\auto_parse\config.py,20,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"r""C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo"""
+tools\auto_parse\config.py,33,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"default_factory=lambda: Path(r""C:\Users\atayl\VoxCore\wago"")"
+tools\auto_parse\config.py,36,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"default_factory=lambda: Path(r""C:\Users\atayl\VoxCore\tools"")"
+tools\auto_parse\config.py,40,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"r""C:\Users\atayl\VoxCore\ExtTools\WowPacketParser\WowPacketParser.exe"""
+tools\build\build.bat,3,C:\Users\atayl\VoxCore,VOXCORE_ROOT,cd /d C:\Users\atayl\VoxCore
+tools\build\build_debug.bat,3,C:\Users\atayl\VoxCore,VOXCORE_ROOT,cd /d C:\Users\atayl\VoxCore
+tools\build\build_scripts.bat,3,C:\Users\atayl\VoxCore,VOXCORE_ROOT,cd /d C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo
+tools\build\configure.bat,3,C:\Users\atayl\VoxCore,VOXCORE_ROOT,cd /d C:\Users\atayl\VoxCore
+tools\build\reconfigure_rel.bat,4,C:\Users\atayl\VoxCore,VOXCORE_ROOT,cd /d C:\Users\atayl\VoxCore
+tools\build\setup_junctions.bat,4,C:\Users\atayl\VoxCore,VOXCORE_ROOT,set BIN=C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo
+tools\build\setup_junctions.bat,5,C:\Users\atayl\VoxCore,VOXCORE_ROOT,set RT=C:\Users\atayl\VoxCore\runtime
+tools\command-center\app.py,24,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"ICON_SRC     = Path(r""C:\Users\atayl\VoxCore\wago\att_icons_export\8K_Format\wow_icons\large"")"
+tools\command-center\app.py,26,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"ART_SRC      = Path(r""C:\Users\atayl\VoxCore\wago\att_icons_export\8K_Format\scenic_art"")"
+tools\command-center\app.py,29,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"ROOT    = r""C:\Users\atayl\VoxCore"""
+tools\command-center\launch.bat,2,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"cd /d ""C:\Users\atayl\VoxCore\tools\command-center"""
+tools\log_tools\auto_parse_v2.py.bak,41,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"RUNTIME_DIR = Path(r""C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo"")"
+tools\log_tools\auto_parse_v2.py.bak,44,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"WAGO_DIR = Path(r""C:\Users\atayl\VoxCore\wago"")"
+tools\log_tools\auto_parse_v2.py.bak,45,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"TOOLS_DIR = Path(r""C:\Users\atayl\VoxCore\tools"")"
+tools\log_tools\auto_parse_v2.py.bak,47,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"WPP_EXE = Path(r""C:\Users\atayl\VoxCore\ExtTools\WowPacketParser\WowPacketParser.exe"")"
+tools\log_tools\generate_nexus_report.py,11,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"env_path = Path(r""C:\Users\atayl\VoxCore\tools\ai_studio\.env"")"
+tools\log_tools\generate_nexus_report.py,20,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"brain_path = Path(r""C:\Users\atayl\VoxCore\AI_Studio\0_Central_Brain.md"")"
+tools\log_tools\generate_nexus_report.py,57,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"out_dir = Path(r""C:\Users\atayl\VoxCore\AI_Studio\NotebookLM_Enterprise\Nexus_Reports"")"
+tools\log_tools\parse_dberrors.py,8,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"LOG_PATH = r""C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\DBErrors.log"""
+tools\packet_tools\opcode_analyzer.py,44,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"r""C:\Users\atayl\VoxCore\ExtTools\WowPacketParser\WowPacketParser\Enums\Version\V12_0_1_65818\Opcode"
+tools\packet_tools\opcode_analyzer.py,45,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"r""C:\Users\atayl\VoxCore\ExtTools\WowPacketParser\WowPacketParser\Enums\Version\V12_0_0_65390\Opcode"
+tools\packet_tools\packet_scope.py,26,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"DEFAULT_PKT_DIR = Path(r""C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\Pack"
+tools\shortcuts\apply_pending_sql.bat,3,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"set ""RUNTIME=C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo"""
+tools\shortcuts\apply_pending_sql.bat,5,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"set ""PENDING_DIR=C:\Users\atayl\VoxCore\sql\updates\pending"""
+tools\shortcuts\apply_pending_sql.bat,6,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"set ""APPLIED_DIR=C:\Users\atayl\VoxCore\sql\updates\applied"""
+tools\shortcuts\build_scripts_rel.bat,3,C:\Users\atayl\VoxCore,VOXCORE_ROOT,cd /d C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo
+tools\shortcuts\create_shortcuts.py,23,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"ICON_SRC = r""C:\Users\atayl\VoxCore\wago\att_icons_export\8K_Format\wow_icons\large"""
+tools\shortcuts\create_shortcuts.py,24,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"ICON_DST = r""C:\Users\atayl\VoxCore\tools\shortcuts\icons"""
+tools\shortcuts\create_shortcuts.py,27,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"ROOT     = r""C:\Users\atayl\VoxCore"""
+tools\shortcuts\Launch_AI_Studio.bat,9,C:\Users\atayl\OneDrive\Desktop\Excluded,EXCLUDED_ROOT,"set ""EXCLUDED=C:\Users\atayl\OneDrive\Desktop\Excluded"""
+tools\shortcuts\Launch_AI_Studio.bat,10,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"set ""STUDIO=C:\Users\atayl\VoxCore\AI_Studio"""
+tools\shortcuts\setup_nexus_task.bat,4,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"schtasks /create /tn ""VoxCore Nexus Report"" /tr ""python C:\Users\atayl\VoxCore\tools\log_tools\gener"
+tools\shortcuts\start_ai_router.bat,3,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"set ""RUNTIME=C:\Users\atayl\VoxCore\tools\ai_studio"""
+tools\shortcuts\start_all.bat,3,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"set ""RUNTIME=C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo"""
+tools\shortcuts\start_all.bat,6,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"set ""CC_DIR=C:\Users\atayl\VoxCore\tools\command-center"""
+tools\shortcuts\start_mysql_uniserverz.bat,3,C:\Users\atayl\VoxCore,VOXCORE_ROOT,set MYSQL_DIR=C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\UniServerZ\core
+tools\shortcuts\stop_all.bat,30,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"set ""RUNTIME=C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo"""
+tools\shortcuts\stop_all.bat,42,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"start ""Claude Code"" wt.exe -d ""C:\Users\atayl\VoxCore"" cmd /c ""claude -p tools\claude_code_handover."
+AI_Studio\0_Central_Brain.md,63,C:\Users\atayl\TongueAndQuill,TQ_ROOT,"- Source: `C:\Users\atayl\TongueAndQuill\tq_formatter.py` (~1,530 lines). Syntax verified clean."
+AI_Studio\Z_Global_Prompts.md,10,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"Whenever you are given a new task, you MUST read `C:\Users\atayl\VoxCore\AI_Studio\0_Central_Brain.m"
+AI_Studio\Z_Global_Prompts.md,21,C:\Users\atayl\VoxCore,VOXCORE_ROOT,> 2. Read `C:\Users\atayl\VoxCore\AI_Studio\0_Central_Brain.md`.
+AI_Studio\Z_Global_Prompts.md,31,C:\Users\atayl\VoxCore,VOXCORE_ROOT,You have been promoted to Lead Architect of a highly concurrent triad AI workspace managing multiple
+AI_Studio\Z_Global_Prompts.md,64,C:\Users\atayl\VoxCore,VOXCORE_ROOT,> You are an Antigravity Backend Specialist assigned exclusively to the **idTIP** World of Warcraft 
+AI_Studio\Z_Global_Prompts.md,67,C:\Users\atayl\VoxCore,VOXCORE_ROOT,> You are an Antigravity Backend Specialist assigned exclusively to the **TongueAndQuill** World of 
+AI_Studio\Z_Global_Prompts.md,70,C:\Users\atayl\VoxCore,VOXCORE_ROOT,> You are an Antigravity Python Specialist assigned exclusively to the **DiscordBot** VoxCore projec
+AI_Studio\Z_Global_Prompts.md,73,C:\Users\atayl\VoxCore,VOXCORE_ROOT,> You are the primary Antigravity Systems Architect assigned to **VoxCore**. Your primary domain is 
+AI_Studio\1_Inbox\2026-03-09__TRIAD-STAB-V1__formal_triad_stabilization_spec_v1.md,74,C:\Users\atayl\VoxCore,VOXCORE_ROOT,`C:\Users\atayl\VoxCore\AI_Studio\0_Central_Brain.md`
+AI_Studio\1_Inbox\2026-03-09__TRIAD-STAB-V1__formal_triad_stabilization_spec_v1.md,151,C:\Users\atayl\VoxCore,VOXCORE_ROOT,## 4) File Structure (Rooted at `C:\Users\atayl\VoxCore\`)
+AI_Studio\1_Inbox\2026-03-09__TRIAD-STAB-V1__formal_triad_stabilization_spec_v1.md,156,C:\Users\atayl\VoxCore,VOXCORE_ROOT,C:\Users\atayl\VoxCore\
+AI_Studio\1_Inbox\2026-03-09__TRIAD-STAB-V1__formal_triad_stabilization_spec_v1.md,248,C:\Users\atayl\VoxCore,VOXCORE_ROOT,- `C:\Users\atayl\VoxCore\`
+AI_Studio\1_Inbox\2026-03-09__TRIAD-STAB-V1__formal_triad_stabilization_spec_v1.md,250,C:\Users\atayl\OneDrive\Desktop\Excluded,EXCLUDED_ROOT,- `C:\Users\atayl\OneDrive\Desktop\Excluded\`
+AI_Studio\1_Inbox\2026-03-09__TRIAD-STAB-V1__formal_triad_stabilization_spec_v1.md,514,C:\Users\atayl\VoxCore,VOXCORE_ROOT,1. Read `C:\Users\atayl\VoxCore\AI_Studio\0_Central_Brain.md` before starting.
+AI_Studio\1_Inbox\2026-03-09__TRIAD-STAB-V1__formal_triad_stabilization_spec_v1.md,542,C:\Users\atayl\VoxCore,VOXCORE_ROOT,1. read `C:\Users\atayl\VoxCore\AI_Studio\0_Central_Brain.md`
+AI_Studio\1_Inbox\ChatGPT_Pause_Handoff_to_Antigravity.md,13,C:\Users\atayl\VoxCore,VOXCORE_ROOT,`C:\Users\atayl\VoxCore\AI_Studio\0_Central_Brain.md`
+AI_Studio\1_Inbox\ChatGPT_Pause_Handoff_to_Antigravity.md,86,C:\Users\atayl\VoxCore,VOXCORE_ROOT,- **File Structure** rooted at `C:\Users\atayl\VoxCore\`
+AI_Studio\1_Inbox\ChatGPT_Pause_Handoff_to_Antigravity.md,106,C:\Users\atayl\VoxCore,VOXCORE_ROOT,`C:\Users\atayl\VoxCore\AI_Studio\0_Central_Brain.md`
+AI_Studio\1_Inbox\ChatGPT_Pause_Handoff_to_Antigravity.md,121,C:\Users\atayl\VoxCore,VOXCORE_ROOT,- Left off after completing a Command Center UI overhaul specification from uploaded source context.
+AI_Studio\3_Audits\VoxTip_Handoff.md,40,C:\Users\atayl\VoxCore,VOXCORE_ROOT,| `C:\Users\atayl\VoxCore\runtime\lua_scripts\voxtip_server.lua` | ~110 | Eluna server script — hand
+AI_Studio\3_Audits\VoxTip_Handoff.md,47,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"| `C:\Users\atayl\VoxCore\runtime\lua_scripts\idtip_server.lua` | Old server script, harmless if idT"
+AI_Studio\NotebookLM_Enterprise\1_Triad_Architecture_Concept.md,36,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"To prevent agent collisions in a highly concurrent setup, all active tabs rely on a shared local sta"
+AI_Studio\Projects\DiscordBot\audit_request.md,42,C:\Users\atayl\VoxCore,VOXCORE_ROOT,**Source root:** `C:\Users\atayl\VoxCore\tools\discord_bot\`
+AI_Studio\Projects\DiscordBot\audit_request.md,43,C:\Users\atayl\VoxCore,VOXCORE_ROOT,(Also accessible via junction: `C:\Users\atayl\VoxCore\AI_Studio\Projects\DiscordBot\Z_SourceCode\`)
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,1,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:05:55 INFO: Formatting: C:\Users\atayl\TongueAndQuill\test_memo.docx (template=auto)
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,2,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:05:55 INFO: Saved: C:\Users\atayl\TongueAndQuill\TQ_Formatted\test_memo_TQ.docx (templ
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,3,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:05:55 INFO: Formatting: C:\Users\atayl\TongueAndQuill\test_memo.docx (template=auto)
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,4,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:05:55 INFO: Saved: C:\Users\atayl\TongueAndQuill\TQ_Formatted\test_memo_TQ (2).docx (t
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,5,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Formatting: C:\Users\atayl\TongueAndQuill\test_bio.docx (template=auto)
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,6,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Saved: C:\Users\atayl\TongueAndQuill\TQ_Formatted\test_bio_TQ.docx (templa
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,7,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Formatting: C:\Users\atayl\TongueAndQuill\test_letter.docx (template=auto)
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,8,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Saved: C:\Users\atayl\TongueAndQuill\TQ_Formatted\test_letter_TQ.docx (tem
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,9,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Formatting: C:\Users\atayl\TongueAndQuill\test_bbp.docx (template=auto)
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,10,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Saved: C:\Users\atayl\TongueAndQuill\TQ_Formatted\test_bbp_TQ.docx (templa
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,11,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Formatting: C:\Users\atayl\TongueAndQuill\test_talking.docx (template=auto
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,12,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Saved: C:\Users\atayl\TongueAndQuill\TQ_Formatted\test_talking_TQ.docx (te
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,13,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Formatting: C:\Users\atayl\TongueAndQuill\nonexistent.docx (template=auto)
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,14,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Formatting: C:\Users\atayl\TongueAndQuill\README.txt (template=auto)
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,15,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Formatting: C:\Users\atayl\TongueAndQuill\test_mfr.docx (template=auto)
+AI_Studio\Projects\TongueAndQuill\Z_SourceCode\tq_formatter.log,16,C:\Users\atayl\TongueAndQuill,TQ_ROOT,2026-03-09 12:06:21 INFO: Saved: C:\Users\atayl\TongueAndQuill\TQ_Formatted\test_mfr_TQ.docx (templa
+AI_Studio\Z_VoxCore_Session_Logs\alerts.txt,196,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[19:33:43] [Crash  ] [FATAL] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\
+AI_Studio\Z_VoxCore_Session_Logs\alerts.txt,197,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[20:11:08] [Crash  ] [FATAL] CRASH [C0000420 An] at C:\Users\atayl\VoxCore\src\common\Debugging\Erro
+AI_Studio\Z_VoxCore_Session_Logs\alerts.txt,198,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[19:19:32] [Crash  ] [FATAL] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\
+AI_Studio\Z_VoxCore_Session_Logs\alerts.txt,199,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[10:47:19] [Crash  ] [FATAL] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\
+AI_Studio\Z_VoxCore_Session_Logs\alerts.txt,200,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[21:38:19] [Crash  ] [FATAL] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\
+AI_Studio\Z_VoxCore_Session_Logs\alerts.txt,201,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[04:23:15] [Crash  ] [FATAL] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\
+AI_Studio\Z_VoxCore_Session_Logs\alerts.txt,202,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[12:33:27] [Crash  ] [FATAL] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\
+AI_Studio\Z_VoxCore_Session_Logs\crashes.txt,5,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[2026-03-08 19:33:43] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\databas
+AI_Studio\Z_VoxCore_Session_Logs\crashes.txt,8,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[2026-03-08 20:11:08] CRASH [C0000420 An] at C:\Users\atayl\VoxCore\src\common\Debugging\Errors.cpp:
+AI_Studio\Z_VoxCore_Session_Logs\crashes.txt,11,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[2026-03-08 19:19:32] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\databas
+AI_Studio\Z_VoxCore_Session_Logs\crashes.txt,14,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[2026-03-09 10:47:19] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\databas
+AI_Studio\Z_VoxCore_Session_Logs\crashes.txt,17,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[2026-03-07 21:38:19] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\databas
+AI_Studio\Z_VoxCore_Session_Logs\crashes.txt,20,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[2026-03-08 04:23:15] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\game\Lu
+AI_Studio\Z_VoxCore_Session_Logs\crashes.txt,23,C:\Users\atayl\VoxCore,VOXCORE_ROOT,[2026-03-08 12:33:27] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\game\Lu
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,72,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""alert-row fatal""><span class=""ts"">12:33:27</span><span class=""txt"">CRASH [C0000005 ACCES"
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,73,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""alert-row fatal""><span class=""ts"">04:23:15</span><span class=""txt"">CRASH [C0000005 ACCES"
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,74,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""alert-row fatal""><span class=""ts"">21:38:19</span><span class=""txt"">CRASH [C0000005 ACCES"
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,75,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""alert-row fatal""><span class=""ts"">10:47:19</span><span class=""txt"">CRASH [C0000005 ACCES"
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,76,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""alert-row fatal""><span class=""ts"">19:19:32</span><span class=""txt"">CRASH [C0000005 ACCES"
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,77,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""alert-row fatal""><span class=""ts"">20:11:08</span><span class=""txt"">CRASH [C0000420 An] a"
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,78,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""alert-row fatal""><span class=""ts"">19:33:43</span><span class=""txt"">CRASH [C0000005 ACCES"
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,96,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""crash-row""><span class=""ts"">2026-03-08 19:33:43</span><span class=""txt"">CRASH [C0000005 "
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,97,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""crash-row""><span class=""ts"">2026-03-08 20:11:08</span><span class=""txt"">CRASH [C0000420 "
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,98,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""crash-row""><span class=""ts"">2026-03-08 19:19:32</span><span class=""txt"">CRASH [C0000005 "
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,99,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""crash-row""><span class=""ts"">2026-03-09 10:47:19</span><span class=""txt"">CRASH [C0000005 "
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,100,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""crash-row""><span class=""ts"">2026-03-07 21:38:19</span><span class=""txt"">CRASH [C0000005 "
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,101,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""crash-row""><span class=""ts"">2026-03-08 04:23:15</span><span class=""txt"">CRASH [C0000005 "
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,102,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""crash-row""><span class=""ts"">2026-03-08 12:33:27</span><span class=""txt"">CRASH [C0000005 "
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,113,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""timeline-scroll""><div class=""tl-row fatal""><span class=""ts"">21:38:19</span><span class="""
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,114,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""tl-row fatal""><span class=""ts"">20:11:08</span><span class=""src"">Crash</span><span class="
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,115,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""tl-row fatal""><span class=""ts"">19:33:43</span><span class=""src"">Crash</span><span class="
+AI_Studio\Z_VoxCore_Session_Logs\dashboard.html,116,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"<div class=""tl-row fatal""><span class=""ts"">19:19:32</span><span class=""src"">Crash</span><span class="
+AI_Studio\Z_VoxCore_Session_Logs\timeline.txt,1237,C:\Users\atayl\VoxCore,VOXCORE_ROOT,12:33:27 F [Crash  ] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\game\Lua
+AI_Studio\Z_VoxCore_Session_Logs\timeline.txt,2003,C:\Users\atayl\VoxCore,VOXCORE_ROOT,19:19:32 F [Crash  ] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\database
+AI_Studio\Z_VoxCore_Session_Logs\timeline.txt,2004,C:\Users\atayl\VoxCore,VOXCORE_ROOT,19:33:43 F [Crash  ] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\database
+AI_Studio\Z_VoxCore_Session_Logs\timeline.txt,2005,C:\Users\atayl\VoxCore,VOXCORE_ROOT,20:11:08 F [Crash  ] CRASH [C0000420 An] at C:\Users\atayl\VoxCore\src\common\Debugging\Errors.cpp:1
+AI_Studio\Z_VoxCore_Session_Logs\timeline.txt,2006,C:\Users\atayl\VoxCore,VOXCORE_ROOT,21:38:19 F [Crash  ] CRASH [C0000005 ACCESS_VIOLATION] at C:\Users\atayl\VoxCore\src\server\database
+config\paths.local.env.example,5,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"VOXCORE_ROOT=""C:\Users\atayl\VoxCore"""
+config\paths.local.env.example,6,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"ROLEPLAYCORE_ROOT=""C:\Users\atayl\VoxCore"""
+config\paths.local.env.example,7,C:\Users\atayl\VoxCore,VOXCORE_ROOT,"PACKETLOG_ROOT=""C:\Users\atayl\VoxCore\PacketLog"""
+config\paths.local.env.example,8,C:\Users\atayl\OneDrive\Desktop\Excluded,EXCLUDED_ROOT,"EXCLUDED_ROOT=""C:\Users\atayl\OneDrive\Desktop\Excluded"""

@@ -1,17 +1,26 @@
 import os
+from pathlib import Path
 
-output_file = r"C:\Users\atayl\OneDrive\Desktop\CommandCenter_Context.txt"
+# Resolve Desktop dynamically
+desktop_dir = Path(os.path.expanduser("~/OneDrive/Desktop"))
+if not desktop_dir.exists():
+    desktop_dir = Path(os.path.expanduser("~/Desktop"))
+
+output_file = desktop_dir / "CommandCenter_Context.txt"
+
+# Resolve Project Root dynamically (since script is in VoxCore/tools/)
+VOXCORE_ROOT = Path(__file__).resolve().parent.parent
 
 payload = """# VoxCore Command Center Context
 
 Below is the current source code for the VoxCore Command Center web dashboard.
-Please read this file. I need a specification to overhaul its UI to be cleaner, less cluttered, and explicitly add a new 'Task Tracker' module that reads and displays tasks from a local JSON or Markdown file (e.g. C:\\Users\\atayl\\.gemini\\antigravity\\brain\\...\\task.md).
+Please read this file. I need a specification to overhaul its UI to be cleaner, less cluttered, and explicitly add a new 'Task Tracker' module that reads and displays tasks from a local JSON or Markdown file.
 
 """
 
 files_to_bundle = [
-    r"C:\Users\atayl\VoxCore\tools\command-center\app.py",
-    r"C:\Users\atayl\VoxCore\tools\command-center\templates\index.html"
+    VOXCORE_ROOT / "tools" / "command-center" / "app.py",
+    VOXCORE_ROOT / "tools" / "command-center" / "templates" / "index.html"
 ]
 
 for file_path in files_to_bundle:

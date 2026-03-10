@@ -21,12 +21,22 @@ from PIL import Image
 
 APP_DIR      = Path(__file__).resolve().parent
 STATIC_DIR   = APP_DIR / "static"
-ICON_SRC     = Path(r"C:\Users\atayl\VoxCore\wago\att_icons_export\8K_Format\wow_icons\large")
+
+import sys
+try:
+    # Try importing the common root resolver from the repo scripts/bootstrap
+    sys.path.append(str(APP_DIR.parent.parent / "scripts" / "bootstrap"))
+    from resolve_roots import find_project_root
+    ROOT = str(find_project_root())
+except ImportError:
+    # Fallback if run standalone or moved
+    ROOT = str(APP_DIR.parent.parent)
+
+ICON_SRC     = Path(ROOT) / r"wago\att_icons_export\8K_Format\wow_icons\large"
 ICON_WEB_DIR = STATIC_DIR / "icons"
-ART_SRC      = Path(r"C:\Users\atayl\VoxCore\wago\att_icons_export\8K_Format\scenic_art")
+ART_SRC      = Path(ROOT) / r"wago\att_icons_export\8K_Format\scenic_art"
 ART_WEB_DIR  = STATIC_DIR / "art"
 
-ROOT    = r"C:\Users\atayl\VoxCore"
 RUNTIME = os.path.join(ROOT, r"out\build\x64-RelWithDebInfo\bin\RelWithDebInfo")
 TOOLS   = os.path.join(ROOT, "tools")
 SC_DIR  = os.path.join(TOOLS, "shortcuts")

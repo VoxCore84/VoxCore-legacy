@@ -1,0 +1,14 @@
+{
+  "project_name": "VoxCore",
+  "aliases": {
+    "VOXCORE_ROOT": ".",
+    "ROLEPLAYCORE_ROOT": ".",
+    "AI_STUDIO_DIR": "AI_Studio",
+    "INBOX_DIR": "AI_Studio/1_Inbox",
+    "ARCHIVE_DIR": "AI_Studio/4_Archive",
+    "TOOLS_DIR": "tools",
+    "SCRIPTS_DIR": "scripts",
+    "DOCS_DIR": "doc",
+    "MEMORY_DIR": ".claude/projects/C--Users-atayl-VoxCore/memory"
+  }
+}

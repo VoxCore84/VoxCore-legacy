@@ -1,9 +1,14 @@
 @echo off
 setlocal
-set "RUNTIME=C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo"
+
+:: Resolve VoxCore root by stepping up two directories from tools/shortcuts/
+set "ROOT=%~dp0..\.."
+for %%i in ("%ROOT%") do set "ROOT=%%~fi"
+
+set "RUNTIME=%ROOT%\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo"
 set "MYSQL_DIR=%RUNTIME%\UniServerZ\core\mysql"
 set "ARCTIUM=C:\WoW\_retail_\Arctium Game Launcher.exe"
-set "CC_DIR=C:\Users\atayl\VoxCore\tools\command-center"
+set "CC_DIR=%ROOT%\tools\command-center"
 
 echo ============================================
 echo   VoxCore — Starting All Servers

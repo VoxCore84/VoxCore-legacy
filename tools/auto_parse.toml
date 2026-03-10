@@ -3,11 +3,13 @@
 # Paths use backslashes (Windows) or forward slashes (both work).
 
 [paths]
-runtime_dir = 'C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo'
-adb_cache_dir = 'C:\WoW\_retail_\Cache\ADB\enUS'
-wago_dir = 'C:\Users\atayl\VoxCore\wago'
-tools_dir = 'C:\Users\atayl\VoxCore\tools'
-wpp_exe = 'C:\Users\atayl\VoxCore\ExtTools\WowPacketParser\WowPacketParser.exe'
+# Using relative offsets from the VoxCore repository root. The python parser script will resolve the 
+# absolute root directory at runtime and prepend it to these values.
+runtime_dir = 'out\build\x64-RelWithDebInfo\bin\RelWithDebInfo'
+adb_cache_dir = 'C:\WoW\_retail_\Cache\ADB\enUS'  # External path stays absolute
+wago_dir = 'wago'
+tools_dir = 'tools'
+wpp_exe = 'ExtTools\WowPacketParser\WowPacketParser.exe'
 
 [watch]
 interval = 5              # Base poll interval (seconds)
