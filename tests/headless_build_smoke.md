@@ -8,7 +8,7 @@ The new headless build infrastructure introduced in `TRIAD-BUILD-V1` provides a 
 2. [x] **Headless Subprocess Compile**: Run `python tools/build/build.py --preset debug-scripts`.
    - *Result*: Successfully materialized the `vcvarsall` environment in a subprocess, executed Ninja headlessly, and built 866 objects without failing out.
 3. [x] **JSON Summary Artifact**: Ensure `logs/build/latest_build_summary.json` is generated with `exit_code: 0`.
-4. [x] **Compile Error Markdown**: Ensure `AI_Studio/3_Audits/latest_compile_errors.md` is initialized and states "SUCCESS / error queue is clean".
+4. [x] **Compile Error Markdown**: Ensure `AI_Studio/Reports/Audits/latest_compile_errors.md` is initialized and states "SUCCESS / error queue is clean".
 
 ## Future Regression Validation
 
@@ -22,4 +22,4 @@ python tools\build\build.py --preset debug-scripts
 
 Check the following files to confirm the outputs match expectations:
 1. `logs/build/latest_build_log.txt` (Standard Ninja Output)
-2. `AI_Studio/3_Audits/latest_compile_errors.md` (AI Markdown Extraction)
+2. `AI_Studio/Reports/Audits/latest_compile_errors.md` (AI Markdown Extraction)

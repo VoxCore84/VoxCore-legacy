@@ -96,7 +96,7 @@ VoxCore/
 
 ### Phase 2: Logging Integration
 - Redirect Ninja output to `logs/build/latest_build_log.txt`.
-- Parse log files and output errors to `AI_Studio/3_Audits/latest_compile_errors.md`.
+- Parse log files and output errors to `AI_Studio/Reports/Audits/latest_compile_errors.md`.
 
 ### Phase 3: Retry Logic Implementation
 - Enforce build retry and exit conditions in `build.py`.

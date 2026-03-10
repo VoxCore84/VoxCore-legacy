@@ -44,6 +44,9 @@
                 {% if "claude_implement" in enabled_jobs %}
                     <a href="/jobs/claude_implement" class="uk-button" style="background-color: #d97757; color: white;">Claude Code</a>
                 {% endif %}
+                {% if "auto_retry_loop" in enabled_jobs %}
+                    <a href="/jobs/auto_retry_loop" class="uk-button" style="background-color: #634fd6; color: white; margin-left: 10px;">Auto-Retry Pipeline</a>
+                {% endif %}
             </div>
         </div>
 

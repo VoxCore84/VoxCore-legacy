@@ -37,9 +37,11 @@ This is the single source of truth for what all tabs are doing, what's done, wha
 | Antigravity (Architect) | API Architect Producer MVP | COMPLETE | Configured run_architect.py pipeline + prompts + schemas. |
 | Antigravity (Triad) | Triad Stream 1 & Stream 2 | COMPLETE | Built `build.py` orchestrator and `run_architect.py` live OpenAI pipeline. Specs saved heavily to doc/. |
 | Antigravity (Bridge) | Stream 3, 4, 5 (Triad Control Plane) | COMPLETE | `2d9a9c38a2`. Built UI Command Center, Orchestrator jobs/adapters, and Claude live-bridge. DB bridge sync failed. |
+| Antigravity (Loop) | Stream 6 (Triad Feedback Loop) | COMPLETE | Native `auto_retry` pipeline natively loops Headless Build -> Extract Errors -> Claude Fix -> Rebuild. |
 | Antigravity (Support) | DraconicBot Novice Overhaul | COMPLETE | `d1b9cf8b08`. NLP parser (25K msgs), `diagnose.bat` auto-fixer, SME knowledge base, DM guide wizard. |
 | Main (136) | DraconicBot v2.2 retool + Antigravity integration | COMPLETE | `e992e98c5e`. Lookups→Wowhead, troubleshooter retooled, 4 boot bugs fixed, bot deployed (17 cogs, 14 commands) |
 | Antigravity | FAQ Phrase Banking & Regex Expansion | COMPLETE | `688bef7b1b`. 15 FAQ responses bulk expanded with 1500+ trigger phrases. |
+| Antigravity (Restructure) | AI Studio Restructuring (P0) | COMPLETE | `fa550b7a81`. Moved Z_Global, schemas, templates to config/triad/. Repointed python configs. |
 | — | — | — | Add rows as tabs are opened |
 
 **Rule**: Before starting work, check this file. If another tab owns a file or task, don't touch it. Update your row when you start and when you finish.

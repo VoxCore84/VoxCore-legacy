@@ -11,7 +11,7 @@ The user is tired of hunting across `C:\Users\atayl\VoxCore\tools\`, `\wago\`, `
     - The user has a button that automatically scrapes downloaded ChatGPT specs from their desktop and dumps them here. **You must watch this folder.** If the user asks you to implement a spec, it will be in here.
 2. `AI_Studio\2_Active_Specs\`
     - Once you read an inbox spec and begin working on it, MOVE IT to this folder so the Inbox stays clean.
-3. `AI_Studio\3_Audits\`
+3. `AI_Studio\Reports\Audits\`
     - If you finish a feature, Antigravity will be asked to audit it, and the resulting mathematical pass/fail `.md` will appear here.
 4. `AI_Studio\4_Archive\`
     - Move completed specs and audits here once a feature is successfully pushed to Git.

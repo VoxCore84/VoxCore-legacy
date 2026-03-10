@@ -1,3 +1,4 @@
 {
-  "build_mismatch": 1
+  "build_mismatch": 1,
+  "server_crash": 1
 }

@@ -49,6 +49,18 @@ def delegate_to_orchestrator(job_name, form_data):
         if form_data.get("dry_run") == "true":
             cmd.append("--dry-run")
             
+    elif job_name == "auto_retry_loop":
+        spec_file = form_data.get("spec_file")
+        if spec_file:
+            cmd.extend(["--spec_file", spec_file])
+            
+        preset = form_data.get("preset")
+        if preset:
+            cmd.extend(["--preset", preset])
+            
+        if form_data.get("dry_run") == "true":
+            cmd.append("--dry-run")
+            
     print(f"WEB_UI: Delegating -> {' '.join(cmd)}")
     
     try:

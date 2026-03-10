@@ -66,7 +66,7 @@ All agents: write status updates HERE instead of relaying through the user. One 
 - **Claude Code (Tab: TongueAndQuill v2.2)**: AFH 33-337 document formatter — code COMPLETE, awaiting Antigravity audit.
   - Upgraded v2.1→v2.2: page numbering (page 2+ flush right), batch mode (GUI+CLI), 13 bug fixes (temp file leaks, double-click guard, DPI awareness, keyboard shortcuts, dead code, ALL CAPS false positives, cross-platform openers), template cache
   - Source: `C:\Users\atayl\TongueAndQuill\tq_formatter.py` (~1,530 lines). Syntax verified clean.
-  - **Resume point**: (1) Update `AUDIT_PROMPT.md` to cover v2.2 features, (2) Fix Antigravity TQ prompt in `Z_Global_Prompts.md` (still says "WoW Addon"), (3) Build exe via `build_exe.bat`, (4) Init git repo, (5) Send 4 files to Antigravity for audit
+  - **Resume point**: (1) Update `AUDIT_PROMPT.md` to cover v2.2 features, (2) Fix Antigravity TQ prompt in `config/triad/Z_Global_Prompts.md` (still says "WoW Addon"), (3) Build exe via `build_exe.bat`, (4) Init git repo, (5) Send 4 files to Antigravity for audit
 
 - **Claude Code (Sync Tab — sessions 125-128 catchup)**: DevOps + AI Studio sync — COMPLETE, idle.
   - Committed `9ee8c2bb55`: AI Studio hub, 3 project junctions (DiscordBot/idTIP/TQ), DevOps pipeline docs, gitignore hardening, discord analytics, .agentrules. 21 files, 855 insertions. Pushed to origin.

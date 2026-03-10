@@ -11,7 +11,7 @@ description: Build-Fix Loop - Iteratively build the project and fix compilation 
 
 2. Loop procedure:
    - **Build**: Run the canonical Headless Builder: `python tools/build/build.py --preset <preset>` using `run_command`
-   - **Parse**: Extract compiler errors from the structured audit output generated at `AI_Studio/3_Audits/latest_compile_errors.md`. Do NOT rely on raw stdout scrollback.
+   - **Parse**: Extract compiler errors from the structured audit output generated at `AI_Studio/Reports/Audits/latest_compile_errors.md`. Do NOT rely on raw stdout scrollback.
    - **Fix**: For each error:
      - Read the source file at the reported line
      - Understand the error in context (check headers, related code)
