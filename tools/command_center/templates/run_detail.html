@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="uk-container">
+    <div class="uk-margin-bottom">
+        <a href="/" class="uk-button uk-button-text"><span uk-icon="arrow-left"></span> Back to Dashboard</a>
+    </div>
+
+    <div class="uk-card uk-card-default uk-card-body">
+        
+        <h2 class="uk-card-title">
+            Run Details: <span class="uk-text-primary">{{ run.job_name }}</span>
+            <span class="uk-float-right">
+                {% set latest = run %}
+                {% include "partials/status_badge.html" %}
+            </span>
+        </h2>
+        
+        <p class="uk-text-meta"><strong>Run ID:</strong> {{ run.run_id }}</p>
+        <hr>
+
+        <div class="uk-grid-match uk-child-width-1-2@m" uk-grid>
+            <div>
+                <dt><strong>Started:</strong></dt>
+                <dd>{{ run.started_at }}</dd>
+            </div>
+            <div>
+                <dt><strong>Duration:</strong></dt>
+                <dd>
+                {% if run.duration_seconds is not none and run.duration_seconds != "" %}
+                    {{ run.duration_seconds }}s
+                {% else %}
+                    &lt; 1s
+                {% endif %}
+                </dd>
+            </div>
+            <div>
+                <dt><strong>Exit Code:</strong></dt>
+                <dd>{{ run.exit_code }}</dd>
+            </div>
+            <div>
+                <dt><strong>Invoked By:</strong></dt>
+                <dd>{{ run.invoked_by }}</dd>
+            </div>
+        </div>
+
+        <h4 class="uk-heading-line uk-margin-large-top"><span>Sanitized Arguments</span></h4>
+        <div class="uk-overflow-auto">
+            <table class="uk-table uk-table-small uk-table-divider">
+                <tbody>
+                    {% for key, val in run.cli_args_sanitized.items() %}
+                    <tr>
+                        <td class="uk-width-medium"><strong>{{ key }}</strong></td>
+                        <td>{{ val }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h4 class="uk-heading-line uk-margin-large-top"><span>State Transitions</span></h4>
+        <ul class="uk-list uk-list-disc uk-text-small">
+            {% for trans in run.transitions %}
+                <li><strong>{{ trans.timestamp }}</strong> — {{ trans.state | upper }}</li>
+            {% endfor %}
+        </ul>
+
+        {% if run.failure_fingerprint %}
+        <h4 class="uk-heading-line uk-margin-large-top uk-text-danger"><span>Failure Fingerprint</span></h4>
+        <div class="uk-alert-danger" uk-alert>
+            <p><strong>Code:</strong> {{ run.failure_fingerprint.exit_code }}</p>
+            {% if run.failure_fingerprint.stderr_tail %}
+            <pre class="uk-margin-top" style="background:#222; color:#ffda6a; padding:10px;">{{ run.failure_fingerprint.stderr_tail }}</pre>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% if is_executing %}
+<script>
+    // Auto-poll the page if the run is still executing
+    setTimeout(function() {
+        location.reload();
+    }, {{ poll_ms }});
+</script>
+{% endif %}
+{% endblock %}

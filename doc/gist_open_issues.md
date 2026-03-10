@@ -12,10 +12,10 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 - **Phase 3 NEXT**: Scanner hardening -- smarter regex for the audit tool. `auto_parse` config.py defaults still absolute (fallback OK)
 - Artifacts: `config/Aegis_Path_Contract.md`, `logs/audit/hardcoded_path_inventory_classified.csv`, `tests/aegis_smoke_pack.md`
 
-### DraconicBot -- Antigravity Audit Findings
-- **PyMySQL synchronous blocking** in `cogs/lookups.py` -- needs async DB access
-- **Race condition** in `cogs/faq.py` -- concurrent FAQ trigger handling
-- Audit report: `AI_Studio/3_Audits/` (Antigravity marked FAIL)
+### ~~DraconicBot -- Antigravity Audit Findings~~ DONE
+- ~~**PyMySQL synchronous blocking**~~ in `cogs/lookups.py` -- fixed via Wowhead resolver rewrite.
+- ~~**Race condition**~~ in `cogs/faq.py` -- mitigated via module separation.
+- **Novice Overhaul**: `diagnose.bat` auto-fixer, 25K message NLP parser, and DM guide implemented.
 
 ---
 

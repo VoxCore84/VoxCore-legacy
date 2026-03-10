@@ -1,0 +1,26 @@
+{
+    "host": "127.0.0.1",
+    "port": 8765,
+    "enabled_jobs": [
+        "headless_build",
+        "architect_spec",
+        "claude_implement"
+    ],
+    "recent_runs_limit": 20,
+    "active_run_poll_ms": 3000,
+    "jobs": {
+        "headless_build": {
+            "allowed_presets": ["debug", "debug-scripts", "release", "release-scripts"]
+        },
+        "architect_spec": {
+            "label": "API Architect Producer",
+            "description": "Generate a new specification from an intake context payload.",
+            "allowed_modes": ["spec", "dry-run", "validate-only"]
+        },
+        "claude_implement": {
+            "label": "Claude Code Implementer",
+            "description": "Trigger Claude Code to execute an architect specification.",
+            "default_spec_dir": "AI_Studio/1_Inbox"
+        }
+    }
+}

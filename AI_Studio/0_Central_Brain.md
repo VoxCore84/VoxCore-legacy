@@ -11,6 +11,7 @@
 - **Audit results**: `AI_Studio/3_Audits/` — Antigravity writes findings here, Claude reads on demand
 
 ### Active Operations
+- **Antigravity (Side Project Tab)**: HOST AUTOMATION CAPABILITY V1 — Building a reusable host-side Playwright/pywinauto capability.
 - **Antigravity**: Phase 1 "Aegis Config" — scanning scripts, removing hardcoded paths. Claude Code will NOT interfere with path changes during this operation
 - **Claude Code**: Standing by for first spec in `1_Inbox/`. No active implementation work
 - **ChatGPT**: Architecture role. Pending specs: Command Center Overhaul, idTIP Transmog Mini-Bridge
@@ -23,11 +24,18 @@ All agents: write status updates HERE instead of relaying through the user. One 
 - Found a conflict → write it here with `[CONFLICT]` tag, don't proceed
 
 ## Current Active Tabs
-- **Antigravity (Master Tab)**: Next Stream 3 — Triad Orchestrator Control Plane.
-  - Active Spec: Pending Architect Generation (Preparing Intake Packet).
-  - Phase: Preparing Intake Packet.
-  - Goal: Build a single-host, job-based control plane that reads `0_Central_Brain.md` task state, launches bounded workflows, records manifests, and avoids background daemonization.
-  - Previous Phase (Architect API Inbox Producer) completely finished, dry-run and live tests proven, and golden references preserved.
+- **Antigravity (Master Tab)**: STREAM 5 - TRIAD PIPELINE BRIDGE
+  - Active Spec: Pending Architect Generation (`Intake_Triad_Pipeline_Bridge.md`)
+  - Phase: Setup / Intake
+  - Goal: Override the holding pattern to build the Claude Code Orchestrator adapter, enabling the Triad to communicate and execute end-to-end API loops.
+- **Antigravity (Side Project Tab)**: HOST AUTOMATION CAPABILITY V1 — Building a reusable host-side Playwright/pywinauto capability.
+
+## Active Architecture & Rules
+- **Triad Control Plane V1**: Single-host, manifest-writing job router. Not a daemon. (Stream 3)
+- **Command Center Surface V1**: Localhost Flask dashboard delegating to Orchestrator. (Stream 4)
+- **Permission Discipline**: `TRIAD-GUARD-V1` — Repeated permission requests for allowlisted tools are PROHIBITED. Execute and diagnose > speculative permission blocks. Escalate only with structured evidence.
+- **Architect API**: Inbox-driven V1 Producer pipeline via `tools/api_architect/run_architect.py` (Stream 2)
+- **Headless Build V1**: Standardized Ninja/CTest invocation via `tools/build/build.py` (Stream 1)
 
 ## Completed Today
 - (Antigravity) Reorganized tools/ directory and updated internal path logic.

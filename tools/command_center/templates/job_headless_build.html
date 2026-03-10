@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="uk-container uk-container-small">
+    <div class="uk-card uk-card-default uk-card-body">
+        
+        <h2 class="uk-card-title">Launch Job: <span class="uk-text-primary">headless_build</span></h2>
+        <p class="uk-text-meta">Delegates to the canonical Triad Headless Build Orchestrator.</p>
+        <hr>
+
+        <form method="POST" action="/jobs/headless_build">
+            
+            <div class="uk-margin">
+                <label class="uk-form-label" for="preset"><strong>Build Preset</strong></label>
+                <div class="uk-form-controls">
+                    <select class="uk-select" id="preset" name="preset" required>
+                        <option value="" disabled selected>Select a preset...</option>
+                        {% for pt in cfg.allowed_presets %}
+                            <option value="{{ pt }}">{{ pt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="uk-margin">
+                <label><input class="uk-checkbox" type="checkbox" name="dry_run" value="true"> 
+                    <span class="uk-margin-small-left uk-text-warning">Execute as Dry-Run</span>
+                </label>
+                <p class="uk-text-meta uk-margin-remove-top">Validate config/locks without compiling C++.</p>
+            </div>
+
+            <div class="uk-margin-top uk-text-right">
+                <a href="/" class="uk-button uk-button-default">Cancel</a>
+                <button type="submit" class="uk-button uk-button-primary">Launch Build</button>
+            </div>
+            
+        </form>
+    </div>
+</div>
+{% endblock %}

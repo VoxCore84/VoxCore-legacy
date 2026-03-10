@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="uk-container uk-container-small">
+    <div class="uk-card uk-card-default uk-card-body">
+        
+        <h2 class="uk-card-title">Launch Job: <span class="uk-text-primary">architect_spec</span></h2>
+        <p class="uk-text-meta">Submit an Intake Packet to the Architect API Producer to generate a V1 Spec.</p>
+        <hr>
+
+        <form method="POST" action="/jobs/architect_spec">
+            
+            <div class="uk-margin">
+                <label class="uk-form-label" for="intake"><strong>Intake Packet Filepath</strong></label>
+                <div class="uk-form-controls">
+                    <input class="uk-input" type="text" id="intake" name="intake" placeholder="e.g. AI_Studio/1_Inbox/Intake_Triad_Orchestrator_Control_Plane.md" required>
+                </div>
+                <p class="uk-text-meta uk-margin-remove-top">Must be an allowlisted path in the Orchestrator config.</p>
+            </div>
+
+            <div class="uk-margin">
+                <label class="uk-form-label" for="mode"><strong>Execution Mode</strong></label>
+                <div class="uk-form-controls">
+                    <select class="uk-select" id="mode" name="mode" required>
+                        {% for m in cfg.allowed_modes %}
+                            <option value="{{ m }}">{{ m | upper }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="uk-margin">
+                <label><input class="uk-checkbox" type="checkbox" id="dry_run" name="dry_run" value="true"> <strong>Safe Dry-Run Only</strong></label>
+            </div>
+
+            <div class="uk-margin-top uk-text-right">
+                <a href="/" class="uk-button uk-button-default">Cancel</a>
+                <button type="submit" class="uk-button uk-button-secondary">Invoke API</button>
+            </div>
+            
+        </form>
+    </div>
+</div>
+{% endblock %}

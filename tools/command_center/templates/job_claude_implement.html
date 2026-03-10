@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="uk-container uk-container-small">
+    <div class="uk-card uk-card-default uk-card-body">
+        
+        <h2 class="uk-card-title">Launch Job: <span class="uk-text-primary">claude_implement</span></h2>
+        <p class="uk-text-meta">Triggers the Claude Code Implementer in a bounded Orchestrator subprocess.</p>
+        <hr>
+
+        <form method="POST" action="/jobs/claude_implement">
+            
+            <div class="uk-margin">
+                <label class="uk-form-label" for="spec_file"><strong>Specification Filepath</strong></label>
+                <div class="uk-form-controls">
+                    <input class="uk-input" type="text" id="spec_file" name="spec_file" placeholder="e.g. AI_Studio/1_Inbox/2026-03-XX__SPEC_NAME.md" required>
+                </div>
+                <p class="uk-text-meta uk-margin-remove-top">Claude will read this file and attempt to implement it.</p>
+            </div>
+
+            <div class="uk-margin">
+                <label><input class="uk-checkbox" type="checkbox" name="dry_run" value="true"> 
+                    <span class="uk-margin-small-left uk-text-warning">Execute as Dry-Run</span>
+                </label>
+                <p class="uk-text-meta uk-margin-remove-top">Validate config/locks without spinning up the Anthropic API loop.</p>
+            </div>
+
+            <div class="uk-margin-top uk-text-right">
+                <a href="/" class="uk-button uk-button-default">Cancel</a>
+                <button type="submit" class="uk-button uk-button-primary" style="background-color: #d97757; color: white; border: none;">Implement Code</button>
+            </div>
+            
+        </form>
+    </div>
+</div>
+{% endblock %}

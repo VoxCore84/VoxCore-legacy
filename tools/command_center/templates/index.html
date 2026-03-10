@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="uk-grid-match uk-child-width-1-2@m" uk-grid>
+    
+    <!-- Central Brain State -->
+    <div>
+        <div class="uk-card uk-card-default uk-card-body">
+            <h3 class="uk-card-title">Central Brain 
+                <span uk-icon="icon: database" class="uk-float-right"></span>
+            </h3>
+            
+            {% if brain.error %}
+                <div class="uk-text-danger">{{ brain.error }}</div>
+            {% else %}
+                <h5 class="uk-heading-line uk-text-center"><span>Active Tabs</span></h5>
+                <ul class="uk-list uk-list-bullet uk-text-small">
+                    {% for item in brain.active_tabs %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h5 class="uk-heading-line uk-text-center"><span>Completed Today</span></h5>
+                <ul class="uk-list uk-list-bullet uk-text-small">
+                    {% for item in brain.completed_today %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Actions & Latest Run -->
+    <div>
+        <div class="uk-card uk-card-default uk-card-body uk-margin-bottom">
+            <h3 class="uk-card-title">Launch Jobs</h3>
+            <div class="uk-flex uk-flex-wrap">
+                {% if "headless_build" in enabled_jobs %}
+                    <a href="/jobs/headless_build" class="uk-button uk-button-primary uk-margin-small-right">Headless Build</a>
+                {% endif %}
+                {% if "architect_spec" in enabled_jobs %}
+                    <a href="/jobs/architect_spec" class="uk-button uk-button-secondary uk-margin-small-right">Architect API</a>
+                {% endif %}
+                {% if "claude_implement" in enabled_jobs %}
+                    <a href="/jobs/claude_implement" class="uk-button" style="background-color: #d97757; color: white;">Claude Code</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="uk-card uk-card-default uk-card-body">
+            <h3 class="uk-card-title">Latest Run <span uk-icon="icon: history" class="uk-float-right"></span></h3>
+            {% if latest %}
+                {% include "partials/status_badge.html" with context %}
+                <ul class="uk-list uk-text-small uk-margin-top">
+                    <li><strong>ID:</strong> <a href="/runs/{{ latest.run_id }}">{{ latest.run_id }}</a></li>
+                    <li><strong>Job:</strong> {{ latest.job_name }}</li>
+                    <li><strong>Exit Code:</strong> {{ latest.exit_code }}</li>
+                    <li><strong>Timestamp:</strong> {{ latest.started_at }}</li>
+                </ul>
+            {% else %}
+                <p class="uk-text-muted">No runs found in current orchestration logs.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<!-- Recent Runs Table -->
+<h3 class="uk-heading-line uk-margin-large-top"><span>Recent Manifests</span></h3>
+<div class="uk-overflow-auto uk-margin-bottom">
+    <table class="uk-table uk-table-divider uk-table-hover uk-table-small">
+        <thead>
+            <tr>
+                <th>Run ID</th>
+                <th>Job</th>
+                <th>Status</th>
+                <th>Exit Code</th>
+                <th>Mode</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for run in recent %}
+            <tr>
+                <td><a href="/runs/{{ run.run_id }}">{{ run.run_id }}</a></td>
+                <td>{{ run.job_name }}</td>
+                <td>
+                    {% set latest = run %}
+                    {% include "partials/status_badge.html" %}
+                </td>
+                <td>{{ run.exit_code }}</td>
+                <td>
+                    {% if run.cli_args_sanitized.get("dry_run", false) %}
+                        <span class="uk-badge badge-dryrun">DRY-RUN</span>
+                    {% else %}
+                        LIVE
+                    {% endif %}
+                </td>
+                <td>{{ run.started_at }}</td>
+            </tr>
+            {% endfor %}
+            {% if not recent %}
+            <tr><td colspan="6" class="uk-text-muted">No records.</td></tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

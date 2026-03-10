@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triad Command Center</title>
+    <!-- Simple CDN UIKit for dark modern aesthetic without raw CSS grinding -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/css/uikit.min.css" />
+    <style>
+        body { background-color: #121212; color: #e0e0e0; }
+        .uk-card-default { background: #1e1e1e; color: #e0e0e0; border: 1px solid #333; }
+        .uk-navbar-container { background: #0f0f0f !important; border-bottom: 1px solid #333; }
+        .uk-table th { color: #a0a0a0; border-bottom-color: #333; }
+        .uk-table td { border-bottom-color: #2a2a2a; }
+        .uk-heading-line > :before, .uk-heading-line > :after { border-bottom: calc(1px + .001em) solid #333; }
+        .badge-success { background-color: #0f5132; color: #75b798; }
+        .badge-danger { background-color: #842029; color: #ea868f; }
+        .badge-warning { background-color: #664d03; color: #ffda6a; }
+        .badge-executing { background-color: #052c65; color: #6ea8fe; }
+        .badge-dryrun { background-color: #333; color: #fff; border: 1px dashed #666; }
+    </style>
+</head>
+<body>
+
+    <nav class="uk-navbar-container" uk-navbar>
+        <div class="uk-navbar-left">
+            <a href="/" class="uk-navbar-item uk-logo uk-light">Triad Command Center</a>
+        </div>
+    </nav>
+
+    <div class="uk-container uk-margin-top">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+                <div class="uk-alert-{{ category }}" uk-alert>
+                    <a class="uk-alert-close" uk-close></a>
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.17.11/dist/js/uikit-icons.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

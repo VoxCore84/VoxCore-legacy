@@ -1,0 +1,11 @@
+{% if latest %}
+    {% if latest.status == "succeeded" %}
+        <span class="uk-badge badge-success">SUCCEEDED</span>
+    {% elif latest.status == "failed" %}
+        <span class="uk-badge badge-danger">FAILED</span>
+    {% elif latest.status == "executing" %}
+        <span class="uk-badge badge-executing">EXECUTING</span>
+    {% else %}
+        <span class="uk-badge badge-warning">{{ latest.status | upper }}</span>
+    {% endif %}
+{% endif %}

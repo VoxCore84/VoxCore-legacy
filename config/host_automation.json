@@ -1,0 +1,15 @@
+{
+    "enabled": true,
+    "default_timeout_ms": 30000,
+    "browser_type": "chromium",
+    "headless": false,
+    "default_viewport": {
+        "width": 1280,
+        "height": 720
+    },
+    "artifacts_dir": "logs/host_automation",
+    "capture_trace": false,
+    "capture_video": false,
+    "capture_html_on_failure": true,
+    "user_data_dir": "logs/host_automation/browser_profile"
+}

@@ -1,0 +1,53 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": [
+        "run_id",
+        "job_name",
+        "status",
+        "started_at",
+        "invoked_by",
+        "central_brain_hash",
+        "transitions"
+    ],
+    "properties": {
+        "run_id": { "type": "string", "description": "Unique identifier for the orchestrator run" },
+        "job_name": { "type": "string", "description": "Name of the invoked job from the registry" },
+        "status": { "type": "string", "enum": ["executing", "succeeded", "failed"], "description": "Final state of the job" },
+        "started_at": { "type": "string", "format": "date-time" },
+        "ended_at": { "type": "string", "format": "date-time" },
+        "duration_ms": { "type": "integer" },
+        "invoked_by": { "type": "string" },
+        "cli_args_sanitized": { "type": "object" },
+        "central_brain_hash": { "type": "string" },
+        "central_brain_path": { "type": "string" },
+        "task_ref": { "type": "string", "description": "Optional task reference or label" },
+        "artifacts_created": {
+            "type": "array",
+            "items": { "type": "string" }
+        },
+        "downstream_log_paths": {
+            "type": "array",
+            "items": { "type": "string" }
+        },
+        "exit_code": { "type": "integer" },
+        "failure_fingerprint": {
+            "type": "object",
+            "properties": {
+                "exit_code": { "type": "integer" },
+                "signature": { "type": "string" }
+            }
+        },
+        "transitions": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "state": { "type": "string" },
+                    "timestamp": { "type": "string", "format": "date-time" }
+                },
+                "required": ["state", "timestamp"]
+            }
+        }
+    }
+}

@@ -1,0 +1,43 @@
+{
+  "run_id": "20260309_223119_ab4b292e",
+  "job_name": "architect_spec",
+  "status": "succeeded",
+  "started_at": "2026-03-10T04:31:19Z",
+  "ended_at": "2026-03-10T04:31:20Z",
+  "duration_ms": -21598734,
+  "invoked_by": "atayl",
+  "cli_args_sanitized": {
+    "intake": "AI_Studio/1_Inbox/Intake_Triad_Orchestrator_Control_Plane.md",
+    "mode": "dry-run",
+    "force": false
+  },
+  "central_brain_hash": "62bf372ffd955c2e914a5e9add5bc6ec4ae44363026931559573a6cbd9fbe068",
+  "central_brain_path": "C:\\Users\\atayl\\VoxCore\\AI_Studio\\0_Central_Brain.md",
+  "task_ref": null,
+  "artifacts_created": [],
+  "downstream_log_paths": [],
+  "exit_code": 0,
+  "failure_fingerprint": null,
+  "transitions": [
+    {
+      "state": "requested",
+      "timestamp": "2026-03-10T04:31:19Z"
+    },
+    {
+      "state": "validated",
+      "timestamp": "2026-03-10T04:31:19Z"
+    },
+    {
+      "state": "lock_acquired",
+      "timestamp": "2026-03-10T04:31:19Z"
+    },
+    {
+      "state": "executing",
+      "timestamp": "2026-03-10T04:31:19Z"
+    },
+    {
+      "state": "succeeded",
+      "timestamp": "2026-03-10T04:31:20Z"
+    }
+  ]
+}
