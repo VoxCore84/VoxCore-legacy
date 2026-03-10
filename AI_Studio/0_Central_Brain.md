@@ -23,10 +23,11 @@ All agents: write status updates HERE instead of relaying through the user. One 
 - Found a conflict → write it here with `[CONFLICT]` tag, don't proceed
 
 ## Current Active Tabs
-- **Antigravity (Master Tab)**: Phase 0, 1, and 2 of Aegis Config Complete. Phase 2 Closeout completed.
-  - High-risk hardcoded absolute paths have been successfully removed across Core Runtime orchestrators, AI Studio batch launchers, and Python parsers (`packet_scope.py`, `app.py`, etc.).
-  - Successfully frozen the `config/paths.json` alias vocabulary via the `Aegis_Path_Contract.md`. Phase 2E is officially deferred.
-  - Staging next phase: Prepare the Phase 3 Request for the Architect (either Phase 3A: Scanner Hardening, or Next Stream 1: Headless Build APIs).
+- **Antigravity (Master Tab)**: Next Stream 3 — Triad Orchestrator Control Plane.
+  - Active Spec: Pending Architect Generation (Preparing Intake Packet).
+  - Phase: Preparing Intake Packet.
+  - Goal: Build a single-host, job-based control plane that reads `0_Central_Brain.md` task state, launches bounded workflows, records manifests, and avoids background daemonization.
+  - Previous Phase (Architect API Inbox Producer) completely finished, dry-run and live tests proven, and golden references preserved.
 
 ## Completed Today
 - (Antigravity) Reorganized tools/ directory and updated internal path logic.

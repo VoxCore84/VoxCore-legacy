@@ -32,6 +32,7 @@ This is the single source of truth for what all tabs are doing, what's done, wha
 | TQ (131) | TongueAndQuill v2.2 — page numbers, batch, 13 fixes | PAUSED | Code complete. Awaiting: AUDIT_PROMPT update, Z_Global fix, exe build, git init, Antigravity audit |
 | Main (133) | Full ecosystem review + wrap-up | COMPLETE | `13ff762a9a`. Reviewed all sessions 123-132, committed Nexus Report tool + NotebookLM Enterprise docs. Memory synced |
 | Main (134) | Triad guardrails + Antigravity briefing | COMPLETE | `43884ca85b`. Guardrails in MEMORY.md, coordination header in Central Brain, full capability dump for Antigravity |
+| Antigravity (Auditor) | Wago CSV vs SQL Auditor pipeline | PAUSED | Python environment set up (`Setup-VoxCoreEnv.ps1`), `scripts/AI_Auditor.py` scaffolded. Command permissions overhauled in `.agentrules`. Awaiting DB connection logic. |
 | — | — | — | Add rows as tabs are opened |
 
 **Rule**: Before starting work, check this file. If another tab owns a file or task, don't touch it. Update your row when you start and when you finish.

@@ -12,6 +12,7 @@ tools/build/
 # -- Secrets / tokens ---------------------------------------------------------
 .env
 *.env
+config/*.local.env
 VoxCore Reader Bot.txt
 
 # -- IDE / editor -------------------------------------------------------------

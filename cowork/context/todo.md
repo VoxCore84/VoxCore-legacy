@@ -12,6 +12,10 @@
 
 ## HIGH
 
+### Background Database Auditor Script (Antigravity)
+- **Phase 0 Complete**: Python `venv` set up, `scripts/AI_Auditor.py` scaffolded, `.agentrules` synced.
+- **Pending**: Write the DB connection logic using `mysql-connector-python` and cross-reference Wago's `Creature-enUS.csv` against `creature_template` in the local MySQL world DB.
+
 ### VoxCore Website — "Arcane Codex" Visual Overhaul
 - ~~**Phase 1**: Arcane visual refresh~~ DONE — dark-only theme, particles, glow hovers, gold milestones
 - ~~**Phase 2**: Animated pipeline + reduction funnel~~ DONE — SVG scroll animation, funnel chart

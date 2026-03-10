@@ -4,14 +4,14 @@ description: Build-Fix Loop - Iteratively build the project and fix compilation 
 
 // turbo-all
 
-1. Parse the user's argument (if any) to pick the build directory:
-- `debug`, `d`, or no argument → `out/build/x64-Debug/`
-- `rel`, `r`, `relwithdebinfo` → `out/build/x64-RelWithDebInfo/`
-- `scripts`, `s` → same as debug but use `ninja -j4 scripts` (scripts-only)
+1. Parse the user's argument (if any) to pick the logical target preset:
+- `debug`, `d`, or no argument → `--preset debug`
+- `rel`, `r`, `relwithdebinfo` → `--preset release`
+- `scripts`, `s` → `--preset debug-scripts`
 
 2. Loop procedure:
-   - **Build**: Run `cd /c/Users/atayl/VoxCore/<build-dir> && ninja -j4 2>&1` (or `ninja -j4 scripts` for scripts-only) using `run_command`
-   - **Parse**: Extract compiler errors from the output. Ignore warnings unless the user asked to fix them.
+   - **Build**: Run the canonical Headless Builder: `python tools/build/build.py --preset <preset>` using `run_command`
+   - **Parse**: Extract compiler errors from the structured audit output generated at `AI_Studio/3_Audits/latest_compile_errors.md`. Do NOT rely on raw stdout scrollback.
    - **Fix**: For each error:
      - Read the source file at the reported line
      - Understand the error in context (check headers, related code)
