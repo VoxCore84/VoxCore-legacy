@@ -5,6 +5,7 @@
 - Auth key bypass reverted (`8bbd610fc7`), 66220 keys applied
 - Hotfix redundancy audit: 10.8M → ~244K content rows, 226,984 hotfix_data entries (3 rounds + orphan sweep)
 - DBCD binary cross-ref audit: 363 redundant rows removed (13 tables), 393 missing broadcast_text filled. Commit `faec6435de`
+
 - ContentTuning enrichment: 4,820 spawned CT=0 creatures → zone/neighbor lookup (`_04` SQL)
 - Stormwind CTD rows (11), server-wide CTD rows (26,745), SmartAI orphans (5,894+181 GUID fix)
 - Stormwind SmartAI orphans (2), stacked bunny, AIName spaces, flatten C:\Tools dirs
@@ -17,13 +18,9 @@
 - **Phase 0 Complete**: Python `venv` set up, `scripts/AI_Auditor.py` scaffolded, `.agentrules` synced.
 - **Pending**: Write the DB connection logic using `mysql-connector-python` and cross-reference Wago's `Creature-enUS.csv` against `creature_template` in the local MySQL world DB.
 
-### VoxCore Website — "Arcane Codex" Visual Overhaul
-- ~~**Phase 1**: Arcane visual refresh~~ DONE — dark-only theme, particles, glow hovers, gold milestones
-- ~~**Phase 2**: Animated pipeline + reduction funnel~~ DONE — SVG scroll animation, funnel chart
-- ~~**Phase 3**: Tool explorer~~ DONE — 54 tools, 9 chips, search, language badges
-- ~~**Also**: Scroll progress bar, nav glow, linked footer badges~~ DONE
-- ~~**Phase 5**: Interactive timeline~~ DONE — expandable cards, color-coded categories
-- ~~**Search/Command Palette**~~ DONE — nav search bar + Ctrl+K + `/` shortcut
+### ~~AI Studio Restructuring (Triad Pipeline)~~ DONE
+- **Completed**: Separated state from config. Moved `Z_Global_Prompts.md`, `schemas/`, and `templates/` out of the root pipeline flow and into a dedicated `config/triad/` directory. Updated configuration paths in `api_architect.json` and `auto_retry.py` for `Reports/Audits/`.
+
 - ~~**Progress Rings**~~ DONE — 5 animated SVG gauges on Status page
 - ~~**15 interactive features**~~ DONE — 3D tilt, cursor trail, copy buttons, page transitions, typewriter, aurora, etc.
 - **Phase 0**: Asset pipeline — extract WoW visuals via wow-export (config + checklist ready)
@@ -460,8 +457,8 @@
 - 2 orphan `hotfixes.item` entries (IDs 242643, 257928) — no matching item_sparse, cosmetic
 
 ## Next Session Immediate Goals
-1. Proceed with testing the completed Triad Pipeline (Command Center -> Orchestrator -> Claude Code).
-2. Continue the "Arcane Codex" VoxCore Website visual overhaul (Phase 0 and Phase 4).
-3. Consolidate and close out lingering Transmog Bug Fixes from Tier 2 (BUG-M3, M7, M8, M10).
-4. Initiate a fresh world database check-in to process the remaining 9 zone phase_area diffs (Tier 3).
-5. Deploy and execute in-game testing for the completed DraconicBot NLP parser and newly expanded FAQ regex patterns.
+1. [ ] Continue the "Arcane Codex" VoxCore Website visual overhaul (Phase 0 and Phase 4).
+2. [ ] Consolidate and close out lingering Transmog Bug Fixes from Tier 2 (BUG-M3, M7, M8, M10).
+3. [ ] Initiate a fresh world database check-in to process the remaining 9 zone phase_area diffs (Tier 3).
+4. [ ] Deploy and execute in-game testing for the completed DraconicBot NLP parser and newly expanded FAQ regex patterns.
+5. [ ] **AI Tooling**: Connect the `AI_Auditor.py` pipeline to the local MySQL schema now that the base infrastructure is fully stabilized and restructured.

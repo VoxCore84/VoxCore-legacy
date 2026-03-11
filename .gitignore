@@ -113,3 +113,4 @@ build_cli.bat
 # -- VCS artifacts ------------------------------------------------------------
 .hg/
 .mailmap
+docx_extract*.txt

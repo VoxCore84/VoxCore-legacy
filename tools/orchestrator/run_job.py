@@ -21,6 +21,7 @@ def parse_args():
     parser.add_argument("--task-ref", help="Optional reference back to a specific task block")
     parser.add_argument("--dry-run", action="store_true", help="Validate routing and state without calling the tools")
     parser.add_argument("--clear-stale-lock", action="store_true", help="Force clear an existing orchestrator lock")
+    parser.add_argument("--no-lock", action="store_true", help="Bypass the orchestrator singleton lock (allows parallel execution)")
     
     # Generic pass-through arguments for the adapters
     parser.add_argument("--preset", help="Build preset to use")
@@ -53,11 +54,13 @@ def main():
     add_transition(manifest, "validated")
     
     # Acquiring Global Lock
-    lock = OrchestratorLock(config_data.get("lock_file", "logs/orchestrator/locks/current.lock"), run_id, args.job)
-    
-    if not lock.acquire(force=args.clear_stale_lock):
-        # We don't record a manifest for pure lock collisions to prevent spamming the logs
-        sys.exit(1)
+    if not args.no_lock:
+        lock = OrchestratorLock(config_data.get("lock_file", "logs/orchestrator/locks/current.lock"), run_id, args.job)
+        if not lock.acquire(force=args.clear_stale_lock):
+            # We don't record a manifest for pure lock collisions to prevent spamming the logs
+            sys.exit(1)
+    else:
+        lock = None
         
     try:
         add_transition(manifest, "lock_acquired")
@@ -91,7 +94,8 @@ def main():
             sys.exit(exit_code)
             
     finally:
-        lock.release()
+        if not args.no_lock and lock:
+            lock.release()
 
 if __name__ == "__main__":
     main()

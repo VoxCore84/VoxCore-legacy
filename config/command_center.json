@@ -4,7 +4,8 @@
     "enabled_jobs": [
         "headless_build",
         "architect_spec",
-        "claude_implement"
+        "claude_implement",
+        "auto_retry_loop"
     ],
     "recent_runs_limit": 20,
     "active_run_poll_ms": 3000,
@@ -20,6 +21,11 @@
         "claude_implement": {
             "label": "Claude Code Implementer",
             "description": "Trigger Claude Code to execute an architect specification.",
+            "default_spec_dir": "AI_Studio/1_Inbox"
+        },
+        "auto_retry_loop": {
+            "label": "Auto-Retry Pipeline",
+            "description": "Trigger Claude Code and autonomously iterate compilation failures until successful.",
             "default_spec_dir": "AI_Studio/1_Inbox"
         }
     }

@@ -13,7 +13,7 @@
             <div class="uk-margin">
                 <label class="uk-form-label" for="intake"><strong>Intake Packet Filepath</strong></label>
                 <div class="uk-form-controls">
-                    <input class="uk-input" type="text" id="intake" name="intake" placeholder="e.g. AI_Studio/1_Inbox/Intake_Triad_Orchestrator_Control_Plane.md" required>
+                    <input class="uk-input" type="text" id="{{ selectors.jobs.architect_spec.intake_input.strip('#') }}" name="intake" placeholder="e.g. AI_Studio/1_Inbox/Intake_Triad_Orchestrator_Control_Plane.md" required>
                 </div>
                 <p class="uk-text-meta uk-margin-remove-top">Must be an allowlisted path in the Orchestrator config.</p>
             </div>
@@ -30,7 +30,7 @@
             </div>
 
             <div class="uk-margin">
-                <label><input class="uk-checkbox" type="checkbox" id="dry_run" name="dry_run" value="true"> <strong>Safe Dry-Run Only</strong></label>
+                <label><input class="uk-checkbox" type="checkbox" id="{{ selectors.jobs.architect_spec.dry_run_checkbox.strip('#') }}" name="dry_run" value="true"> <strong>Safe Dry-Run Only</strong></label>
             </div>
 
             <div class="uk-margin-top uk-text-right">

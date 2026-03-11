@@ -17,6 +17,13 @@ def get_cc_config():
             return json.load(f)
     return {}
 
+def get_selectors():
+    selectors_path = VOXCORE_ROOT / "config" / "host_automation_selectors.json"
+    if selectors_path.exists():
+        with open(selectors_path, "r", encoding="utf-8") as f:
+            return json.load(f).get("command_center", {})
+    return {}
+
 @app.route("/")
 def index():
     cc_config = get_cc_config()
@@ -24,13 +31,15 @@ def index():
     latest_run = get_latest_manifest()
     recent_runs = get_recent_manifests(limit=cc_config.get("recent_runs_limit", 10))
     enabled_jobs = cc_config.get("enabled_jobs", [])
+    selectors = get_selectors()
     
     return render_template(
         "index.html", 
         brain=brain_state, 
         latest=latest_run, 
         recent=recent_runs,
-        enabled_jobs=enabled_jobs
+        enabled_jobs=enabled_jobs,
+        selectors=selectors
     )
 
 @app.route("/jobs/<job_name>", methods=["GET", "POST"])

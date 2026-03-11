@@ -6,7 +6,7 @@ from datetime import datetime
 import pystray
 from PIL import Image, ImageDraw
 
-EXCLUDED_DIR = r"C:\Users\atayl\OneDrive\Desktop\Excluded"
+EXCLUDED_DIR = r"C:\Users\atayl\Desktop\Excluded"
 INBOX_DIR = r"C:\Users\atayl\VoxCore\AI_Studio\1_Inbox"
 ALLOWED_EXTENSIONS = {".md", ".txt", ".json", ".csv", ".sql", ".lua"}
 running = True

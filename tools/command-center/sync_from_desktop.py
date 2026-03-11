@@ -14,7 +14,7 @@ import sys
 
 import win32com.client
 
-DESKTOP = os.path.join(os.environ["USERPROFILE"], "OneDrive", "Desktop")
+DESKTOP = os.path.join(os.environ["USERPROFILE"], "Desktop")
 
 # Map desktop folder names to Command Center category IDs
 FOLDER_TO_CAT = {

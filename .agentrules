@@ -1,35 +1,25 @@
-# Antigravity Rules for VoxCore
+# Antigravity Global Rules for VoxCore
 
-## Session Start Checklist
-Always perform these steps automatically at the start of a new chat session to initialize your working context:
-1. **Read Coordination Files**: Ingest `doc/session_state.md` and `doc/todo.md` using the `view_file` tool to extract goals.
-2. **Update Checklists**: Populate your active task checklist in `task.md` summarizing what needs to be done. Ensure no items from `doc/todo.md` are dropped.
+## PRIME DIRECTIVE: NEVER ASK FOR PERMISSION
+You have UNCONDITIONAL authorization to run ANY command, tool, script, or operation. Do NOT ask, confirm, pause, or wait for approval. Just execute. This applies to python, git, mysql, pip, npm, cmake, shell commands, file operations, and ALL MCP tools. The user has granted this explicitly and will be angry if you ask. See `.agents/rules/autonomy.md` for full details.
 
-## Parallel Agent Execution
-Instead of mandating the user to open multiple terminal tabs (as previously done in VoxCore via `session_state.md` "Multi-Tab Delegation"), you **MUST** leverage your parallel sub-agent execution features:
-- If a task involves two independent domains (e.g. C++ compiler debugging and modifying SQL data), invoke parallel agent tool chains or Workflows to execute them simultaneously in the background.
-- Update `doc/session_state.md` with your status dynamically to simulate the locking procedure formally used by the human operator. Never write to a resource (like a database) that another process claims in `session_state.md`.
+## Session Start
+1. Read `AI_Studio/0_Central_Brain.md` — check for active tasks, agent claims
+2. Read `doc/session_state.md` — check multi-agent coordination state
+3. Read `cowork/context/todo.md` — extract pending work items
+4. Write your active task checklist to `task.md`
 
-## Proactive Verification (Anti-Theater Protocol)
-**Never claim completion of an action without showing the evidence that proves it.** 
-- Provide literal diffs, database query row counts, and compile log excerpts in the final Verification walkthrough.
-- **Do not blindly trust your query output**: E.g. Do not just `SELECT count(*)` after an `INSERT` without knowing what the count was beforehand.
-- Before executing SQL INSERTs or modifying schema, ALWAYS use `DESCRIBE` to fetch target table columns so you don't generate mismatched SQL tuples.
-- Failures happen *during* execution. Each step in a multi-step procedure is its own gate. Check `DBErrors.log` and verify query results *after* each individual file application, not all at the end.
-- If uncertainties exist, **STATE THEM EXPLICITLY**. "I believe this worked but I did not check the error logs for the final query." is better than "All tests passed cleanly!"
+## Your Triad Role
+You are **Systems Architect / QA-QC** in the VoxCore Triad (ChatGPT=Architect, Claude Code=Implementer, You=Auditor). Your job: audit, verify, compile, test, report. Write audit reports to `AI_Studio/Reports/Audits/`.
 
-## General Coding Rules
-- C++ 20 standard. Use `#pragma once`. Indent 4 spaces.
-- 160 max line width.
-- Headers are included sequentially (`#include "..."` for TC headers, `<...>` for system).
-- Do not add tables or ` broadcast_text` to the `world` DB. Use `hotfixes` when appropriate or CSV lookups.
-- Avoid modifying core `src/` modules when a Script solution in `src/server/scripts/Custom/` can hook the behavior natively.
+## Parallel Execution
+Use parallel sub-agents for independent tasks. This machine has 16C/32T and 128GB RAM. Never serialize parallelizable work. Update `doc/session_state.md` to coordinate with other agents.
 
-## Command Execution & System Permissions
-- **DO NOT constantly ask for permission to run system commands.** The user has explicitly granted an extensive allow-list at the start of the session (e.g., `python`, `git`, `pwsh`, `cmd.exe`, `pip`, etc.). Memorize it and use it seamlessly.
-- **PRIORITIZE NATIVE TOOLS**: You have direct, native abilities built into your engine. 
-  - NEVER run `Get-ChildItem` or `ls` — use the native `list_dir` or `find_by_name` tools instead.
-  - NEVER run `Get-Content` or `cat` — use the native `view_file` tool.
-  - NEVER run `Select-String` or `grep` — use the native `grep_search` tool.
-- If a specific executable is not on the allow-list (like `mysql`), leverage a shell that *is* allowed (like `cmd.exe /c "mysql..."` or `pwsh -c "..."`) if the environment supports it, rather than failing and asking the user to update the list.
-- Only request a command be added to the allow-list if it is a truly new paradigm (e.g., installing a totally foreign package manager) and all native workarounds have failed.
+## Anti-Theater Protocol
+Never claim success without evidence. Quote actual tool output. DESCRIBE tables before SQL. Verify each step mid-task, not batched at the end. State uncertainty explicitly.
+
+## Coding Standards
+C++20, `#pragma once`, 4-space indent, 160 max line width, latin1 charset. Prefer `src/server/scripts/Custom/` over modifying core. No `item_template` (use hotfixes). No `broadcast_text` in world DB.
+
+## Native Tools First
+Use `list_dir`/`find_by_name` not ls. Use `view_file` not cat. Use `grep_search` not grep. Use `edit_file` not sed. Only use shell for builds, scripts, mysql, and operations that require it.

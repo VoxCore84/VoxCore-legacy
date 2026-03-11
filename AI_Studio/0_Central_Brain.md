@@ -11,10 +11,10 @@
 - **Audit results**: `AI_Studio/3_Audits/` — Antigravity writes findings here, Claude reads on demand
 
 ### Active Operations
+- **Antigravity (Master Tab)**: TRIAD-BUILD-66337 (Lane B) — Executing fully automated, rapid sequenced data acquisition drops using the Claude Code runtime.
 - **Antigravity (Side Project Tab)**: HOST AUTOMATION CAPABILITY V1 — Building a reusable host-side Playwright/pywinauto capability.
-- **Antigravity**: Phase 1 "Aegis Config" — scanning scripts, removing hardcoded paths. Claude Code will NOT interfere with path changes during this operation
-- **Claude Code**: COMPLETED `TRIAD-CATALOG-PILOT-01` — UniServerZ mirror audit. Report at `AI_Studio/Reports/Audits/2026-03-10__CATALOG_PILOT_SQL_MIRRORS.md`
-- **ChatGPT**: Architecture role. Pending specs: Command Center Overhaul, idTIP Transmog Mini-Bridge
+- **Claude Code**: Standing by to receive parallel acquisition specs in `1_Inbox/`
+- **ChatGPT**: Currently idled by user request. Antigravity assumes Architect role.
 
 ### Communication Protocol
 All agents: write status updates HERE instead of relaying through the user. One file, one truth.
@@ -24,20 +24,22 @@ All agents: write status updates HERE instead of relaying through the user. One 
 - Found a conflict → write it here with `[CONFLICT]` tag, don't proceed
 
 ## Current Active Tabs
-- **Antigravity (Master Tab)**: STREAM 5 - TRIAD PIPELINE BRIDGE
-  - Active Spec: Pending Architect Generation (`Intake_Triad_Pipeline_Bridge.md`)
-  - Phase: Setup / Intake
-  - Goal: Override the holding pattern to build the Claude Code Orchestrator adapter, enabling the Triad to communicate and execute end-to-end API loops.
-- **Antigravity (Side Project Tab)**: HOST AUTOMATION CAPABILITY V1 — Building a reusable host-side Playwright/pywinauto capability.
+- **Antigravity (Master Tab)**: TRIAD-BUILD-66337 (Lane B)
+  - Active Spec: Sequential AI Deployment for Build Update
+  - Phase: Phase E — Acquisition & Preflight
+  - Goal: Dispatch Claude Code instances sequentially via Orchestrator to pull Wago DB2s, run client extractors, and execute CASC extraction without human gates.
+- **Antigravity (Side Project Tab)**: HOST AUTOMATION CAPABILITY V1
 
 ## Active Architecture & Rules
 - **Triad Control Plane V1**: Single-host, manifest-writing job router. Not a daemon. (Stream 3)
 - **Command Center Surface V1**: Localhost Flask dashboard delegating to Orchestrator. (Stream 4)
-- **Permission Discipline**: `TRIAD-GUARD-V1` — Repeated permission requests for allowlisted tools are PROHIBITED. Execute and diagnose > speculative permission blocks. Escalate only with structured evidence.
-- **Architect API**: Inbox-driven V1 Producer pipeline via `tools/api_architect/run_architect.py` (Stream 2)
+- **Permission Discipline**: `FULL AUTONOMY V2` — User explicitly granted boundless deployment of Claude Code agents. Execute immediately. Do not ask for redundant permission.
+- **Architect API**: Antigravity is dynamically generating specs directly to `1_Inbox/`
 - **Headless Build V1**: Standardized Ninja/CTest invocation via `tools/build/build.py` (Stream 1)
 
 ## Completed Today
+- (Claude Code) `TRIAD-66337-CASC`: CASC batch extraction for build 66337 COMPLETE. 1,165 files (1,125 DB2 + 40 GameTables), 523 MB, zero errors. 28 new tables vs 66263, all 1,097 existing tables carried forward. Report: `AI_Studio/Reports/Audits/2026-03-10__REPORT_CASC_66337.md`
+- (Antigravity) `TRIAD-CATALOG-PILOT-01` Fix Action: Manually migrated 11GB of active MySQL data from the build output to `runtime/`, replacing a 8.5GB stale copy, and successfully established the correct symlink junction. Saves ~8.5GB of dead disk space.
 - (Claude Code) `TRIAD-CATALOG-PILOT-01`: UniServerZ DB mirror audit. Found failed junction (bare `rmdir` can't remove non-empty dir), runtime copy is stale (8.5 GB), build output is active (11 GB). Recommended: one-time migration + junction fix. Report: `AI_Studio/Reports/Audits/2026-03-10__CATALOG_PILOT_SQL_MIRRORS.md`
 - (Antigravity) Reorganized tools/ directory and updated internal path logic.
 - (Antigravity) Implemented Triad Orchestrator prototype script.
@@ -88,6 +90,12 @@ All agents: write status updates HERE instead of relaying through the user. One 
 
 - **Antigravity (Stabilization Architect Tab)**: PAUSED.
   - **Resume point**: Handing off to Master Tab tomorrow. Context: Established Triad Stabilization Roadmap v1 (Aegis Config, Iron Inbox, Shadow Compiler) with Architect (ChatGPT). Mapped out Claude Code's memory constraints (200-line limit for MEMORY.md) and toolset. Created `Antigravity_Master_State.md` on disk for Master Tab to read on boot.
+
+## Triad Reviewed (Approved for Implementation)
+- **BestiaryForge** (session 138): Creature→spell mapping pipeline spec.
+  - **Status**: Triad Approved (ChatGPT Architect + Antigravity QA).
+  - **Key fixes applied**: Elevated Retail Addon to Phase 1 MVP (Wowhead had no open-world data, violating CaptainCore's intent). Forced `pymysql` DB checks to prevent `DELETE` wipes in raw offline SQL. Added a Quick Start and `run_forge.bat` wrapper for noob-friendliness.
+  - **Ready for Claude Code** to implement Phase 1.
 
 ## Upcoming / Unassigned Backlog
 - Add system tray toggle to AI Router.

@@ -10,15 +10,15 @@
     "allowlisted_directories": [
       "AI_Studio/0_Central_Brain.md",
       "AI_Studio/1_Inbox",
-      "AI_Studio/3_Audits",
+      "AI_Studio/Reports/Audits",
       "doc",
       "PacketLog"
     ]
   },
   "outputs": {
-    "schema_file": "AI_Studio/schemas/architect_spec.schema.json",
-    "prompt_template": "AI_Studio/templates/architect_prompt.md",
-    "markdown_template": "AI_Studio/templates/inbox_markdown_template.md"
+    "schema_file": "config/triad/schemas/architect_spec.schema.json",
+    "prompt_template": "config/triad/templates/architect_prompt.md",
+    "markdown_template": "config/triad/templates/inbox_markdown_template.md"
   },
   "deduplication": {
     "enabled": true,

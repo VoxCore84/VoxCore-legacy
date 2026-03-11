@@ -21,6 +21,11 @@
             "adapter": "claude_code",
             "timeout_sec": 3600,
             "allowed_flags": ["spec_file", "dry_run"]
+        },
+        "auto_retry_loop": {
+            "adapter": "auto_retry",
+            "timeout_sec": 7200,
+            "allowed_flags": ["spec_file", "preset", "dry_run"]
         }
     }
 }

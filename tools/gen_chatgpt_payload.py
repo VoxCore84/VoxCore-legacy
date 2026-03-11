@@ -2,9 +2,7 @@ import os
 from pathlib import Path
 
 # Resolve Desktop dynamically
-desktop_dir = Path(os.path.expanduser("~/OneDrive/Desktop"))
-if not desktop_dir.exists():
-    desktop_dir = Path(os.path.expanduser("~/Desktop"))
+desktop_dir = Path(os.path.expanduser("~/Desktop"))
 
 output_file = desktop_dir / "CommandCenter_Context.txt"
 

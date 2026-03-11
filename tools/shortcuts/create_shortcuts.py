@@ -30,7 +30,7 @@ except ImportError:
 
 ICON_SRC = os.path.join(ROOT, r"wago\att_icons_export\8K_Format\wow_icons\large")
 ICON_DST = os.path.join(ROOT, r"tools\shortcuts\icons")
-DESKTOP  = os.path.join(os.environ["USERPROFILE"], "OneDrive", "Desktop")
+DESKTOP  = os.path.join(os.environ["USERPROFILE"], "Desktop")
 
 RUNTIME  = os.path.join(ROOT, r"out\build\x64-RelWithDebInfo\bin\RelWithDebInfo")
 TOOLS    = os.path.join(ROOT, "tools")
