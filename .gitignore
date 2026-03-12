@@ -135,6 +135,7 @@ tools/antigravity/watchdog.log
 **/*_Resume_*.md
 **/Adam_Taylor_*
 **/VoxCore_Brand_*
+**/VoxCore_Website_Content*
 **/claude_code_reliability_audit*
 
 # -- VCS artifacts ------------------------------------------------------------

@@ -8,9 +8,9 @@
 
 ## Triad Coordination — READ FIRST (all agents)
 
-**Last updated**: 2026-03-12 — Claude Code primary terminal transition + Cowork setup
+**Last updated**: 2026-03-12 — Session 160: Triad P0 directive added to all core files, Antigravity deprecated, transmog archived, prompt injections removed, inbox triaged (39→11), Central Brain + session_state coordination formalized
 
-### Architecture (as of session 159)
+### Architecture (as of session 160)
 
 ```
 Claude Code (Primary Terminal / Implementer / Coordinator)
@@ -62,8 +62,8 @@ Update THIS file on `/wrap-up` with: what was completed, what's deployed, infras
 - Found a conflict → write `[CONFLICT]` tag here, don't proceed
 
 ## Current Focus
-- **Cleanup**: Cowork-driven 8-task cleanup (injections removed, transmog archived, inbox triaged, stale refs cleaned)
-- **Transmog**: ARCHIVED — reimplemented externally. All VoxCore transmog work superseded
+- **Session 160**: Triad P0 directive installed across all core files (CLAUDE.md, MEMORY.md, Central Brain, session-start.md). Antigravity deprecated as central terminal — Gemini accessed via API. Transmog fully archived (3 commands, 1 agent, rules file). Prompt injections removed from Central Brain + .agentrules. Inbox triaged (39→11 actionable specs). 20 files committed as `b6e75874e0`
+- **Monetization planning**: Brand positioning defined (high-trust systems brand), first offer identified (Codebase Inventory & Architecture Map)
 - **BestiaryForge**: DEPLOYED but NEEDS IN-GAME TEST
 - **DraconicBot v3**: Standalone repo, Gemini AI enabled, Oracle VM provisioned, not yet deployed
 - **VoxCore Daemon**: Phase 1 COMPLETE, Phase 2 next (LogMonitor, ReportWriter, InboxTriage)

@@ -3,7 +3,7 @@
 **Read this FIRST in any new Claude Code tab.**
 This is the single source of truth for what all tabs are doing, what's done, what's blocked, and what to pick up next. Updated by whichever tab finishes work.
 
-**Last updated**: March 12, 2026 — Cowork cleanup (transmog archived, injections removed, stale items purged)
+**Last updated**: March 12, 2026 — Session 160: Triad P0 directive, Antigravity deprecated, transmog archived, prompt injections removed, inbox triaged (39→11)
 
 ---
 
@@ -50,6 +50,7 @@ This is the single source of truth for what all tabs are doing, what's done, wha
 | Main (146) | Lambda Tor Army v4 scraper improvements | COMPLETE | wago/ gitignored. Upgraded scraper_v4.py (adaptive WAF, multi-region, graceful shutdown), parsers.py (5 new specialized parsers, single-quote fix), generate_id_lists.py (validate sync, density stats), handler.py (15 fingerprints, coherent headers, WAF detection) |
 | Main (147) | Greedy Parser v2 + Relationship Web + 66337 Hotfix Applied | COMPLETE | wago/ gitignored. parsers.py rewritten (1,245 lines, 18 extractors, relationship web — 45 edges/page, ~32M projected). generate_id_lists.py build-delta mode. scraper_v4.py 38 targets + delta mode. 66337 hotfix SQL applied (237,530 rows). |
 | Main (148) | Claude Code Power Hooks + 7 Published Repos | COMPLETE | `206f2bb852`. BurntToast toasts, 3 new skills, hook test harness. Published 7 repos to VoxCore84 GitHub. |
+| Main (160) | Cowork cleanup, Triad P0, Antigravity deprecation, inbox triage | COMPLETE | `b6e75874e0`. Removed prompt injections, archived transmog (3 commands, 1 agent, rules), Antigravity→API, P0 Triad directive in all core files, 39 stale specs archived, 2 personal files relocated. 20 files, -533/+180 lines |
 | — | — | — | Add rows as tabs are opened |
 
 **Rule**: Before starting work, check this file. If another tab owns a file or task, don't touch it. Update your row when you start and when you finish.
