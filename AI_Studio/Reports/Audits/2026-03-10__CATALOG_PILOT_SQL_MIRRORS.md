@@ -232,4 +232,21 @@ Windows junctions (`mklink /J`) are the correct choice over symlinks (`mklink /D
 
 ---
 
+## Session 143 Updates (2026-03-11)
+
+Several items identified in this audit were resolved during the desktop/batch cleanup session:
+
+| Item | Original Finding | Resolution |
+|------|-----------------|------------|
+| `start_mysql_uniserverz.bat` hardcoded absolute path (line 86-89 above) | Hardcoded `C:\Users\atayl\VoxCore\...` | **FIXED** — now uses `%~dp0..\..` relative resolution |
+| `apply_pending_sql.bat` always targeting `world` DB (line 93 above) | Every SQL file piped to `world` regardless of DB | **FIXED** — parses DB name from `YYYY_MM_DD_NN_<db>.sql` filename convention |
+| `_optimize_db.bat` hardcoded paths (line 94 above) | Listed as using build output paths | **Already portable** — uses `%~dp0..` relative resolution (was never broken) |
+| `setup_junctions.bat` bare `rmdir` bug (core finding) | Bare `rmdir` silently failed on non-empty dirs | **ALREADY FIXED** — current code uses `fsutil reparsepoint query` check, no bare `rmdir` |
+
+**~~Still pending~~: RESOLVED.** Session 143 verified via `fsutil reparsepoint query` that the build-output UniServerZ **IS ALREADY A JUNCTION** pointing to `runtime\UniServerZ`. The migration was completed at some point between the audit (Mar 10) and verification (Mar 11). The 11 GB data lives only in `runtime/UniServerZ/` — zero duplication. All 5 VoxCore databases confirmed present (auth, characters, world, hotfixes, roleplay) plus fusiongen, lorewalker_world, wpp.
+
+**Additional discovery**: The running MySQL was actually MySQL Server 8.0 (system service at `C:\Program Files\MySQL\MySQL Server 8.0\`), NOT UniServerZ. MySQL 8.0 only had system databases — VoxCore's databases are exclusively in UniServerZ. The system MySQL 8.0 service was stopped and UniServerZ started for 66337 pipeline work.
+
+---
+
 *Report complete. Ready for Antigravity ingestion.*

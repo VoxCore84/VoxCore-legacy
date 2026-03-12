@@ -1,6 +1,10 @@
 @echo off
 title UniServerZ MySQL 9.5.0
-set MYSQL_DIR=C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\UniServerZ\core\mysql
+
+:: Resolve VoxCore root
+set "ROOT=%~dp0..\.."
+for %%i in ("%ROOT%") do set "ROOT=%%~fi"
+set "MYSQL_DIR=%ROOT%\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo\UniServerZ\core\mysql"
 
 echo === Starting UniServerZ MySQL 9.5.0 ===
 echo Data dir: %MYSQL_DIR%\data

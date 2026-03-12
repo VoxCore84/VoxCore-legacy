@@ -1,10 +1,9 @@
+---
+allowed-tools: Bash, Read
+description: Run WowPacketParser on the server's packet log to produce human-readable text and SQL output
+---
+
 # Decode Packet Log
-
-Run WowPacketParser on the server's packet log to produce human-readable text and SQL output.
-
-## Tools
-
-Bash, Read
 
 ## Arguments
 

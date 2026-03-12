@@ -10,7 +10,7 @@ echo.
 set "ROOT=%~dp0..\.."
 for %%i in ("%ROOT%") do set "ROOT=%%~fi"
 
-set "EXCLUDED=%USERPROFILE%\OneDrive\Desktop\Excluded"
+set "EXCLUDED=%USERPROFILE%\Desktop\Excluded"
 set "STUDIO=%ROOT%\AI_Studio"
 set "INBOX=%STUDIO%\1_Inbox"
 

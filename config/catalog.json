@@ -1,0 +1,34 @@
+{
+  "version": "1.0",
+  "taxonomy": {
+    "source": {
+      "description": "Authoritative source code meant to be version controlled.",
+      "extensions": [".cpp", ".h", ".py", ".sql", ".lua", ".bat", ".md", ".json", ".xml", ".cmake"]
+    },
+    "generated": {
+      "description": "Artifacts produced by builds or parsers that can be safely deleted/rebuilt.",
+      "paths": ["build", "out", "sql_output"],
+      "extensions": [".obj", ".exe", ".dll", ".lib", ".pdb"]
+    },
+    "cache": {
+      "description": "Temporary cached data (often very large).",
+      "paths": [".cache", "cache", ".vs"]
+    },
+    "asset": {
+      "description": "Media or heavy game assets.",
+      "extensions": [".png", ".jpg", ".blp", ".mp3", ".ogg", ".wav", ".avi"]
+    },
+    "extracted_data": {
+      "description": "Raw data extracted from the WoW client (dbc, maps).",
+      "paths": ["dbc", "maps", "vmaps", "mmaps", "cameras"]
+    },
+    "vendor": {
+      "description": "Third-party libraries or dependencies.",
+      "paths": ["dep", "ExtTools"]
+    }
+  },
+  "scan_rules": {
+    "ignore_completely": [],
+    "deep_hash_targets": ["source"]
+  }
+}

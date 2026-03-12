@@ -1,10 +1,9 @@
+---
+allowed-tools: Read
+description: Display the current to-do list from memory
+---
+
 # Show To-Do List
-
-Display the current to-do list from memory.
-
-## Tools
-
-Read
 
 ## Instructions
 

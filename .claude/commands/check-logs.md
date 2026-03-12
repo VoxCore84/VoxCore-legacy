@@ -1,10 +1,9 @@
+---
+allowed-tools: Read, Bash(python3:*), Bash(wc:*), Grep, Glob
+description: Read and categorize recent server log entries to find errors, warnings, and notable events
+---
+
 # Check Server Logs
-
-Read and categorize recent server log entries to find errors, warnings, and notable events.
-
-## Tools
-
-Read, Bash(python3, wc), Grep, Glob
 
 ## Instructions
 

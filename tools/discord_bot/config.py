@@ -43,12 +43,6 @@ SUPPORT_CHANNEL_IDS = set()
 # --- SOAP ---
 # (SOAP variables removed)
 
-# --- MySQL ---
-MYSQL_HOST = os.getenv("MYSQL_HOST", "127.0.0.1")
-MYSQL_PORT = int(os.getenv("MYSQL_PORT", 3306))
-MYSQL_USER = os.getenv("MYSQL_USER", "root")
-MYSQL_PASS = os.getenv("MYSQL_PASS", "admin")
-
 # --- Wago CSV ---
 # (WAGO_CSV_DIR removed)
 

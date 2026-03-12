@@ -1,10 +1,9 @@
+---
+allowed-tools: Read, Bash(python3:*), Grep, Glob
+description: Parse WowPacketParser output or raw packet hex and map to codebase handlers
+---
+
 # Parse Packet Dump
-
-Parse WowPacketParser output or raw packet hex and map to codebase handlers.
-
-## Tools
-
-Read, Bash(python3), Grep, Glob
 
 ## Instructions
 

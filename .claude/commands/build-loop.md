@@ -1,10 +1,9 @@
+---
+allowed-tools: Bash(ninja:*), Bash(cd:*), Read, Edit, Grep, Glob
+description: Iteratively build the project and fix compilation errors until the build succeeds
+---
+
 # Build-Fix Loop
-
-Iteratively build the project and fix compilation errors until the build succeeds.
-
-## Tools
-
-Bash(ninja, cd), Read, Edit, Grep, Glob
 
 ## Instructions
 

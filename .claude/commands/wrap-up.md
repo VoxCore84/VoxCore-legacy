@@ -1,10 +1,9 @@
+---
+allowed-tools: Bash(git:*), Bash(gh:*), Bash(python3:*), Read, Edit, Write, Grep, Glob, Agent
+description: End-of-session routine — commit changes, push, sync bridge, update gists, and refresh memory
+---
+
 # Wrap Up Session
-
-End-of-session routine: commit changes, push, sync bridge, update gists, and refresh memory.
-
-## Tools
-
-Bash(git, gh, python3), Read, Edit, Write, Grep, Glob, Agent
 
 ## Arguments
 

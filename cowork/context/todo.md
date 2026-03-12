@@ -243,19 +243,6 @@
 ### Auth Key Self-Service Extraction
 - x64dbg + WoWDumpFix or Frida — documented in `auth-key-notes.md`
 
-## Code Quality (session 24 audit)
-- `.gitignore` for build artifacts
-- Cross-faction `AllowTwoSide.*` audit, `MinPetitionSigns=0` verify
-- Dead code: Hoff class, RotationAxis enum, marker system
-- Non-idempotent setup SQL in `sql/RoleplayCore/`
-- RelWithDebInfo `/Ob2` + LTO investigation
-
-## Future Audit Passes
-- C++ ScriptName bindings vs compiled script classes
-- ~~DBC/DB2 spell/item existence cross-ref~~ DONE (DBCD audit: all clean, broadcast_text filled)
-- Map coordinates validity
-- Client-side rendering data coverage
-- 16 remaining missing broadcast_text: 9 TWW-era (awaiting Wago update) + 7 custom 912M (need manual creation)
 ### ~~ATT (AllTheThings) Data Import~~ DONE
 - `att_parser.py` + `att_generate_sql.py` in wago-tooling repo (`81cf71a`)
 - Applied: 4,630 quest starters, 3,081 quest chains, 1,510 vendor items
@@ -468,7 +455,9 @@
 - **Also verify**: Discord Developer Portal → Message Content Intent is enabled (may be the real blocker)
 
 ## Next Session Immediate Goals
-1. [ ] Test the newly uncapped Triad Orchestration limits (1.28M context, 32 threads) on a massive task to benchmark the 128GB RAM optimization.
-2. [ ] Connect the `AI_Auditor.py` pipeline to the local MySQL schema for Wago CSV cross-referencing.
-3. [ ] Deploy and execute in-game testing for the completed DraconicBot NLP parser and expanded FAQ regex patterns.
-4. [ ] Verify lingering Transmog Bug Fixes in-game (BUG-M3, M7, M8, M10).
+1. [ ] **DraconicBot Message Content Intent** — verify it's enabled in Discord Developer Portal (https://discord.com/developers/applications). This is likely the real blocker for FAQ non-response
+2. [ ] **DraconicBot FAQ rewrite** — replace regex matching with keyword/intent scoring system in `faq.py` + fix misleading `bot.py` warning. Redeploy to Oracle Cloud (129.146.82.200)
+3. [ ] **Triad benchmark** — test uncapped orchestration limits (1.28M context, 32 threads) on a massive task
+4. [ ] **AI Auditor pipeline** — connect `AI_Auditor.py` to local MySQL for Wago CSV cross-referencing
+5. [ ] **Transmog in-game testing** — verify BUG-M3, M7, M8, M10 fixes
+6. [ ] **One-liner deploy script** — create a quick redeploy script for pushing bot code changes to Oracle Cloud

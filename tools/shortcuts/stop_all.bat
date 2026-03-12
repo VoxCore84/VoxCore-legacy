@@ -27,7 +27,9 @@ if %ERRORLEVEL%==0 (echo        Stopped.) else (echo        Not running.)
 echo.
 
 echo [5/5] Signaling Auto-Parse Daemon to shutdown...
-set "RUNTIME=C:\Users\atayl\VoxCore\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo"
+set "ROOT=%~dp0..\.."
+for %%i in ("%ROOT%") do set "ROOT=%%~fi"
+set "RUNTIME=%ROOT%\out\build\x64-RelWithDebInfo\bin\RelWithDebInfo"
 echo shutdown > "%RUNTIME%\.stop_auto_parse"
 echo        Daemon will close its window dynamically after finishing the packet pipeline.
 echo.
@@ -39,6 +41,6 @@ explorer "%RUNTIME%\PacketLog"
 
 echo.
 echo Spawning Claude Code Handover Agent...
-start "Claude Code" wt.exe -d "C:\Users\atayl\VoxCore" cmd /c "claude -p tools\claude_code_handover.md & pause"
+start "Claude Code" wt.exe -d "%ROOT%" cmd /c "claude -p tools\claude_code_handover.md & pause"
 
 %SYSTEMROOT%\system32\timeout.exe /t 3

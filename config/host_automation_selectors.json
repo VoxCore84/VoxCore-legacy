@@ -1,0 +1,19 @@
+{
+  "command_center": {
+    "nav_architect_spec": "a[href='/jobs/architect_spec']",
+    "jobs": {
+      "architect_spec": {
+        "intake_input": "#intake",
+        "dry_run_checkbox": "#dry_run",
+        "submit_button": "button[type='submit']"
+      }
+    },
+    "flash_messages": {
+      "success": ".uk-alert-success"
+    },
+    "recent_runs": {
+      "latest_run_link": "table tbody tr:first-child td:first-child a",
+      "latest_run_dryrun_badge": "table tbody tr:first-child .badge-dryrun"
+    }
+  }
+}

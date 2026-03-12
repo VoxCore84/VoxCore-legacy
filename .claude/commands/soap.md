@@ -1,10 +1,9 @@
+---
+allowed-tools: Bash(bash:*), Bash(curl:*)
+description: Send a GM command to the running worldserver via SOAP
+---
+
 # SOAP Remote Command
-
-Send a GM command to the running worldserver via SOAP.
-
-## Tools
-
-Bash(bash, curl)
 
 ## Instructions
 

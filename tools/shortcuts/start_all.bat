@@ -30,16 +30,22 @@ start "UniServerZ MySQL" "%MYSQL_DIR%\bin\mysqld_z.exe" ^
     --port=3306 ^
     --console
 
-echo        Waiting up to 15 seconds for initialization...
-%SYSTEMROOT%\system32\timeout.exe /t 15 /nobreak >nul
-
-netstat -ano | findstr ":3306 " | findstr "LISTENING" >nul 2>&1
-if %ERRORLEVEL% NEQ 0 (
-    echo        WARNING: MySQL failed to start on port 3306.
+:: Poll for MySQL readiness (up to 15 seconds, check every 1s)
+echo        Waiting for MySQL...
+set /a tries=0
+:mysql_poll
+if %tries% GEQ 15 (
+    echo        WARNING: MySQL failed to start on port 3306 after 15 seconds.
     pause
     exit /b 1
 )
-echo        UniServerZ MySQL started.
+%SYSTEMROOT%\system32\timeout.exe /t 1 /nobreak >nul
+netstat -ano | findstr ":3306 " | findstr "LISTENING" >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    set /a tries+=1
+    goto mysql_poll
+)
+echo        UniServerZ MySQL started in ~%tries% seconds.
 
 :mysql_ready
 echo.
@@ -59,8 +65,24 @@ echo.
 :: 3. Start worldserver
 echo [3/6] Starting worldserver...
 start "worldserver" /D "%RUNTIME%" "%RUNTIME%\worldserver.exe"
-echo        worldserver launched. Waiting 35 seconds for initialization...
-%SYSTEMROOT%\system32\timeout.exe /t 35 /nobreak >nul
+echo        worldserver launched. Waiting for initialization...
+
+:: Poll for worldserver readiness via SOAP port 7878 (up to 90 seconds)
+set /a tries=0
+:world_poll
+if %tries% GEQ 90 (
+    echo        WARNING: worldserver SOAP port 7878 not responding after 90 seconds.
+    echo        Server may still be loading. Continuing...
+    goto world_done
+)
+%SYSTEMROOT%\system32\timeout.exe /t 2 /nobreak >nul
+netstat -ano | findstr ":7878 " | findstr "LISTENING" >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    set /a tries+=2
+    goto world_poll
+)
+echo        worldserver ready in ~%tries% seconds.
+:world_done
 echo.
 
 :: 4. Start Arctium Game Launcher
