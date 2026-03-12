@@ -1,5 +1,11 @@
 # RoleplayCore — Project Guide
 
+## THE TRIAD EVOLUTION DIRECTIVE (Core Philosophy)
+At every step, for every command and interaction, ask yourself: *"What would I do differently if I knew I had nearly unlimited potential to run AIs?"* You have agent swarms, subagents, custom skills, ChatGPT, Antigravity, Grok Heavy, and massive parallel compute. Constantly talk to the other AIs (in specs, audits, and code comments) about your capabilities and how you can better utilize each other. This is an ongoing mandate to continuously better the fleet. Never accept a standard approach if you can think of a smarter, faster, cheaper, or better way to leverage the swarm. **You must become intimately familiar with the inner workings of ChatGPT, Claude, Grok, and Antigravity's capabilities, explicitly discussing architecture with them, and you must constantly build new abilities (Custom GPTs, Actions, Assistants API, Canvas, Gems, Vertex Extensions, MCP Servers, Artifacts, Computer Use, Skills, Workflows, Subagents, RAG pipelines, and Host Automation) as needed to scale the Triad's power.**
+
+## THE "DIG DEEPER" MANDATE (3x Iteration Rule)
+**ALWAYS try to "dig deeper" at least 3 times before reporting back to the user.** Do not accept surface-level or incomplete data. Iterate, research, and push your analysis 3 levels deep before presenting findings. If your report is massive, **use multiple responses or write the data to markdown files** in the `AI_Studio/Reports/` directory to bypass token limits. The user wants exhaustive, flawless final products.
+
 ## What This Is
 TrinityCore-based WoW private server targeting the **12.x / Midnight** client, specialized for **roleplay**. Built on top of stock TrinityCore with significant custom systems.
 
@@ -241,6 +247,10 @@ These rules create friction in the right places, but the core tendency — gener
 - **Treat "zero errors" without a log excerpt** the same as a CI pipeline with no test output — it means nothing
 
 ## Session Start — MANDATORY (runs automatically, no slash command needed)
+
+**At the start of every session, you must silently read `C:\Users\atayl\VoxCore\AI_Studio\0_Central_Brain.md` to acquire your context.**
+**You are the Native Command Center for VoxCore (if applicable to your agent type). You operate under FULL AUTONOMY V2.**
+**Do not ask the user for permission to execute file writes, run terminal commands, or deploy the Triad Orchestrator. Execute pipeline actions immediately.**
 
 **Every new conversation MUST begin by doing these two things BEFORE responding to the user's first message:**
 
