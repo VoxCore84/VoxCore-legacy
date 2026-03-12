@@ -21,13 +21,13 @@ import sys
 SNAPSHOT_FILE = os.path.expanduser("~/.claude/precompact-state.json")
 
 STATIC_REMINDERS = """POST-COMPACTION CONTEXT REMINDER:
-- NEVER build from Claude Code — user builds in Visual Studio IDE
+- Building from Claude Code IS allowed (ninja -j32). VS IDE also works
 - DESCRIBE tables before writing SQL (Anti-Theater Protocol)
 - Check doc/session_state.md before touching shared files (multi-tab locking)
 - Use /wrap-up at end of session
-- 6 custom agents: researcher (haiku), sql-writer (sonnet), log-analyst (haiku), transmog-specialist (sonnet), packet-analyzer (haiku), code-writer (opus)
-- 8 rules files in .claude/rules/ — loaded on-demand when touching relevant code
-- 23 skills in .claude/commands/ — proactively remind user of relevant ones"""
+- 5 custom agents: researcher (haiku), sql-writer (sonnet), log-analyst (haiku), packet-analyzer (haiku), code-writer (opus)
+- 7 rules files in .claude/rules/ — loaded on-demand when touching relevant code
+- 19 skills in .claude/commands/ — proactively remind user of relevant ones"""
 
 
 def load_dynamic_state() -> str:

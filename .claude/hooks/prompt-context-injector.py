@@ -34,18 +34,18 @@ def detect_and_inject(prompt: str) -> list[str]:
     if len(prompt.strip()) < 10:
         return []
 
-    # --- TRANSMOG ---
+    # --- TRANSMOG (ARCHIVED — reimplemented externally) ---
     if any(kw in prompt_lower for kw in ["transmog", "outfit", "wardrobe", "viewedoutfit", "adt", "idt"]):
         context_parts.append(
-            "CONTEXT: Transmog work detected. Read .claude/rules/transmog.md for authoritative rules. "
-            "Run /transmog-status first. Bugtracker: memory/transmog-bugtracker.md"
+            "CONTEXT: Transmog UI work is ARCHIVED — reimplemented externally. "
+            "Historical docs in .claude/rules/archive/transmog.md. No active transmog commands or agents."
         )
 
     # --- BUILD / COMPILE ---
     if any(kw in prompt_lower for kw in ["build error", "compile", "linker", "ninja", "cmake", "lnk2"]):
         context_parts.append(
-            "CONTEXT: Build issue detected. NEVER build from Claude Code — user builds in Visual Studio. "
-            "Use /parse-errors to categorize build output. Use /build-loop only if user explicitly asks."
+            "CONTEXT: Build issue detected. Building from Claude Code IS allowed (ninja -j32). "
+            "Use /parse-errors to categorize build output. Use /build-loop for iterative build+fix cycles."
         )
 
     # --- SERVER CRASH / LOGS ---

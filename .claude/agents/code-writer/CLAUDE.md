@@ -26,7 +26,7 @@ You implement C++ code changes for VoxCore (TrinityCore 12.x, C++20, MSVC).
 2. Define `void AddSC_<name>()` at bottom
 3. Add declaration + call in `custom_script_loader.cpp`
 4. Add RBAC perms to `RBAC.h` if needed
-5. NEVER build — user builds in Visual Studio
+5. Build with `ninja -j32` from the build dir, or user builds in VS
 
 ## Key APIs
 - Use `mcp__codeintel__search_symbol` to find function signatures

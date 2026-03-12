@@ -3,7 +3,7 @@
 **Read this FIRST in any new Claude Code tab.**
 This is the single source of truth for what all tabs are doing, what's done, what's blocked, and what to pick up next. Updated by whichever tab finishes work.
 
-**Last updated**: March 11, 2026 — Session 138 wrap-up (system optimization + AI fleet API integration)
+**Last updated**: March 12, 2026 — Cowork cleanup (transmog archived, injections removed, stale items purged)
 
 ---
 
@@ -58,51 +58,32 @@ This is the single source of truth for what all tabs are doing, what's done, wha
 
 ## Current Server State
 
-- **Build**: `4f2512f29d` (Mar 9 2026, RelWithDebInfo) — includes transmog fail-open + bridge grace
-- **Server**: NOT RUNNING (last ran 12:47 today, clean shutdown)
+- **Build**: Current (VS build done). Includes transmog fail-open + bridge grace + BestiaryForge hooks
+- **Server**: NOT RUNNING
 - **Client**: 12.0.1.66263
 - **DB**: world ~1,200 MB (712K creatures, +101K from LoreWalker) | hotfixes 811 MB (400K spells) | characters 4 MB
 - **Logs**: Clean — zero crashes/fatals. SmartAI warnings + unhandled 12.x opcodes only.
-- **Needs build**: `.npc copy` command + voxplacer + **8 transmog bug fixes** (session 110). See `doc/transmog_next_steps.md` for test plan.
 - **LoreWalker TDB import**: APPLIED (session 118) — 7 files + _00_ Stormwind fix. Restart worldserver to load.
 
 ---
 
 ## What Needs Doing — Priority Order
 
-### Tier 1: Build & Test (requires human + server restart)
+### Tier 1: Server Restart & Test (requires human)
 
-These are blocked on building in VS and running the server. No Claude Code tab can do these alone.
+Build is done. These need a server restart and in-game testing.
 
-- [ ] **Build in VS** — compile current master (`.npc copy`, cs_npc changes)
 - [ ] **Restart worldserver** and test:
   - Arcane Waygate (`.cast 1900028`, gossip, teleports)
   - Stormwind phase fixes (7 phase_area, Genn/Velen/Anduin visibility)
   - Valdrakken portal, embassy NPCs, Hero's Call Boards
   - Apply `_08_00` SQL before restarting
-- [ ] **Transmog in-game verification** — ALL fixes from sessions 52-73 deployed but never tested
+- [ ] **BestiaryForge in-game test** — C++ hooks + addon deployed but never tested
 - [ ] **Enable crash dumps** — Windows crash dump generation for worldserver
 
-### Tier 2: Transmog Bug Fixes (Claude Code tab can do independently)
+> **Note**: Transmog Outfits UI work is ARCHIVED — reimplemented externally. All transmog bugs, slash commands, and agents have been removed. Historical docs preserved in `.claude/rules/archive/transmog.md` and `doc/transmog_*`.
 
-**Assign to**: Transmog Tab
-**How**: Run `/transmog-implement` — reads bug tracker, picks next bug, implements fix
-**Bug tracker**: `C:\Users\atayl\.claude\projects\C--Users-atayl-VoxCore\memory\transmog-bugtracker.md`
-**Full context**: `doc/transmog_implementation_report.md`
-**Behavioral rules**: CLAUDE.md "Transmog UI / Midnight 12.x" section
-
-**Session 110 DONE** — 8 bugs fixed (BUG-G, H1, M6, M9, M1, M5, M2, UNICODE). Ready for build.
-See `doc/transmog_next_steps.md` for full test plan and remaining bugs.
-
-Remaining (MEDIUM/LOW):
-1. **BUG-M3**: HandleTransmogOutfitNew missing bridge defer
-2. **BUG-M7**: EffectEquipTransmogOutfit return value ignored
-3. **BUG-M8**: Missing SMSG response after spell-based outfit apply
-4. **BUG-M10**: UpdateSlots parser heuristic skip
-5. **BUG-L1**: Dead HandleTransmogrifyItems handler (~400 lines)
-6. **BUG-L4**: spell_clear_transmog auxiliary fields
-
-### Tier 3: World DB Cleanup (Claude Code tab can do independently)
+### Tier 2: World DB Cleanup (Claude Code tab can do independently)
 
 **Assign to**: Any available tab
 **How**: Run `python tools/diff_draconic.py --zone <id> --map <map>`
@@ -121,7 +102,7 @@ Priority order:
 
 Each zone produces a SQL file in `sql/exports/` and findings for review.
 
-### Tier 4: Spell Implementation (Claude Code tab can do independently)
+### Tier 3: Spell Implementation (Claude Code tab can do independently)
 
 **Assign to**: Any available tab
 **Context**: `memory/spell-audit.md`
@@ -129,14 +110,14 @@ Each zone produces a SQL file in `sql/exports/` and findings for review.
 - 84 YELLOW passive DUMMY auras (low priority)
 - Key spells: Avenging Wrath, Pillar of Frost, Blood Plague, Divine Hymn
 
-### Tier 5: Data Quality (Claude Code tab can do independently)
+### Tier 4: Data Quality (Claude Code tab can do independently)
 
 - **66 crash-risk creature displayIDs** — query world DB, fix or remove
 - **3 MySQL deadlocks** — investigate transaction contention patterns
 - **Companion Squad SQL** — apply `sql/RoleplayCore/5.1 companion characters.sql`
 - **Equipment gaps** — 13K NPCs missing `creature_equip_template`
 
-### Tier 6: Website & Polish
+### Tier 5: Website & Polish
 
 - Arcane Codex website asset pipeline (Phase 0 ready)
 - Skyriding/dragonriding outside Dragon Isles
@@ -163,9 +144,6 @@ Each zone produces a SQL file in `sql/exports/` and findings for review.
 
 | Skill | What It Does |
 |-------|-------------|
-| `/transmog-implement` | Pick next bug from tracker, implement fix, update tracker |
-| `/transmog-status` | Quick overview of open transmog bugs |
-| `/transmog-correct` | Corrective pass on fillOutfitData behavioral model |
 | `/build-loop` | Iterative build + fix compilation errors |
 | `/check-logs` | Read server logs for errors |
 | `/apply-sql` | Apply SQL file to a database |
@@ -182,7 +160,7 @@ Each zone produces a SQL file in `sql/exports/` and findings for review.
 3. **One bug per commit** — don't combine fixes across domains
 4. **Don't touch files another tab owns** — check the table
 5. **Update this file when done** — move your task to completed, note what changed
-6. **Never build from Claude Code** — user builds via VS IDE
+6. **Building from Claude Code is allowed** — use `ninja -j32` via Bash (VS IDE also works)
 7. **Don't duplicate research** — if a memory file or report covers it, read that instead of re-analyzing source code
 8. **Update bug trackers** — after fixing a bug, change its status in the tracker
 

@@ -39,12 +39,12 @@ Read the current project state and present a concise briefing so the user can de
 - **Tab 3** (if warranted): [independent workstream]
 
 ### Quick Commands
-- `/transmog-status` — check transmog bugs
 - `/todo` — full task list
 - `/check-logs` — server log health
+- `/build-loop` — iterative build+fix
 ```
 
-5. **Always suggest multi-tab splits** when the top priorities span different domains (transmog vs world DB vs spells vs infrastructure). Reference the CLAUDE.md Work Style multi-tab rules.
+5. **Always suggest multi-tab splits** when the top priorities span different domains (world DB vs spells vs infrastructure vs DraconicBot). Reference the CLAUDE.md Work Style multi-tab rules.
 
 ## Rules
 - Keep the briefing under 40 lines

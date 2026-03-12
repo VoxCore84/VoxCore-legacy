@@ -37,7 +37,11 @@ Run the bridge sync so Cowork has fresh data:
 ```
 python /c/Users/atayl/cowork/sync_bridge.py --full 2>&1
 ```
-If the script doesn't exist or fails, note it and continue.
+If the script doesn't exist or fails, try the VoxCore copy:
+```
+python /c/Users/atayl/VoxCore/cowork/sync_bridge.py --full 2>&1
+```
+If neither exists or both fail, note it and continue. This step is critical — Cowork's scheduled tasks depend on fresh bridge data.
 
 ### Step 4: Update gists (unless user said "skip gists" or "quick")
 
@@ -74,6 +78,16 @@ If `doc/session_state.md` exists, update it:
 1. Mark this tab's row as COMPLETE in the Active Tabs table (add commit hash)
 2. Move any completed Tier items to the Recently Completed table
 3. Update any status fields that changed during this session
+
+### Step 5c: Update Central Brain (unless user said "quick")
+
+Update `AI_Studio/0_Central_Brain.md` with:
+1. **"Current Focus"** section — reflect what was completed this session
+2. **"Infrastructure State"** — update build/server/DB status if changed
+3. **"Inbox Status"** — update count if specs were processed or added
+4. **Timestamp** — update "Last updated" at top
+
+Keep Central Brain updates concise (1-2 lines per change). This file is read by Cowork's scheduled tasks and other Claude Code tabs.
 
 ### Step 6: Update todo.md with next-session suggestions
 

@@ -10,7 +10,6 @@
 | C++ file edited, work complete | Remind: "Ready to build in VS" |
 | SQL file created/edited | `/smartai-check` (if SmartAI) or `/apply-sql` |
 | Writing new SQL update | `/new-sql-update` — run for filename |
-| Transmog work begins | `/transmog-status` — run first |
 | Multiple tasks / scope expanding | Suggest tab split (see multi-tab rules) |
 | Session start | Auto-read `doc/session_state.md` + `todo.md` |
 | Name without ID (spell/item/creature/area) | Run `/lookup-*` to resolve |

@@ -6,9 +6,9 @@ The user runs multiple Claude Code tabs in Windows Terminal. Tabs are cheap. Sin
 
 | # | Trigger | Example |
 |---|---------|---------|
-| 1 | Request touches 2+ independent subsystems | "fix transmog bugs and also run the LoreWalker import" |
+| 1 | Request touches 2+ independent subsystems | "fix spell bugs and also run the LoreWalker import" |
 | 2 | Task growing beyond one focused objective | Started with SQL, now also debugging C++ and writing docs |
-| 3 | Subtask has its own dedicated skill | `/transmog-implement`, `/transmog-correct` can run standalone |
+| 3 | Subtask has its own dedicated skill | `/build-loop`, `/check-logs` can run standalone |
 | 4 | Investigation + implementation both needed | One tab researches, another implements |
 | 5 | Both C++ code changes AND SQL generation | These don't share files |
 | 6 | About to start a second unrelated fix | Stop. Suggest a tab |

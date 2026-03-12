@@ -113,6 +113,30 @@ build_cli.bat
 .claude.json
 .clangd
 
+# -- Large data files / generated dirs ----------------------------------------
+listfile.csv
+catalog/
+tests/integration/
+tools/antigravity/watchdog.log
+
+# -- Personal / sensitive data (never commit) ---------------------------------
+**/Personal_Data_Matrix*
+**/Master_Resume*
+**/Career_Package*
+**/Career_Evidence*
+**/Brand_Master_Playbook*
+**/Brand_Standards*
+**/Brand_Foundation*
+**/Brand_Research*
+**/Prompt_Kit*
+**/Resume_OWF*
+**/Profile_Package*
+**/*_Resume_*.docx
+**/*_Resume_*.md
+**/Adam_Taylor_*
+**/VoxCore_Brand_*
+**/claude_code_reliability_audit*
+
 # -- VCS artifacts ------------------------------------------------------------
 .hg/
 .mailmap

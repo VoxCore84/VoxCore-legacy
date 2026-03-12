@@ -7,8 +7,8 @@
 | `x64-Debug` | `out/build/x64-Debug/` | Compilation, debugging |
 | **`x64-RelWithDebInfo`** | `out/build/x64-RelWithDebInfo/` | **Primary runtime** (17s startup vs 60s Debug) |
 
-- **Build**: `cd ~/VoxCore/out/build/x64-Debug && ninja -j20 2>&1`
-- **Scripts only**: `cd ~/VoxCore/out/build/x64-Debug && ninja -j20 scripts 2>&1`
+- **Build**: `cd ~/VoxCore/out/build/x64-Debug && ninja -j32 2>&1`
+- **Scripts only**: `cd ~/VoxCore/out/build/x64-Debug && ninja -j32 scripts 2>&1`
 - **CMake reconfigure**: `cmake -B out/build/x64-Debug -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`
 - **Key CMake options**: `SCRIPTS=static`, `ELUNA=ON`, `TOOLS=ON`
 - **Compiler**: MSVC (VS 2026), Generator: Ninja, C++20
@@ -59,7 +59,7 @@ sql/
 ### Script Systems (all in `src/server/scripts/Custom/`)
 4. **Visual Effects (`.effect`)** — `Noblegarden::EffectsHandler` — SpellVisualKit persistence, late-join sync
 5. **Display/Transmog (`.display`)** — `RoleplayCore::DisplayHandler` — per-slot appearance overrides
-6. **Transmog Outfits** — Full `CMSG_TRANSMOG_OUTFIT_*` handling for 12.x wardrobe
+6. **Transmog Outfits** — `CMSG_TRANSMOG_OUTFIT_*` handling for 12.x wardrobe (ARCHIVED — reimplemented externally)
 7. **Player Morph (`.wmorph`/`.wscale`/`.remorph`)** — `player_morph_scripts.cpp` — persistent player morph/scale
 8. **Misc Scripts** — `spell_dragonriding.cpp`, `item_toy_scripts.cpp`, `spell_wormhole_generators.cpp`, `spell_clear_transmog.cpp`, `free_share_scripts.cpp`
 
@@ -79,7 +79,7 @@ sql/
 2. Define `void AddSC_<name>()` at the bottom
 3. Add the declaration + call in `custom_script_loader.cpp`
 4. If it needs new RBAC perms, add to `RBAC.h` and `sql/RoleplayCore/1. auth db.sql`
-5. Build with `ninja -j20 scripts`
+5. Build with `ninja -j32 scripts`
 
 ## Server Runtime & Logs
 
@@ -92,7 +92,7 @@ sql/
 
 - **MCP servers**: `wago-db2` (DB2 CSV queries), `mysql` (direct DB access), `codeintel` (C++ symbol lookup)
 - **LSP plugins**: `clangd-lsp` (C++), `lua-lsp` (Lua), `github` (PRs/issues)
-- **22 slash commands**: `/build-loop`, `/check-logs`, `/parse-errors`, `/apply-sql`, `/soap`, `/lookup-spell`, `/lookup-item`, `/lookup-creature`, `/lookup-area`, `/lookup-faction`, `/lookup-emote`, `/lookup-sound`, `/decode-pkt`, `/parse-packet`, `/new-script`, `/new-sql-update`, `/smartai-check`, `/transmog-correct`, `/transmog-implement`, `/transmog-status`, `/todo`, `/wrap-up`
+- **19 slash commands**: `/build-loop`, `/check-logs`, `/parse-errors`, `/apply-sql`, `/soap`, `/lookup-spell`, `/lookup-item`, `/lookup-creature`, `/lookup-area`, `/lookup-faction`, `/lookup-emote`, `/lookup-sound`, `/decode-pkt`, `/parse-packet`, `/new-script`, `/new-sql-update`, `/smartai-check`, `/todo`, `/wrap-up`
 - **External repos**: wago (`wago/`), tc-packet-tools (`tools-dev/tc-packet-tools/`), code-intel (`tools-dev/code-intel/`), claude-skills (`tools-dev/claude-skills/`)
 - **External tools**: `ExtTools/` (WowPacketParser, wow.tools.local, DBC2CSV, Arctium, etc.)
 - **GitHub**: `VoxCore84/RoleplayCore` (private), `gh` CLI authenticated
