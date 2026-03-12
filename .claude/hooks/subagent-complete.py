@@ -1,13 +1,8 @@
 #!/usr/bin/env python3
 """SubagentStop hook: toast notification + duration logging when subagents finish.
 
-PROBLEM: When you fan out 3+ parallel agents, you don't know when they finish
-unless you're staring at the terminal. The community TTS pattern doesn't work
-well on Windows with VoIP headsets.
-
-APPROACH: Windows toast notification (async, non-blocking) + structured JSONL
-logging with duration data. Over time, the stats show which agent types are
-slow and which are fast — useful for tuning model selection.
+Uses BurntToast for a subtle, short-lived toast. Falls back silently.
+Also logs completion to session-stats.jsonl for analytics.
 """
 import json
 import os
@@ -37,13 +32,13 @@ def main():
     except Exception:
         pass
 
-    # Windows toast notification (non-blocking)
-    message = "Subagent completed"
-
+    # Toast notification — subtle and short-lived
     burnttoast = (
-        f'try {{ New-BurntToastNotification -Text "Claude Code", "{message}" '
-        f'-AppLogo $null -ExpirationTime ([datetime]::Now.AddSeconds(8)) }} '
-        f'catch {{ }}'
+        "try { New-BurntToastNotification "
+        "-Text 'Subagent Complete', 'Background agent finished' "
+        "-ExpirationTime ([datetime]::Now.AddSeconds(6)) "
+        "-Silent "
+        "} catch { }"
     )
 
     try:
@@ -51,7 +46,7 @@ def main():
             ["powershell.exe", "-NoProfile", "-Command", burnttoast],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
-            creationflags=0x00000008  # DETACHED_PROCESS
+            creationflags=0x00000008,  # DETACHED_PROCESS
         )
     except Exception:
         pass
