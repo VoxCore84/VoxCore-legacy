@@ -156,6 +156,11 @@ class BugTriage(commands.Cog):
 
         # --- Misrouting detection: bug-shaped messages in #troubleshooting ---
         if message.channel.id in (CHANNEL_TROUBLESHOOTING, CHANNEL_TWW):
+            # Don't suggest misrouting in threads or replies
+            if isinstance(message.channel, discord.Thread):
+                return
+            if message.reference is not None:
+                return
             if BUG_INDICATORS.search(content) and WOWHEAD_RE.search(content):
                 # Has both a bug indicator AND a wowhead link — likely a bug report
                 if CHANNEL_BUGREPORT:

@@ -1,6 +1,10 @@
-"""Wowhead link resolver — auto-detects wowhead URLs and embeds a clean preview."""
+"""Wowhead link resolver — auto-detects wowhead URLs and embeds a clean preview.
+
+Rate-limited: max 1 resolution per channel per 2 minutes to avoid noise.
+"""
 
 import logging
+import time
 
 import discord
 from discord.ext import commands
@@ -11,7 +15,8 @@ from emojis import em
 
 log = logging.getLogger(__name__)
 
-# Friendly names for entity types
+_CHANNEL_COOLDOWN = 120  # seconds
+
 ENTITY_LABELS = {
     "spell": "Spell",
     "item": "Item",
@@ -28,6 +33,7 @@ class WowheadResolver(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self._channel_cooldowns: dict[int, float] = {}
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -36,22 +42,33 @@ class WowheadResolver(commands.Cog):
 
         # Only resolve in support/bug channels
         target_channels = SUPPORT_CHANNEL_IDS | ({CHANNEL_BUGREPORT} if CHANNEL_BUGREPORT else set())
-        if message.channel.id not in target_channels:
+        if target_channels and message.channel.id not in target_channels:
+            return
+
+        # Don't resolve in threads (keeps thread noise down)
+        if isinstance(message.channel, discord.Thread):
             return
 
         links = extract_wowhead_links(message.content)
         if not links:
             return
 
-        # Limit to 5 links per message to avoid spam
-        links = links[:5]
+        # Per-channel cooldown
+        now = time.time()
+        last = self._channel_cooldowns.get(message.channel.id, 0)
+        if now - last < _CHANNEL_COOLDOWN:
+            return
+        self._channel_cooldowns[message.channel.id] = now
+
+        # Limit to 3 links per message to avoid spam
+        links = links[:3]
         lines = []
 
         for entity_type, entity_id in links:
             label = ENTITY_LABELS.get(entity_type, entity_type.title())
             icon = em("lookup", "\U0001f50d")
             url = f"https://www.wowhead.com/{entity_type}={entity_id}"
-            lines.append(f"{icon} **{label}** `{entity_id}` — [View on Wowhead]({url})")
+            lines.append(f"{icon} **{label}** `{entity_id}` -- [View on Wowhead]({url})")
 
         if not lines:
             return

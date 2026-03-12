@@ -48,6 +48,8 @@ This is the single source of truth for what all tabs are doing, what's done, wha
 | Main (144) | AWS Lambda deploy + Social media strategy + AI tool research | COMPLETE | `cf4a598c4f`. Lambda on AWS, 265 web searches, 20-platform social media strategy, Buffer recommended, brand identity = VoxCore (not DraconicWoW) |
 | Main (145) | Audit Gap Analysis + Infrastructure Commit | COMPLETE | `263bac9675`. 33 files, Claude rules/hooks/agents, Antigravity toolkit |
 | Main (146) | Lambda Tor Army v4 scraper improvements | COMPLETE | wago/ gitignored. Upgraded scraper_v4.py (adaptive WAF, multi-region, graceful shutdown), parsers.py (5 new specialized parsers, single-quote fix), generate_id_lists.py (validate sync, density stats), handler.py (15 fingerprints, coherent headers, WAF detection) |
+| Main (147) | Greedy Parser v2 + Relationship Web + 66337 Hotfix Applied | COMPLETE | wago/ gitignored. parsers.py rewritten (1,245 lines, 18 extractors, relationship web — 45 edges/page, ~32M projected). generate_id_lists.py build-delta mode. scraper_v4.py 38 targets + delta mode. 66337 hotfix SQL applied (237,530 rows). |
+| Main (148) | Claude Code Power Hooks + 7 Published Repos | COMPLETE | `206f2bb852`. BurntToast toasts, 3 new skills, hook test harness. Published 7 repos to VoxCore84 GitHub. |
 | — | — | — | Add rows as tabs are opened |
 
 **Rule**: Before starting work, check this file. If another tab owns a file or task, don't touch it. Update your row when you start and when you finish.

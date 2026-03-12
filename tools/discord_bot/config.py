@@ -37,8 +37,16 @@ CHANNEL_SHADOWLANDS = _int_env("CHANNEL_SHADOWLANDS")
 CHANNEL_DRAGONFLIGHT = _int_env("CHANNEL_DRAGONFLIGHT")
 CHANNEL_MIDNIGHT = _int_env("CHANNEL_MIDNIGHT")
 
-# Empty set = respond in ALL guild channels (no allowlist filtering)
-SUPPORT_CHANNEL_IDS = set()
+# Build support channel set from configured IDs.
+# Bot only auto-responds (FAQ, frustration, wowhead) in these channels.
+# If ALL are unconfigured (all zero), falls back to responding everywhere (empty set).
+_support_candidates = [
+    CHANNEL_TROUBLESHOOTING, CHANNEL_BUGREPORT, CHANNEL_TWW, CHANNEL_GENERAL,
+    CHANNEL_CLASSIC, CHANNEL_BURNING_CRUSADE, CHANNEL_WOTLK, CHANNEL_CATACLYSM,
+    CHANNEL_MOP, CHANNEL_WOD, CHANNEL_LEGION, CHANNEL_BFA, CHANNEL_SHADOWLANDS,
+    CHANNEL_DRAGONFLIGHT, CHANNEL_MIDNIGHT,
+]
+SUPPORT_CHANNEL_IDS = {cid for cid in _support_candidates if cid}
 
 # --- SOAP ---
 # (SOAP variables removed)
