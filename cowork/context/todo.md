@@ -456,9 +456,19 @@
 - 16 remaining missing broadcast_text: 9 TWW-era (awaiting Wago update) + 7 custom 912M (need manual creation)
 - 2 orphan `hotfixes.item` entries (IDs 242643, 257928) — no matching item_sparse, cosmetic
 
+### DraconicBot: Replace Regex FAQ with Keyword/Intent Scoring
+- Current regex patterns miss natural phrasing (e.g. "the launcher won't work" doesn't trigger `arctium_launcher`)
+- Adding more regex branches is unsustainable — need semantic matching
+- **Plan**: Replace regex engine in `faq.py` with keyword/intent scoring system:
+  - Each FAQ entry gets primary keywords (must match ≥1) + context keywords (boost score)
+  - Score threshold triggers FAQ response — catches all natural phrasing variations
+  - Keep same response data, just swap the matching engine
+- Also fix misleading warning in `bot.py` `_validate_config()` — logs "FAQ will be inactive" when `SUPPORT_CHANNEL_IDS` is empty, but empty set actually means "respond everywhere" (FAQ works fine)
+- Bot is deployed on Oracle Cloud (129.146.82.200), running via systemd as `draconic-bot` service
+- **Also verify**: Discord Developer Portal → Message Content Intent is enabled (may be the real blocker)
+
 ## Next Session Immediate Goals
-1. [ ] Connect the `AI_Auditor.py` pipeline to the local MySQL schema for Wago CSV cross-referencing.
-2. [ ] Deploy and execute in-game testing for the completed DraconicBot NLP parser and expanded FAQ regex patterns.
-3. [ ] Verify lingering Transmog Bug Fixes in-game (BUG-M3, M7, M8, M10).
-4. [ ] Process world database phase_area diffs (9 zones remaining) for Tier 3 cleanup.
-5. [ ] Continue Arcane Codex VoxCore Website visual overhaul (Phases 0 and 4).
+1. [ ] Test the newly uncapped Triad Orchestration limits (1.28M context, 32 threads) on a massive task to benchmark the 128GB RAM optimization.
+2. [ ] Connect the `AI_Auditor.py` pipeline to the local MySQL schema for Wago CSV cross-referencing.
+3. [ ] Deploy and execute in-game testing for the completed DraconicBot NLP parser and expanded FAQ regex patterns.
+4. [ ] Verify lingering Transmog Bug Fixes in-game (BUG-M3, M7, M8, M10).
