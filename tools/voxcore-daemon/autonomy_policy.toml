@@ -1,0 +1,30 @@
+# VoxCore Daemon Autonomy Policy
+# Controls what actions the daemon can take without human approval
+
+[domains]
+safe = ["tooling", "reports", "utilities", "non-gameplay-scripts", "documentation"]
+review_required = ["gameplay-systems", "new-features", "db-schema-additions", "ui-changes"]
+restricted = ["auth-account", "network-protocol", "persistence-layer", "build-system", "credentials"]
+
+[code_writer]
+max_files_per_task = 5
+max_loc_per_task = 400
+never_edit_paths = [
+    "src/server/game/Accounts/",
+    "src/server/game/Server/Protocol/",
+    "src/server/database/Database/",
+    "CMakeLists.txt",
+    "cmake/",
+    "config/",
+    ".env",
+]
+
+[sql]
+auto_apply = ["INSERT", "UPDATE", "DELETE", "REPLACE"]
+require_approval = ["ALTER", "DROP", "CREATE", "TRUNCATE", "RENAME"]
+restricted_databases = ["auth"]
+
+[time_windows]
+idle_threshold_minutes = 20
+night_start_hour = 23
+night_end_hour = 7

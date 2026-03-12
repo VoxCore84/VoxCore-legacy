@@ -1,0 +1,62 @@
+# VoxCore Daemon Configuration
+# See SPEC_VoxCore_Daemon_V2.md for full documentation
+
+[daemon]
+log_file = "logs/daemon/daemon.log"
+state_dir = "tools/voxcore-daemon/state"
+force_autonomous = false
+dry_run = false
+idle_threshold_minutes = 20
+night_window_start = 23
+night_window_end = 7
+
+[api]
+provider = "anthropic"
+model_default = "claude-sonnet-4-6"
+model_complex = "claude-opus-4-6"
+max_retries = 3
+circuit_breaker_threshold = 3
+circuit_breaker_cooldown_minutes = 30
+env_file = "tools/ai_studio/.env"
+daily_token_budget = 500000
+per_run_token_budget = 100000
+
+[build]
+preset = "x64-RelWithDebInfo"
+ninja_jobs = 32
+timeout_sec = 1200
+max_build_retries = 2
+
+[mysql]
+host = "127.0.0.1"
+port = 3306
+user = "root"
+password_env = "MYSQL_PASSWORD"
+db_launcher = ""
+
+[server]
+worldserver_exe = "out/build/x64-RelWithDebInfo/bin/RelWithDebInfo/worldserver.exe"
+bnetserver_exe = "out/build/x64-RelWithDebInfo/bin/RelWithDebInfo/bnetserver.exe"
+soap_host = "127.0.0.1"
+soap_port = 7878
+soap_user = "1"
+soap_password_env = "SOAP_PASSWORD"
+startup_timeout_sec = 90
+health_check_sec = 60
+adopt_existing_processes = false
+
+[git]
+base_branch = "master"
+branch_prefix = "daemon/run"
+auto_pr = false
+never_push_master = true
+
+[notify]
+discord_webhook_env = "DISCORD_WEBHOOK_URL"
+burnttoast_enabled = true
+
+[schedules]
+inbox_triage_minutes = 30
+daily_standup_hour = 8
+weekly_report_day = "sunday"
+weekly_report_hour = 18
