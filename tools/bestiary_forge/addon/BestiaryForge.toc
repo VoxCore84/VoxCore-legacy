@@ -1,0 +1,25 @@
+## Interface: 120001
+## Title: |cff00ccffBestiaryForge|r
+## Notes: Passively records creature spell casts for emulator database generation.
+## Author: VoxCore
+## Version: 1.1.0
+## Category: Development Tools
+## DefaultState: enabled
+## X-License: MIT
+## X-Website: https://github.com/VoxCore84
+## SavedVariables: BestiaryForgeDB
+## OptionalDeps: LibStub, CallbackHandler-1.0, LibDataBroker-1.1, LibDBIcon-1.0
+## IconTexture: Interface\Icons\INV_Misc_Book_09
+## AddonCompartmentFunc: BestiaryForge_OnCompartmentClick
+## AddonCompartmentFuncOnEnter: BestiaryForge_OnCompartmentEnter
+## AddonCompartmentFuncOnLeave: BestiaryForge_OnCompartmentLeave
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+
+BestiaryForge.lua
+Export.lua
+UI.lua
+Minimap.lua
