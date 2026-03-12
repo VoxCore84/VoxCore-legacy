@@ -45,6 +45,9 @@ This is the single source of truth for what all tabs are doing, what's done, wha
 | Antigravity (Restructure) | AI Studio Restructuring (P0) | COMPLETE | `fa550b7a81`. Moved Z_Global, schemas, templates to config/triad/. Repointed python configs. |
 | Main (139) | BestiaryForge spec — creature→spell mapping pipeline | COMPLETE | `28df2070db`. 1,409-line spec, 3 QA passes + 2 adversarial rounds. Triad-approved. Phase 1 MVP next |
 | Main (138b) | System optimization + AI fleet API integration | COMPLETE | `2dffaca3f2`. Power/perf tuning, OneDrive/Miniconda removed, all 3 API keys active, ChatGPT bridge operational, models upgraded, memory files overhauled |
+| Main (144) | AWS Lambda deploy + Social media strategy + AI tool research | COMPLETE | `cf4a598c4f`. Lambda on AWS, 265 web searches, 20-platform social media strategy, Buffer recommended, brand identity = VoxCore (not DraconicWoW) |
+| Main (145) | Audit Gap Analysis + Infrastructure Commit | COMPLETE | `263bac9675`. 33 files, Claude rules/hooks/agents, Antigravity toolkit |
+| Main (146) | Lambda Tor Army v4 scraper improvements | COMPLETE | wago/ gitignored. Upgraded scraper_v4.py (adaptive WAF, multi-region, graceful shutdown), parsers.py (5 new specialized parsers, single-quote fix), generate_id_lists.py (validate sync, density stats), handler.py (15 fingerprints, coherent headers, WAF detection) |
 | — | — | — | Add rows as tabs are opened |
 
 **Rule**: Before starting work, check this file. If another tab owns a file or task, don't touch it. Update your row when you start and when you finish.

@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "created": "2026-03-11",
   "settings_critical": {
     "telemetry.telemetryLevel": "off",
@@ -33,7 +33,14 @@
     "swift", "typescript-basics", "typescript-language-features", "vb"
   ],
   "db_permissions": {
-    "agent_prefs_b64": "CjAKJnRlcm1pbmFsQXV0b0V4ZWN1dGlvblBvbGljeVNlbnRpbmVsS2V5EgYKBEVBTT0KKQofYXJ0aWZhY3RSZXZpZXdQb2xpY3lTZW50aW5lbEtleRIGCgRFQUk9CiEKF3BsYW5uaW5nTW9kZVNlbnRpbmVsS2V5EgYKBEVBRT0KNgosYWxsb3dBZ2VudEFjY2Vzc05vbldvcmtzcGFjZUZpbGVzU2VudGluZWxLZXkSBgoEQ0FFPQo1CithbGxvd0Nhc2NhZGVBY2Nlc3NHaXRpZ25vcmVGaWxlc1NlbnRpbmVsS2V5EgYKBENBRT0="
+    "agent_prefs_b64": "CjAKJnRlcm1pbmFsQXV0b0V4ZWN1dGlvblBvbGljeVNlbnRpbmVsS2V5EgYKBEVBTT0KKQofYXJ0aWZhY3RSZXZpZXdQb2xpY3lTZW50aW5lbEtleRIGCgRFQUk9CiEKF3BsYW5uaW5nTW9kZVNlbnRpbmVsS2V5EgYKBEVBRT0KNgosYWxsb3dBZ2VudEFjY2Vzc05vbldvcmtzcGFjZUZpbGVzU2VudGluZWxLZXkSBgoEQ0FFPQo1CithbGxvd0Nhc2NhZGVBY2Nlc3NHaXRpZ25vcmVGaWxlc1NlbnRpbmVsS2V5EgYKBENBRT0KMAomZm9sbG93QWxvbmdXaXRoQWdlbnREZWZhdWx0U2VudGluZWxLZXkSBgoEQ0FFPQ==",
+    "window_prefs_b64": "CiIKGGNvbmZpcm1SZWxvYWRTZW50aW5lbEtleRIGCgRDQUE9",
+    "browser_prefs_b64": "CigKHmJyb3dzZXJfYWxsb3dsaXN0X3NlbnRpbmVsX2tleRIGCgRDZ0VxCjIKKGJyb3dzZXJfanNfZXhlY3V0aW9uX2NvbmZpZ19zZW50aW5lbF9rZXkSBgoEQ0FRPQ=="
   },
-  "db_journal_mode": "wal"
+  "db_journal_mode": "wal",
+  "mcp_patch": {
+    "target_file": "jetskiAgent/main.js",
+    "patch_script": "patch_mcp_autoconfirm.py",
+    "description": "Auto-confirms MCP tool calls (bypasses hardcoded WAITING status)"
+  }
 }

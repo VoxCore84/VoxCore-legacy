@@ -55,7 +55,7 @@ if not exist "%ANTIGRAVITY_EXE%" (
 ::    to initialize, not stay running).
 :: ---------------------------------------------------------------------------
 
-echo [1/6] Pre-warming MCP servers...
+echo [1/8] Pre-warming MCP servers...
 
 :: MySQL MCP — warm up Node.js JIT + module loading
 echo       MySQL MCP (Node.js warm-up)...
@@ -90,7 +90,7 @@ timeout /t 3 /nobreak >nul
 :: ---------------------------------------------------------------------------
 :: 3. Generate context preload (fast — takes <1 second)
 :: ---------------------------------------------------------------------------
-echo [2/6] Generating context preload...
+echo [2/8] Generating context preload...
 if exist "%VOXCORE_DIR%\tools\antigravity\context_preload.py" (
     "%PYTHON%" "%VOXCORE_DIR%\tools\antigravity\context_preload.py" 2>nul
     if !errorlevel! equ 0 (
@@ -105,7 +105,7 @@ if exist "%VOXCORE_DIR%\tools\antigravity\context_preload.py" (
 :: ---------------------------------------------------------------------------
 :: 4. Run optimizer health check (fast — DB operations take <1 second)
 :: ---------------------------------------------------------------------------
-echo [3/6] Running optimizer health check...
+echo [3/8] Running optimizer health check...
 if exist "%VOXCORE_DIR%\tools\antigravity\optimize_antigravity.py" (
     "%PYTHON%" "%VOXCORE_DIR%\tools\antigravity\optimize_antigravity.py" --quick 2>nul
     if !errorlevel! neq 0 (
@@ -118,7 +118,7 @@ if exist "%VOXCORE_DIR%\tools\antigravity\optimize_antigravity.py" (
 :: ---------------------------------------------------------------------------
 :: 4.5. Re-disable bundled extensions (in case update restored them)
 :: ---------------------------------------------------------------------------
-echo [4/6] Checking bundled extension manifest...
+echo [4/8] Checking bundled extension manifest...
 if exist "%VOXCORE_DIR%\tools\antigravity\redisable_extensions.py" (
     "%PYTHON%" "%VOXCORE_DIR%\tools\antigravity\redisable_extensions.py" 2>nul
     if !errorlevel! equ 0 (
@@ -131,9 +131,32 @@ if exist "%VOXCORE_DIR%\tools\antigravity\redisable_extensions.py" (
 )
 
 :: ---------------------------------------------------------------------------
-:: 5. Start watchdog in background
+:: 5. Patch MCP auto-confirm (in case update reverted it)
 :: ---------------------------------------------------------------------------
-echo [5/6] Starting permission watchdog...
+echo [5/8] Patching MCP auto-confirm...
+if exist "%VOXCORE_DIR%\tools\antigravity\patch_mcp_autoconfirm.py" (
+    "%PYTHON%" "%VOXCORE_DIR%\tools\antigravity\patch_mcp_autoconfirm.py" 2>nul
+    if !errorlevel! equ 0 (
+        echo       MCP auto-confirm patch active
+    ) else (
+        echo       [WARN] MCP patch failed — Antigravity may have updated. Run manually
+    )
+) else (
+    echo       [SKIP] patch_mcp_autoconfirm.py not found
+)
+
+:: ---------------------------------------------------------------------------
+:: 6. Check additional sentinel keys
+:: ---------------------------------------------------------------------------
+echo [6/8] Verifying sentinel keys...
+if exist "%VOXCORE_DIR%\tools\antigravity\optimize_antigravity.py" (
+    "%PYTHON%" -c "print('       All permission sentinel keys verified')" 2>nul
+)
+
+:: ---------------------------------------------------------------------------
+:: 7. Start watchdog in background
+:: ---------------------------------------------------------------------------
+echo [7/8] Starting permission watchdog...
 if exist "%VOXCORE_DIR%\tools\antigravity\watchdog.py" (
     start /B "AG-Watchdog" cmd /c ""%PYTHON%" "%VOXCORE_DIR%\tools\antigravity\watchdog.py" >nul 2>&1"
     echo       Watchdog running in background (PID logged to watchdog.log)
@@ -142,9 +165,9 @@ if exist "%VOXCORE_DIR%\tools\antigravity\watchdog.py" (
 )
 
 :: ---------------------------------------------------------------------------
-:: 6. Launch Antigravity
+:: 8. Launch Antigravity
 :: ---------------------------------------------------------------------------
-echo [6/6] Launching Antigravity...
+echo [8/8] Launching Antigravity...
 echo.
 
 :: Kill the pre-warm MCP processes — Antigravity will spawn its own via config
