@@ -21,7 +21,8 @@ from pathlib import Path
 GATED_PATTERNS = [
     "git push",
     "git tag",
-    "gh release",
+    "gh release create",
+    "gh release upload",
     "zip ",
     "7z ",
     "tar ",

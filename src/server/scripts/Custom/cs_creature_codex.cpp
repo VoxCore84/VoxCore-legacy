@@ -12,8 +12,8 @@
 
 using namespace Trinity::ChatCommands;
 
-// Forward declarations from bestiary_sniffer.cpp
-namespace BestiaryForge
+// Forward declarations from creature_codex_sniffer.cpp
+namespace CreatureCodex
 {
     bool IsRuntimeBlacklisted(uint32 spellId);
     void AddToBlacklist(uint32 spellId);
@@ -21,45 +21,45 @@ namespace BestiaryForge
     std::unordered_set<uint32> GetBlacklistCopy();
 }
 
-class bestiary_commandscript : public CommandScript
+class creature_codex_commandscript : public CommandScript
 {
 public:
-    bestiary_commandscript() : CommandScript("bestiary_commandscript") {}
+    creature_codex_commandscript() : CommandScript("creature_codex_commandscript") {}
 
     ChatCommandTable GetCommands() const override
     {
         static ChatCommandTable blacklistTable =
         {
-            { "add",    HandleBlacklistAdd,    rbac::RBAC_PERM_COMMAND_BESTIARY, Console::No },
-            { "remove", HandleBlacklistRemove, rbac::RBAC_PERM_COMMAND_BESTIARY, Console::No },
-            { "list",   HandleBlacklistList,   rbac::RBAC_PERM_COMMAND_BESTIARY, Console::No },
+            { "add",    HandleBlacklistAdd,    rbac::RBAC_PERM_COMMAND_CREATURE_CODEX, Console::No },
+            { "remove", HandleBlacklistRemove, rbac::RBAC_PERM_COMMAND_CREATURE_CODEX, Console::No },
+            { "list",   HandleBlacklistList,   rbac::RBAC_PERM_COMMAND_CREATURE_CODEX, Console::No },
         };
 
-        static ChatCommandTable bestiaryTable =
+        static ChatCommandTable codexTable =
         {
-            { "query",     HandleBestiaryQuery, rbac::RBAC_PERM_COMMAND_BESTIARY, Console::No },
-            { "stats",     HandleBestiaryStats, rbac::RBAC_PERM_COMMAND_BESTIARY, Console::No },
+            { "query",     HandleCodexQuery, rbac::RBAC_PERM_COMMAND_CREATURE_CODEX, Console::No },
+            { "stats",     HandleCodexStats, rbac::RBAC_PERM_COMMAND_CREATURE_CODEX, Console::No },
             { "blacklist", blacklistTable },
         };
 
         static ChatCommandTable commandTable =
         {
-            { "bestiary", bestiaryTable },
+            { "codex", codexTable },
         };
         return commandTable;
     }
 
-    static bool HandleBestiaryQuery(ChatHandler* handler, uint32 entry)
+    static bool HandleCodexQuery(ChatHandler* handler, uint32 entry)
     {
         CreatureTemplate const* cInfo = sObjectMgr->GetCreatureTemplate(entry);
         if (!cInfo)
         {
-            handler->PSendSysMessage("[BestiaryForge] Creature entry %u not found.", entry);
+            handler->PSendSysMessage("[CreatureCodex] Creature entry %u not found.", entry);
             handler->SetSentErrorMessage(true);
             return false;
         }
 
-        handler->PSendSysMessage("[BestiaryForge] Spells for |cFF00FF00%s|r (entry %u):",
+        handler->PSendSysMessage("[CreatureCodex] Spells for |cFF00FF00%s|r (entry %u):",
             cInfo->Name.c_str(), entry);
 
         bool found = false;
@@ -89,7 +89,7 @@ public:
         return true;
     }
 
-    static bool HandleBestiaryStats(ChatHandler* handler)
+    static bool HandleCodexStats(ChatHandler* handler)
     {
         uint32 totalSessions = 0;
         uint32 listeningPlayers = 0;
@@ -105,7 +105,7 @@ public:
                 ++listeningPlayers;
         }
 
-        auto blacklist = BestiaryForge::GetBlacklistCopy();
+        auto blacklist = CreatureCodex::GetBlacklistCopy();
 
         handler->SendSysMessage("[CreatureCodex] Sniffer Statistics:");
         handler->PSendSysMessage("  Players online: %u", totalSessions);
@@ -118,46 +118,46 @@ public:
     static bool HandleBlacklistAdd(ChatHandler* handler, uint32 spellId)
     {
         SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellId, DIFFICULTY_NONE);
-        BestiaryForge::AddToBlacklist(spellId);
+        CreatureCodex::AddToBlacklist(spellId);
 
         if (spellInfo && spellInfo->SpellName)
-            handler->PSendSysMessage("[BestiaryForge] Blacklisted spell %u (%s).",
+            handler->PSendSysMessage("[CreatureCodex] Blacklisted spell %u (%s).",
                 spellId, (*spellInfo->SpellName)[LOCALE_enUS]);
         else
-            handler->PSendSysMessage("[BestiaryForge] Blacklisted spell %u (unknown).", spellId);
+            handler->PSendSysMessage("[CreatureCodex] Blacklisted spell %u (unknown).", spellId);
 
         return true;
     }
 
     static bool HandleBlacklistRemove(ChatHandler* handler, uint32 spellId)
     {
-        if (!BestiaryForge::RemoveFromBlacklist(spellId))
+        if (!CreatureCodex::RemoveFromBlacklist(spellId))
         {
-            handler->PSendSysMessage("[BestiaryForge] Spell %u not in runtime blacklist.", spellId);
+            handler->PSendSysMessage("[CreatureCodex] Spell %u not in runtime blacklist.", spellId);
             return true;
         }
 
         SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellId, DIFFICULTY_NONE);
         if (spellInfo && spellInfo->SpellName)
-            handler->PSendSysMessage("[BestiaryForge] Removed spell %u (%s) from blacklist.",
+            handler->PSendSysMessage("[CreatureCodex] Removed spell %u (%s) from blacklist.",
                 spellId, (*spellInfo->SpellName)[LOCALE_enUS]);
         else
-            handler->PSendSysMessage("[BestiaryForge] Removed spell %u from blacklist.", spellId);
+            handler->PSendSysMessage("[CreatureCodex] Removed spell %u from blacklist.", spellId);
 
         return true;
     }
 
     static bool HandleBlacklistList(ChatHandler* handler)
     {
-        auto blacklist = BestiaryForge::GetBlacklistCopy();
+        auto blacklist = CreatureCodex::GetBlacklistCopy();
 
         if (blacklist.empty())
         {
-            handler->SendSysMessage("[BestiaryForge] Runtime blacklist is empty.");
+            handler->SendSysMessage("[CreatureCodex] Runtime blacklist is empty.");
             return true;
         }
 
-        handler->PSendSysMessage("[BestiaryForge] Runtime blacklist (%u entries):", uint32(blacklist.size()));
+        handler->PSendSysMessage("[CreatureCodex] Runtime blacklist (%u entries):", uint32(blacklist.size()));
 
         for (uint32 spellId : blacklist)
         {
@@ -172,7 +172,7 @@ public:
     }
 };
 
-void AddSC_bestiary_commands()
+void AddSC_creature_codex_commands()
 {
-    new bestiary_commandscript();
+    new creature_codex_commandscript();
 }

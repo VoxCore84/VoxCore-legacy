@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Bookmark Organizer (one-time)",
+  "version": "1.0",
+  "description": "One-time bookmark reorganization into folders",
+  "permissions": ["bookmarks"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

@@ -37,8 +37,8 @@ void AddSC_maxachieve_command();
 void AddSC_arcane_waygate();
 void AddSC_npc_copy_command();
 void AddSC_voxplacer_commands();
-void AddSC_bestiary_forge_sniffer();
-void AddSC_bestiary_commands();
+void AddSC_creature_codex_sniffer();
+void AddSC_creature_codex_commands();
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
@@ -64,7 +64,7 @@ void AddCustomScripts()
     AddSC_arcane_waygate();
     AddSC_npc_copy_command();
     AddSC_voxplacer_commands();
-    AddSC_bestiary_forge_sniffer();
-    AddSC_bestiary_commands();
+    AddSC_creature_codex_sniffer();
+    AddSC_creature_codex_commands();
 
 }

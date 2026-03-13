@@ -12,7 +12,7 @@
 #include <unordered_set>
 
 /*
- * BestiaryForge Server-Side Sniffer
+ * CreatureCodex Server-Side Sniffer
  *
  * Broadcasts creature spell casts and aura applications to nearby players
  * who have the CreatureCodex addon installed (registered the "CCDX" addon
@@ -54,10 +54,10 @@ static constexpr uint32 BLACKLISTED_CREATURES[] = {
 };
 
 // ============================================================
-// Runtime blacklist (managed by .bestiary command)
+// Runtime blacklist (managed by .codex command)
 // ============================================================
 
-namespace BestiaryForge
+namespace CreatureCodex
 {
     static std::mutex s_blacklistMutex;
     static std::unordered_set<uint32> s_runtimeBlacklist;
@@ -92,7 +92,7 @@ static bool IsBlacklistedSpell(uint32 spellId)
     for (uint32 id : BLACKLISTED_SPELLS)
         if (id == spellId)
             return true;
-    return BestiaryForge::IsRuntimeBlacklisted(spellId);
+    return CreatureCodex::IsRuntimeBlacklisted(spellId);
 }
 
 static bool IsBlacklistedCreature(uint32 entry)
@@ -138,7 +138,7 @@ static void BroadcastToNearbyPlayers(Creature* creature, SpellInfo const* spell,
         if (!player || !player->GetSession())
             continue;
 
-        // Only send to players who have BestiaryForge installed
+        // Only send to players who have CreatureCodex installed
         if (!player->GetSession()->IsAddonRegistered(CCDX_PREFIX))
             continue;
 
@@ -149,10 +149,10 @@ static void BroadcastToNearbyPlayers(Creature* creature, SpellInfo const* spell,
     }
 }
 
-class BestiaryForgeSniffer : public UnitScript
+class CreatureCodexSniffer : public UnitScript
 {
 public:
-    BestiaryForgeSniffer() : UnitScript("bestiary_forge_sniffer") {}
+    CreatureCodexSniffer() : UnitScript("creature_codex_sniffer") {}
 
     // Fires after Spell::SendSpellGo -- the spell has been cast
     void OnCreatureSpellCast(Creature* creature, SpellInfo const* spell) override
@@ -199,7 +199,7 @@ public:
     }
 };
 
-void AddSC_bestiary_forge_sniffer()
+void AddSC_creature_codex_sniffer()
 {
-    new BestiaryForgeSniffer();
+    new CreatureCodexSniffer();
 }
