@@ -8,19 +8,22 @@
 
 ## Triad Coordination — READ FIRST (all agents)
 
-**Last updated**: 2026-03-13 -- Session 168: VoxSniffer v1.0.0 (7-round dual ChatGPT review). Shipped to GitHub + AddOns + publishable/
+**Last updated**: 2026-03-13 -- Session 169: 5-round AI review cycle pipeline built + all 3 APIs tested green
 
 ### Architecture (as of session 160)
 
 ```
 Claude Code (Primary Terminal / Implementer / Coordinator)
-  ├── ChatGPT API (Architect — spec generation via run_architect.py)
-  ├── Gemini API (Auditor — QA/review, NEEDS API KEY)
+  ├── ChatGPT API (Architect — spec generation + design review)
+  ├── Gemini API (Auditor — correctness/security review)
+  ├── Claude API (Cold-reader — implementation bias detection)
   ├── Cowork (Scheduler — 5 recurring tasks, reads this file)
   └── Claude Code tabs (parallel implementation via session_state.md)
 ```
 
-**Antigravity (Windsurf IDE)**: DEPRECATED as central terminal. Gemini is now accessed via API from Claude Code. Historical config preserved in `.agentrules` + `.agents/`.
+**5-Round Review Cycle** (standing preference): ChatGPT → Gemini → Claude API → ChatGPT → Gemini → User. All non-trivial work goes through this pipeline. Script: `tools/ai_studio/review_cycle.py`.
+
+**Antigravity (Windsurf IDE)**: DEPRECATED.
 
 ### Agent Reference Files
 - **Claude Code config**: `CLAUDE.md` (root) + `~/.claude/projects/.../memory/MEMORY.md` (27 topic files)
@@ -34,6 +37,10 @@ Claude Code (Primary Terminal / Implementer / Coordinator)
 | Pipeline | Script | API | Model | Status |
 |----------|--------|-----|-------|--------|
 | ChatGPT Bridge | `tools/ai_studio/chatgpt_bridge.py` | OpenAI | gpt-5.4 | OPERATIONAL |
+| ChatGPT Reviewer | `tools/ai_studio/call_chatgpt_review.py` | OpenAI | gpt-5.4 | OPERATIONAL |
+| Gemini Reviewer | `tools/ai_studio/call_gemini.py` | Google AI | gemini-2.5-pro | OPERATIONAL |
+| Claude Reviewer | `tools/ai_studio/call_claude.py` | Anthropic | claude-sonnet-4-6 | OPERATIONAL |
+| 5-Round Cycle | `tools/ai_studio/review_cycle.py` | All 3 | All 3 | OPERATIONAL |
 | Triad Orchestrator | `tools/ai_studio/orchestrator.py` | Anthropic + Vertex AI | claude-opus-4-6 + gemini-3.1-pro | OPERATIONAL |
 | API Architect | `tools/api_architect/call_openai.py` | OpenAI | gpt-5.4 | OPERATIONAL |
 | Nexus Reports | `tools/log_tools/generate_nexus_report.py` | Vertex AI | gemini-3.1-pro | OPERATIONAL |
@@ -92,7 +99,7 @@ Potentially actionable specs remaining in `1_Inbox/`:
 
 ## Upcoming / Unassigned Backlog
 - Sweep `VoxCore\doc\` directory for deprecated files
-- Gemini API key setup (enables full Triad from Claude Code)
+- ~~Gemini API key setup~~ DONE (session 169 — all 3 API keys configured, review cycle operational)
 - VoxCore Daemon Phase 2
 - DraconicBot v3 Oracle Cloud deployment
 - BestiaryForge in-game testing
