@@ -57,6 +57,48 @@ This is the single source of truth for what all tabs are doing, what's done, wha
 
 ---
 
+## Release Gate System (NEW — Session 165)
+
+A pre-ship audit system is now available for all addon/tool work. Use it before shipping anything.
+
+### Available Tools
+
+| Tool | What | When |
+|------|------|------|
+| `/pre-ship <path>` | Full 5-phase audit: mechanical checks + 3 parallel adversarial agents (noob, bully, security) | Before any release, zip, or GitHub publish |
+| `/release-gate-fix` | Focus only on open BLOCKING items from last audit | After running `/pre-ship`, to fix what it found |
+| Enforcement hooks | `PreToolUse` blocks `git push --tags`, `gh release`, zip when gate != PASS. `PostToolUse` invalidates gate when publishable/ files are edited | Automatic — no action needed |
+
+### Validator Agents (`.claude/agents/`)
+
+| Agent | Role | Mode |
+|-------|------|------|
+| `grep-auditor` | Naming remnants, non-ASCII, secrets, dead refs | Read-only |
+| `doc-auditor` | Path verification, version consistency, feature claims vs reality | Read-only |
+| `app-reviewer` | Adversarial personas (noob, bully, security) | Read-only |
+
+### Gate State File
+
+`.claude/release-gate-status.json` — written by `/pre-ship`, read by hooks. Values: `PASS`, `FAIL`, `STALE`, `UNKNOWN`.
+
+### Checklist Reference
+
+Full 16-phase, ~130 item checklist: `memory/addon-building-checklist.md`. Covers Lua, C++, Python, naming, docs, packaging, security, distribution.
+
+### Known Issue
+
+Custom agent types (`app-reviewer`, `grep-auditor`, `doc-auditor`) require Claude Code restart to register. Until then, `/pre-ship` uses `general-purpose` agents with detailed prompts — same results, just no type restriction.
+
+### Pre-Ship Audit Findings (Session 165)
+
+62 findings across CreatureCodex + VoxGM. Full report was delivered in session chat. Key blockers for each project:
+
+**CreatureCodex blockers**: Rename not finished (live source still says Bestiary), dev artifacts in distribution (CHATGPT_AUDIT_REQUEST*.md, reference/ dir), em dashes in Python/C++, RBAC SQL inconsistency between README and sql file, Linux shell scripts call Windows-only APIs
+
+**VoxGM blockers**: ~300-400 lines dead code, Favorites/History claimed as features with zero UI, em dashes in 4 Lua files, "Max Gold (999g)" label wrong (gives ~9999g), README claims "any TrinityCore server" but ~15 commands are VoxCore-specific
+
+---
+
 ## Current Server State
 
 - **Build**: Current (VS build done). Includes transmog fail-open + bridge grace + BestiaryForge hooks

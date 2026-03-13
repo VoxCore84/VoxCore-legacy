@@ -74,6 +74,9 @@ See `.claude/rules/multi-tab.md`. If task touches 2+ independent subsystems, MUS
 ## Compaction Instructions
 When compacting, ALWAYS preserve: (1) files modified this session, (2) current task/goal, (3) pending SQL or build actions, (4) spawned agents and findings. Drop: exploration results, failed approaches, verbose tool output.
 
+## Release Gate — MANDATORY for Shipping
+Before shipping any addon, tool, or app: run `/pre-ship <path>`. It runs automated checks (naming, non-ASCII, TOC, versions, docs, secrets) then spawns 3 adversarial review agents (noob, bully, security) in parallel. Writes `.claude/release-gate-status.json` which enforcement hooks read — `git push --tags` and `gh release create` are BLOCKED when gate != PASS. Full checklist: `memory/addon-building-checklist.md` (16 phases, ~130 items).
+
 ## Reference (loaded on-demand from `.claude/rules/`)
 - **Project structure, build, DBs, systems, key files, tools** → `project-reference.md`
 - **C++ coding conventions** → `coding-conventions.md`

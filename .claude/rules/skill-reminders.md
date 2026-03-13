@@ -13,6 +13,9 @@
 | Multiple tasks / scope expanding | Suggest tab split (see multi-tab rules) |
 | Session start | Auto-read `doc/session_state.md` + `todo.md` |
 | Name without ID (spell/item/creature/area) | Run `/lookup-*` to resolve |
+| Addon/tool/app approaching "done" state | `/pre-ship` — remind before commit |
+| Writing to `tools/publishable/` directory | `/pre-ship` — ask if ready for audit |
+| User says "ship it", "release", "v1.0", "zip it up" | `/pre-ship` — run before packaging |
 
 **Rules:**
 - If in doubt, ask. A one-line reminder is cheap; forgetting `/wrap-up` loses work.
