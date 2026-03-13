@@ -170,69 +170,84 @@ After all three agents return:
 
 ## Output Format
 
+Write the audit report as a structured document. Fill in ALL sections with actual findings — no placeholder text.
+
 ```markdown
-## Pre-Ship Audit: [Project Name] v[Version]
+## Pre-Ship Audit: {project_name} v{version}
 
 ### Automated Checks
 | Check | Status | Details |
 |-------|--------|---------|
-| Naming | PASS/FAIL | ... |
-| Non-ASCII | PASS/FAIL | ... |
-| TOC Integrity | PASS/FAIL | ... |
-| Version Consistency | PASS/FAIL | ... |
-| Doc Paths | PASS/FAIL | ... |
-| Cross-Doc | PASS/FAIL | ... |
-| Secrets | PASS/FAIL | ... |
-| Dead Code | PASS/WARN | ... |
-| Distribution | PASS/FAIL | ... |
+| Naming | {PASS or FAIL} | {specific findings or "No old names found"} |
+| Non-ASCII | {PASS or FAIL} | {count and locations, or "Clean"} |
+| TOC Integrity | {PASS, FAIL, or SKIP} | {missing/unlisted files, or "All files match"} |
+| Version Consistency | {PASS or FAIL} | {extracted versions and mismatches} |
+| Doc Paths | {PASS or FAIL} | {broken references, or "All paths valid"} |
+| Cross-Doc | {PASS, FAIL, or SKIP} | {contradictions found, or "Consistent"} |
+| Secrets | {PASS or FAIL} | {findings with file:line, or "Clean"} |
+| Dead Code | {PASS or WARN} | {unreferenced functions, or "All functions called"} |
+| Distribution | {PASS or FAIL} | {missing LICENSE, banned files, etc.} |
 
 ### Noob Review (Agent 1)
-[Summary + survivability rating]
+{Agent's full summary — survivability rating 1-10, specific confusion points, "would give up at" steps}
 
 ### TC Bully Review (Agent 2)
-[Summary + Discord survival rating]
+{Agent's full review — Discord survival rating, specific roasts, code quality concerns}
 
 ### Security Audit (Agent 3)
-[Summary + trust verdict]
+{Agent's full assessment — trust verdict, specific vulnerability findings by severity}
 
 ### Combined Findings
 #### BLOCKING (must fix)
-1. ...
+{Numbered list of blocking findings with file:line references. If none: "None — gate PASS"}
 
 #### SHOULD FIX (professional quality)
-1. ...
+{Numbered list of quality findings}
 
 #### NICE TO HAVE (polish)
-1. ...
+{Numbered list of polish items}
 
 ### Checklist Coverage
-Items from addon-building-checklist.md not covered by any agent: [list]
+{List specific checklist items from addon-building-checklist.md that no agent or automated check covered. If all covered: "Full coverage achieved"}
 ```
 
 ## Phase 5: Write Gate Status
 
-After synthesis, write the machine-readable gate status file:
+After synthesis, write the machine-readable gate status file to `.claude/release-gate-status.json`.
 
-```python
-import json
-status = {
-    "status": "PASS" if len(blocking) == 0 else "FAIL",
-    "project": project_name,
-    "version": detected_version,
-    "timestamp": datetime.now().isoformat(),
-    "blockers": [finding["title"] for finding in blocking],
-    "should_fix_count": len(should_fix),
-    "nice_to_have_count": len(nice_to_have),
+This file is created fresh by each `/pre-ship` run — it does not exist until the first audit.
+It is read by enforcement hooks:
+- `PreToolUse` hook blocks `git push --tags`, `gh release create`, zip creation when status != "PASS"
+- `PostToolUse` hook invalidates status to "STALE" when publishable files are edited after a PASS
+
+Write this JSON structure using the Write tool:
+
+```json
+{
+    "status": "PASS or FAIL",
+    "project": "project_name",
+    "project_path": "tools/publishable/ProjectName",
+    "version": "detected_version",
+    "timestamp": "ISO 8601 UTC",
+    "blockers": ["finding title 1", "finding title 2"],
+    "should_fix_count": 0,
+    "nice_to_have_count": 0,
     "agents_run": ["noob", "bully", "security"],
-    "automated_checks": {check_name: "PASS"/"FAIL" for each Phase 2 check}
+    "automated_checks": {
+        "naming": "PASS",
+        "non_ascii": "PASS",
+        "toc_integrity": "PASS",
+        "version_consistency": "PASS",
+        "doc_paths": "PASS",
+        "cross_doc": "SKIP",
+        "secrets": "PASS",
+        "dead_code": "WARN",
+        "distribution": "PASS"
+    }
 }
 ```
 
-Write this to `.claude/release-gate-status.json` using the Write tool.
-
-This file is read by enforcement hooks:
-- `PreToolUse` hook blocks `git push --tags`, `gh release create`, zip creation when status != "PASS"
-- `PostToolUse` hook invalidates status to "STALE" when publishable files are edited after a PASS
+Set `status` to `"PASS"` only when `blockers` is empty. Otherwise set `"FAIL"`.
 
 ## Rules
 
