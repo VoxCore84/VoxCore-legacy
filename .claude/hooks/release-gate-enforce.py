@@ -48,21 +48,35 @@ def read_gate_status():
         return "ERROR", ["Could not read release-gate-status.json"]
 
 
+def extract_command_line(command: str) -> str:
+    """Extract only the first line / actual command, ignoring heredoc bodies.
+
+    Heredoc content (between <<'EOF' and EOF) can contain trigger words
+    like 'git push --tags' in commit messages. We must not match those.
+    """
+    # If there's a heredoc marker, only check the command before <<
+    for marker in ("<<'EOF'", '<<"EOF"', "<<EOF", "<<-'EOF'"):
+        if marker in command:
+            return command[:command.index(marker)]
+    # Otherwise check only the first line (multi-line commands via &&)
+    return command.split("\n")[0]
+
+
 def is_release_action(command: str) -> bool:
     """Check if the command is a release-gated action."""
-    cmd_lower = command.lower().strip()
+    cmd_line = extract_command_line(command).lower().strip()
 
     # Always-allowed exceptions
     for allowed in ALWAYS_ALLOWED:
-        if cmd_lower.startswith(allowed):
+        if cmd_line.startswith(allowed):
             return False
 
     # Check if this is a gated action
     for pattern in GATED_PATTERNS:
-        if pattern in cmd_lower:
+        if pattern in cmd_line:
             # Only gate pushes to tags or release branches
             if pattern == "git push":
-                return "--tags" in cmd_lower or "refs/tags" in cmd_lower
+                return "--tags" in cmd_line or "refs/tags" in cmd_line
             return True
 
     return False
