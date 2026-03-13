@@ -1,12 +1,18 @@
 {
-  "status": "PASS",
+  "status": "STALE",
   "project": "VoxGM",
   "version": "1.0.0",
   "timestamp": "2026-03-13T12:30:00Z",
   "blockers": [],
   "should_fix_count": 0,
   "nice_to_have_count": 4,
-  "agents_run": ["noob", "bully", "security", "chatgpt-api-r4-r7", "chatgpt-browser-r4-r8"],
+  "agents_run": [
+    "noob",
+    "bully",
+    "security",
+    "chatgpt-api-r4-r7",
+    "chatgpt-browser-r4-r8"
+  ],
   "automated_checks": {
     "naming": "PASS",
     "non_ascii": "PASS",
@@ -17,5 +23,6 @@
     "secrets": "PASS",
     "dead_code": "PASS",
     "distribution": "PASS"
-  }
+  },
+  "stale_reason": "File edited after gate pass: C:\\Users\\atayl\\VoxCore\\tools\\publishable\\CreatureCodex\\installer\\__init__.py"
 }

@@ -8,8 +8,13 @@
 1. DESIGN  → ChatGPT generates spec    → lands in AI_Studio/1_Inbox/
 2. REVIEW  → ChatGPT reviews spec      → approved specs move to AI_Studio/2_Active_Specs/
 3. BUILD   → Claude Code implements     → code/SQL/config written
-4. AUDIT   → Gemini reviews the diff   → report in AI_Studio/Reports/Audits/
-5. ITERATE → if audit fails, fix and re-audit (don't skip step 4)
+4. REVIEW CYCLE (5-round, 3 reviewers):
+   4a. ChatGPT reviews   → architecture/design      → fix issues
+   4b. Gemini reviews    → correctness/edge cases   → fix issues
+   4c. Claude API reviews → cold-read, impl bias    → fix issues
+   4d. ChatGPT reviews   → verify fixes, coherence  → fix issues
+   4e. Gemini reviews    → final seal (strictest)
+5. USER    → human review of final artifact
 ```
 
 ### When to Call Each
