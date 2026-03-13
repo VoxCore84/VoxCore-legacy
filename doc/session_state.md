@@ -3,7 +3,7 @@
 **Read this FIRST in any new Claude Code tab.**
 This is the single source of truth for what all tabs are doing, what's done, what's blocked, and what to pick up next. Updated by whichever tab finishes work.
 
-**Last updated**: March 13, 2026 -- Session 171b: CreatureCodex v1.0.0 released, bestiary rename complete
+**Last updated**: March 13, 2026 -- Session 171c: 8 claude-code-* repos audited, fixed, v1.0.0 released. Release gate enforce.py bug fixed
 
 ---
 
@@ -55,6 +55,8 @@ This is the single source of truth for what all tabs are doing, what's done, wha
 | Main (168) | VoxSniffer v1.0.0 iterative review pipeline (7 rounds) | COMPLETE | `db077c0afc` (62 files, 8,881 lines). Dual ChatGPT review (API + Browser). Deployed to GitHub + AddOns + publishable/ + Desktop zip |
 | Main (170) | Codex CLI pipeline integration | COMPLETE | Device-auth, config.toml, call_codex_review.py, review_cycle.py updated. Codex replaces ChatGPT API in rounds 1 & 4 (flat rate, repo-aware) |
 | Main (171) | VoxGM v2.0 spec — autonomous review loop | IN PROGRESS | Owns: `AI_Studio/1_Inbox/` spec files, `AI_Studio/Reports/Audits/*VOXGM*`, `tools/ai_studio/review_cycle.py`. Pipeline: fix all findings → self-audit (noob/bully/diff) → re-run 5 rounds → repeat until PASS → present to user. **DO NOT implement from TRIAD-VOXGM-V2-ENHANCEMENTS-V1 until moved to 2_Active_Specs/** |
+| Release Gate (171c) | 8 claude-code-* repo audit + v1.0.0 releases | COMPLETE | Full audit: em dashes, .gitignore, VoxCore refs, config naming, __pycache__. All 8 repos pushed + released. enforce.py bug fixed (overbroad `gh release` match). Gate status PASS |
+| Main (171c) | Brand expansion + Deep Research ingestion | COMPLETE | 2 memory files created. 4 r/ClaudeAI reports ingested. Career guidance. awesome-claude-code email sent |
 | -- | -- | -- | Add rows as tabs are opened |
 
 **Rule**: Before starting work, check this file. If another tab owns a file or task, don't touch it. Update your row when you start and when you finish.
@@ -217,6 +219,7 @@ Each zone produces a SQL file in `sql/exports/` and findings for review.
 
 | Session | What | Key Output |
 |---------|------|-----------|
+| 171c | 8 claude-code-* repos v1.0.0 | Full audit + fix cycle: em dashes, .gitignore, VoxCore refs, config naming, __pycache__. All 8 repos released on GitHub. enforce.py overbroad match bug fixed |
 | 168 | VoxSniffer v1.0.0 | 14-module server data sniffer (62 files, 8,881 lines). 7-round dual ChatGPT review. Source-bound callbacks, nameplate reseeding, dedup-after-envelope. GitHub + AddOns + publishable/ |
 | 167 | VoxGM v1.0.0 | 26-file GM control panel (2,700 lines). 9-round review. 6 tabs, minimap button, event parsers. GitHub + AddOns + publishable/ |
 | 166 | CreatureCodex v1.0.0 | Creature spell/aura sniffer. 7-round review. C++ hooks + addon + Eluna. install_hooks.py fix, session.py WoW root detection. GitHub + AddOns |
