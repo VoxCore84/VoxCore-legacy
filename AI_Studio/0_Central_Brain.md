@@ -8,7 +8,7 @@
 
 ## Triad Coordination — READ FIRST (all agents)
 
-**Last updated**: 2026-03-15 -- Session 177: Case discrepancy register finalized — 57 discrepancies across 15 categories, 14-entity complaint trail (Section O), CWI correction sweep (55 edits across 3 docs), AFBCMR narrative framed. No VoxCore code changes (all work on Desktop/Case_Reference)
+**Last updated**: 2026-03-15 -- Session 179: NPDB Subject Statement filed (fact-checked, "In review"). 5-phase evidence audit complete (661 files inventoried, 561 images cataloged, 44/60 discrepancies have screenshot evidence). OCR pipeline built (PyMuPDF+Tesseract). Congressional correspondence extracted (Johnston "criminal misconduct" letter to Sen. Lujan, DHA Stringer response with multiple contradictions). QAI confirmed STILL ONGOING at 19 months. No VoxCore code changes (all Desktop/Case_Reference)
 
 ### Architecture (as of session 160)
 
@@ -95,7 +95,7 @@ Potentially actionable specs remaining in `1_Inbox/`:
 - **Server**: NOT RUNNING
 - **Client**: 12.0.1.66263
 - **DB**: world ~1,200 MB | hotfixes 811 MB | characters 4 MB
-- **19 slash commands** (3 transmog commands removed)
+- **31 slash commands** (+12 case management skills session 178)
 - **Cowork**: OPERATIONAL with 5 scheduled tasks
 - **Bridge**: `cowork/sync_bridge.py` — auto-runs on `/wrap-up`
 
