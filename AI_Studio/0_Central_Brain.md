@@ -8,7 +8,7 @@
 
 ## Triad Coordination — READ FIRST (all agents)
 
-**Last updated**: 2026-03-14 -- Session 174b: Built and shipped `VoxCore84/claude-code-scroll-fix` (4 workarounds for scroll jumping). Posted on 7 anthropics/claude-code issues. Added to awesome-claude-code. Set up WSL Claude Code + tmux for scroll-free terminal. Windows Terminal optimized (snapOnOutput + tmux profile)
+**Last updated**: 2026-03-15 -- Session 177: Case discrepancy register finalized — 57 discrepancies across 15 categories, 14-entity complaint trail (Section O), CWI correction sweep (55 edits across 3 docs), AFBCMR narrative framed. No VoxCore code changes (all work on Desktop/Case_Reference)
 
 ### Architecture (as of session 160)
 
