@@ -8,7 +8,7 @@
 
 ## Triad Coordination — READ FIRST (all agents)
 
-**Last updated**: 2026-03-14 -- Session 173: VoxGM v2.0 spec autonomous review loop (R1-R6, 6 iterations x 5 rounds = 30 total reviews). ~50 findings fixed. Packaged for user at Desktop/VoxGM_v2_Spec_Package.zip. R7 remaining items well-scoped (~15 findings)
+**Last updated**: 2026-03-14 -- Session 174b: Built and shipped `VoxCore84/claude-code-scroll-fix` (4 workarounds for scroll jumping). Posted on 7 anthropics/claude-code issues. Added to awesome-claude-code. Set up WSL Claude Code + tmux for scroll-free terminal. Windows Terminal optimized (snapOnOutput + tmux profile)
 
 ### Architecture (as of session 160)
 
