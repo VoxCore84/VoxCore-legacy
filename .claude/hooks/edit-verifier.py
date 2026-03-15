@@ -86,10 +86,16 @@ def main():
         json.dump(result, sys.stdout)
         sys.exit(0)
 
+    # Normalize line endings for comparison (Windows \r\n vs Unix \n)
+    # This is the #1 cause of false positives on Windows
+    content_norm = content.replace("\r\n", "\n").replace("\r", "\n")
+    new_norm = new_string.replace("\r\n", "\n").replace("\r", "\n") if new_string else ""
+    old_norm = old_string.replace("\r\n", "\n").replace("\r", "\n") if old_string else ""
+
     problems = []
 
     # Check 1: new_string should be present in the file
-    if new_string and new_string not in content:
+    if new_string and new_norm not in content_norm:
         problems.append(
             f"MISSING NEW CONTENT: The expected new text was not found in "
             f"'{file_path}' after the Edit. The edit may not have applied."
@@ -100,7 +106,7 @@ def main():
     # legitimately remain (multiple occurrences, or old_string is a substring
     # of surrounding context that naturally repeats). In those cases, if
     # new_string IS present, the edit almost certainly succeeded.
-    if old_string and old_string in content:
+    if old_norm and old_norm in content_norm:
         if replace_all:
             # replace_all was set but old_string still exists — definite failure
             problems.append(
@@ -108,9 +114,9 @@ def main():
                 f"text still exists in '{file_path}' despite replace_all being "
                 f"set. The edit may have failed or matched incorrectly."
             )
-        elif old_string != new_string and new_string and new_string not in content:
+        elif old_norm != new_norm and new_norm and new_norm not in content_norm:
             # old_string present AND new_string missing — likely real failure
-            occurrences = content.count(old_string)
+            occurrences = content_norm.count(old_norm)
             problems.append(
                 f"POSSIBLE EDIT FAILURE: old_string still appears "
                 f"{occurrences} time(s) and new_string is missing in "

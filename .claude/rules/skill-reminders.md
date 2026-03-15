@@ -16,6 +16,20 @@
 | Addon/tool/app approaching "done" state | `/pre-ship` — remind before commit |
 | Writing to `tools/publishable/` directory | `/pre-ship` — ask if ready for audit |
 | User says "ship it", "release", "v1.0", "zip it up" | `/pre-ship` — run before packaging |
+| Working on Case_Reference or legal case files | `/case-status` — run at session start for case work |
+| User pastes output from ChatGPT/Gemini/Grok for case | Spawn `case-intake` agent to parse and plan edits |
+| User asks "who handles X" or "which lawyer" | `/lane-map` — show legal lane ownership |
+| User asks for a summary, brief, or one-pager | `/one-pager [audience]` — generate executive summary |
+| User mentions .mbox, Gmail export, email archive | `/mbox-parse` — index and search |
+| User mentions deadline, "how many days", ADSCD | `/deadlines` — show countdown |
+| User asks to find evidence or verify a claim | `/evidence-xref "claim"` — trace to source |
+| User asks to search case files for a name/topic | `/case-search [term]` — search archive |
+| User asks to sort/triage/organize files | Spawn `file-sorter` agent |
+| User needs to read a .docx file | `/read-doc [path]` — extract text |
+| User asks about a specific person in the case | `/person-dossier [name]` — full mention search |
+| User preparing a filing (DD7050, AFBCMR, NPDB, etc.) | `/filing-prep [type]` — draft with evidence citations |
+| User asks "do we have evidence for X" before filing | `/evidence-gap [filing]` — requirements vs archive |
+| User asks to update or regenerate the timeline | `/case-timeline [update]` — rebuild from all sources |
 
 **Rules:**
 - If in doubt, ask. A one-line reminder is cheap; forgetting `/wrap-up` loses work.
