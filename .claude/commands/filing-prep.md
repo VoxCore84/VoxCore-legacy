@@ -21,18 +21,33 @@ The user specifies:
 
 ### Phase 1: Requirements
 Read the specific filing requirements for the requested form type. Key regulatory references:
-- **DD 7050**: 10 U.S.C. 1034, DoDD 7050.06, DAFI 90-301
-- **DD 149**: 10 U.S.C. 1552, DAFI 36-2603
-- **NPDB**: 45 C.F.R. Part 60
-- **HIPAA**: 45 C.F.R. Parts 160, 164
+- **DD 7050**: 10 U.S.C. 1034, DoDD 7050.06, DAFI 90-301. Two-part burden-shifting test: (1) complainant shows protected disclosure was "a contributing factor" in unfavorable action, (2) agency must prove by clear and convincing evidence it would have taken same action absent the disclosure
+- **DD 149**: 10 U.S.C. 1552, DAFI 36-2603. 3-year filing window from discovery of error. Board can waive in interest of justice
+- **NPDB**: 45 C.F.R. Part 60, specifically 45 CFR 60.21 (formal dispute process). Filing triggers 60-day dialogue with reporting entity + opens HHS Secretary review pathway. Subject Statement (narrative only) is DIFFERENT from Formal Dispute (triggers investigation)
+- **HIPAA**: 45 C.F.R. Parts 160, 164. File at ocrportal.hhs.gov. 180-day filing window from violation
+- **Privilege Due Process**: DHA-PM 6025.13 Vol 3, Enclosure 3 — key paragraphs:
+  - Para 2.b.(1)(b): "Clinical privileging actions are NOT a disciplinary tool"
+  - Para 2.p.(1)(g): No PCS during clinical due process (conflicts with DoDI 6495.02 ET)
+  - Para 2.p.(6)(a): CDE required before adverse action
+  - Para 2.p.(14)(b): NPDB Revision-to-Action (never filed by PA)
+  - Para 2.p.(15)(d): PA can submit secret MFR to DHA (member denied copy)
+  - Para 2.p.(15)(f): No provision for provider to appear at DHA panel
+  - Para 13(b): PA shall NOT rely on facts outside hearing record
+- **IDES/MEB**: DoDM 1332.18 Vol 1, Section 4.3 — PEBLO assignment within 3 calendar days
+- **SAPR**: DoDI 6495.02 — expedited transfer rights for sexual assault victims
+- **VLC**: 10 USC 1044e — right to Victims' Legal Counsel
+
+Use the **regulation-lookup agent** to search `_DHAPM_SIGNED_full_text.txt` on Desktop for exact text when needed.
 
 ### Phase 2: Evidence Gathering
 Fan out agents to search the case archive for evidence supporting each required element:
 
-1. **case-researcher agent**: Search `Case_Reference/` and FINAL docs for relevant evidence
-2. **Grep the email extracts**: `11_EMAILS/Takeout_Extracted/Legal/txt/` and `UNOPENED_EVIDENCE/txt/`
-3. **Check the cross-reference report**: `11_EMAILS/CROSS_REFERENCE_REPORT.md`
-4. **Read the discrepancy analysis**: `00_COMPLETE_DISCREPANCY_ANALYSIS.md`
+1. **case-researcher agent**: Search `Case_Reference/` and MASTER docs (`99_MASTER_SYNTHESIS_OUTPUT/`) for relevant evidence
+2. **regulation-lookup agent**: Search regulatory text files for exact paragraph citations needed in the filing
+3. **Grep the email extracts**: `11_EMAILS/Takeout_Extracted/Legal/txt/` and `UNOPENED_EVIDENCE/txt/`
+4. **Check the cross-reference report**: `11_EMAILS/CROSS_REFERENCE_REPORT.md`
+5. **Read the discrepancy analysis**: `00_COMPLETE_DISCREPANCY_ANALYSIS.md`
+6. **Read the evidence validation report**: `99_MASTER_SYNTHESIS_OUTPUT/00_EVIDENCE_VALIDATION_REPORT.md`
 
 ### Phase 3: Draft Narrative
 Write the narrative section of the filing:

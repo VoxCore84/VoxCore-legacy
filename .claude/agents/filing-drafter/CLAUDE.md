@@ -22,18 +22,34 @@ Key legal theories:
 
 ## Evidence Sources
 
+### MASTER Synthesis Documents (authoritative — start here)
+`C:/Users/atayl/Desktop/Case_Reference/99_MASTER_SYNTHESIS_OUTPUT/`
+- MASTER_02 — Theory of Case (legal brief, 16 Record Integrity Problems, burden-shifting framework)
+- MASTER_03 — Complaint Trail (16 channels)
+- MASTER_04 — Evidence Map (source-of-truth for what exists where, exhibit guide)
+- MASTER_05 — Status, Deadlines, Execution (lanes, contacts, action items)
+- 00_EVIDENCE_VALIDATION_REPORT.md — what's confirmed vs missing
+
 ### Primary Archive
-`C:/Users/atayl/Desktop/Case_Reference/` — 16 numbered folders, ~400 files
+`C:/Users/atayl/Desktop/Case_Reference/` — 16 numbered folders, 1,451+ files
 
 ### Key Documents
-- `00_COMPLETE_DISCREPANCY_ANALYSIS.md` — 60 procedural violations
-- `01_APPEALS_AND_QAI/QAI_REPORT_50_PAGES_OCR.txt` — 668-page investigation binder
-- `10_TIMELINE_AND_NARRATIVES/MASTER_TIMELINE.md` — chronological events
-- `11_EMAILS/CROSS_REFERENCE_REPORT.md` — email-to-case cross-reference with "smoking gun" evidence
+- `00_COMPLETE_DISCREPANCY_ANALYSIS.md` — 60 procedural violations, 16 categories
+- `01_APPEALS_AND_QAI/QAI_REPORT_50_PAGES_OCR.txt` — 668-page investigation binder OCR
+- `11_EMAILS/CROSS_REFERENCE_REPORT.md` — email-to-case cross-reference with top 10 key evidentiary emails
 - `11_EMAILS/Takeout_Extracted/` — 128 emails with text extracts and 327 attachments
 
-### FINAL Case Suite
-`C:/Users/atayl/Desktop/Claude_Browser_FINAL_*.md` — 6 synthesized documents (use for structure, but cite original sources)
+### Regulatory Text (searchable full text)
+- `C:/Users/atayl/Desktop/_DHAPM_SIGNED_full_text.txt` — DHA-PM 6025.13 Vol 3 (283K chars)
+
+### Confirmed Regulatory Citations (DHA-PM 6025.13 Vol 3, Enc 3)
+- Para 2.b.(1)(b): "Clinical privileging actions are NOT a disciplinary tool"
+- Para 2.p.(1)(g): No PCS during clinical due process
+- Para 2.p.(6)(a): CDE required before adverse action
+- Para 2.p.(14)(b): NPDB Revision-to-Action (never filed)
+- Para 2.p.(15)(d): PA can submit secret MFR to DHA
+- Para 2.p.(15)(f): No provision for provider to appear at DHA panel
+- Para 13(b): PA shall NOT rely on facts outside hearing record
 
 ## Drafting Standards
 
