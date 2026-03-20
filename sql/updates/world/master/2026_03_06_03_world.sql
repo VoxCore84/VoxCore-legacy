@@ -3761,3 +3761,6 @@ INSERT INTO game_event (eventEntry, start_time, end_time, occurence, length, hol
 INSERT INTO game_event (eventEntry, start_time, end_time, occurence, length, holiday, holidayStage, description, world_event, announce) VALUES (251, NULL, NULL, 5184000, 2592000, 0, 0, 'Spring Balloon Festival', 0, 2);
 INSERT INTO game_event (eventEntry, start_time, end_time, occurence, length, holiday, holidayStage, description, world_event, announce) VALUES (252, NULL, NULL, 5184000, 2592000, 0, 0, 'Kirin Tor Tavern Crawl', 0, 2);
 INSERT INTO game_event (eventEntry, start_time, end_time, occurence, length, holiday, holidayStage, description, world_event, announce) VALUES (253, NULL, NULL, 5184000, 2592000, 0, 0, 'March of the Tadpoles', 0, 2);
+DELETE FROM `spell_script_names` WHERE `ScriptName` IN ("spell_pri_archangel");
+INSERT INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES
+(472433, 'spell_pri_archangel');

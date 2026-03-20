@@ -475,7 +475,6 @@ namespace WorldPackets
         class SetBackpackAutosortDisabled;
         class SetBackpackSellJunkDisabled;
         class SetBankAutosortDisabled;
-        class SellAllJunkItems;
     }
 
     namespace LFG
@@ -840,9 +839,9 @@ namespace WorldPackets
     namespace Transmogrification
     {
         class TransmogrifyItems;
+        class ClearNewAppearance;
         class TransmogOutfitNew;
         class TransmogOutfitUpdateInfo;
-        class TransmogOutfitUpdateSituations;
         class TransmogOutfitUpdateSlots;
     }
 
@@ -1825,11 +1824,10 @@ class TC_GAME_API WorldSession
 
         // Transmogrification
         void HandleTransmogrifyItems(WorldPackets::Transmogrification::TransmogrifyItems& transmogrifyItems);
-        void HandleTransmogOutfitNew(WorldPackets::Transmogrification::TransmogOutfitNew& transmogOutfitNew);
-        void HandleTransmogOutfitUpdateInfo(WorldPackets::Transmogrification::TransmogOutfitUpdateInfo& transmogOutfitUpdateInfo);
-        void HandleTransmogOutfitUpdateSituations(WorldPackets::Transmogrification::TransmogOutfitUpdateSituations& transmogOutfitUpdateSituations);
-        void HandleTransmogOutfitUpdateSlots(WorldPackets::Transmogrification::TransmogOutfitUpdateSlots& transmogOutfitUpdateSlots);
-
+        void HandleTransmogOutfitUpdateSlots(WorldPackets::Transmogrification::TransmogOutfitUpdateSlots& packet);
+        void HandleTransmogOutfitNew(WorldPackets::Transmogrification::TransmogOutfitNew& packet);
+        void HandleTransmogOutfitUpdateInfo(WorldPackets::Transmogrification::TransmogOutfitUpdateInfo& packet);
+        void HandleClearNewAppearance(WorldPackets::Transmogrification::ClearNewAppearance& packet);
         // TransmogBridge: addon-message-based workaround for 12.x client serializer bug.
         // The client's CommitAndApplyAllPending C++ serializer omits HEAD/MH/OH/enchants
         // and sends stale IMAIDs for all other slots. A client addon sends correct IMAIDs

@@ -336,7 +336,8 @@ enum ActionButtonType
     ACTION_BUTTON_CMACRO    = ACTION_BUTTON_C | ACTION_BUTTON_MACRO,
     ACTION_BUTTON_COMPANION = 0x50,
     ACTION_BUTTON_MOUNT     = 0x60,
-    ACTION_BUTTON_ITEM      = 0x80
+    ACTION_BUTTON_ITEM      = 0x80,
+    ACTION_BUTTON_TRANSMOG_OUTFIT = 0x90
 };
 
 enum class HonorGainSource : uint8
@@ -1717,7 +1718,7 @@ class TC_GAME_API Player final : public Unit, public GridObject<Player>
         void RemoveRewardedQuest(uint32 questId, bool update = true);
         void SendQuestUpdate(uint32 questId, bool updateInteractions = true, bool updateGameObjectQuestGiverStatus = false);
         QuestGiverStatus GetQuestDialogStatus(Object const* questGiver) const;
-        void SkipQuests(std::vector<uint32> const& questIds); // removes quest from log, flags rewarded, but does not give any rewards to player
+        void SkipQuests(std::span<uint32 const> questIds); // removes quest from log, flags rewarded, but does not give any rewards to player
         void DespawnPersonalSummonsForQuest(uint32 questId);
 
         void SetDailyQuestStatus(uint32 quest_id);
@@ -2019,6 +2020,7 @@ class TC_GAME_API Player final : public Unit, public GridObject<Player>
         void ApplyTraitEntryChanges(int32 editedConfigId, WorldPackets::Traits::TraitConfig const& newConfig, bool applyTraits, bool consumeCurrencies);
         void RenameTraitConfig(int32 editedConfigId, std::string&& newName);
         void DeleteTraitConfig(int32 deletedConfigId);
+        void AddMoveImpulse(Position direction);
         void ApplyTraitConfig(int32 configId, bool apply);
         void ApplyTraitEntry(int32 traitNodeEntryId, int32 rank, int32 grantedRanks, bool apply);
         void SetActiveCombatTraitConfigID(int32 traitConfigId) { SetUpdateFieldValue(m_values.ModifyValue(&Player::m_activePlayerData).ModifyValue(&UF::ActivePlayerData::ActiveCombatTraitConfigID), traitConfigId); }
@@ -2238,8 +2240,6 @@ class TC_GAME_API Player final : public Unit, public GridObject<Player>
         void RemoveLootRoll(LootRoll* roll);
 
         void RemovedInsignia(Player* looterPlr);
-
-        void AddMoveImpulse(Position direction);
 
         WorldSession* GetSession() const { return m_session; }
 
@@ -2927,6 +2927,9 @@ class TC_GAME_API Player final : public Unit, public GridObject<Player>
         uint32 GetLastTargetedGO() { return _lastTargetedGO; }
         void SetLastTargetedGO(uint32 lastTargetedGO) { _lastTargetedGO = lastTargetedGO; }
 
+        uint64 GetLastTargetedGO2() { return _lastTargetedGO2; }
+        void SetLastTargetedGO2(uint64 lastTargetedGO2) { _lastTargetedGO2 = lastTargetedGO2; }
+
         void SendPlayerChoice(ObjectGuid sender, int32 choiceId);
 
         bool MeetPlayerCondition(uint32 conditionId) const;
@@ -3416,6 +3419,7 @@ class TC_GAME_API Player final : public Unit, public GridObject<Player>
         bool overrideScreenFlash;
 
         uint32 _lastTargetedGO;
+        uint64 _lastTargetedGO2;
 
         std::unique_ptr<Garrison> _garrison;
 

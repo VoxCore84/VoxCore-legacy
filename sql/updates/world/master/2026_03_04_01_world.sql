@@ -17,3 +17,10 @@ UPDATE world.gameobject
       AND zoneId = 0
       AND position_x BETWEEN -9800 AND -8200
       AND position_y BETWEEN -100 AND 1400;
+
+-- Upstream TrinityCore: Warrior Keep Your Feet on the Ground
+DELETE FROM `spell_proc` WHERE `SpellId` IN (438590);
+
+DELETE FROM `spell_script_names` WHERE `ScriptName` IN ('spell_warr_keep_your_feet_on_the_ground');
+INSERT INTO `spell_script_names` (`spell_id`, `ScriptName`) VALUES
+(438590, 'spell_warr_keep_your_feet_on_the_ground');

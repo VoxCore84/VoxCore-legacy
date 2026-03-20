@@ -284,6 +284,14 @@ enum class BattlemasterListFlags : uint32
 
 DEFINE_ENUM_FLAG(BattlemasterListFlags);
 
+enum class CampaignFlags : int32
+{
+    DontUseJourneyQuestBang = 0x01,
+    IsContainer             = 0x02
+};
+
+DEFINE_ENUM_FLAG(CampaignFlags);
+
 enum class CfgCategoriesCharsets : uint8
 {
     Any     = 0x00,
@@ -1630,6 +1638,13 @@ enum class MapFlags2 : uint32
 
 DEFINE_ENUM_FLAG(MapFlags2);
 
+enum class MapFlags3 : uint32
+{
+    IsDelve = 0x00000100,
+};
+
+DEFINE_ENUM_FLAG(MapFlags3);
+
 enum class MapDifficultyFlags : uint8
 {
     LimitToPlayersFromOneRealm              = 0x01,
@@ -2035,7 +2050,7 @@ enum class ModifierTreeType : int32
     PlayerHasActiveTraitSubTree                                         = 385, // Player has active trait config with {TraitSubTree}
     PlayerIsInTimerunningSeason                                         = 386, // Player is timerunning {TimerunningSeason}
     PlayerIsInSoloRBG                                                   = 387, /*NYI*/ // Player is in solo RBG (BG Blitz)
-    PlayerHasCompletedCampaign                                          = 388, /*NYI*/ // Player has completed campaign "{Campaign}"
+    PlayerHasCompletedCampaign                                          = 388, // Player has completed campaign "{Campaign}"
     TargetCreatureClassificationEqual                                   = 389, // Creature classification is {CreatureClassification}
     PlayerDataElementCharacterBetween                                   = 390, // Player {PlayerDataElementCharacter} is between {#Amount} and {#Amount2}
     PlayerDataElementAccountBetween                                     = 391, // Player {PlayerDataElementAccount} is between {#Amount} and {#Amount2}
@@ -2279,6 +2294,13 @@ enum PrestigeLevelInfoFlags : uint8
 {
     PRESTIGE_FLAG_DISABLED  = 0x01                      // Prestige levels with this flag won't be included to calculate max prestigelevel.
 };
+
+enum class QuestLineXQuestFlags : int32
+{
+    IgnoreForCompletion = 0x01
+};
+
+DEFINE_ENUM_FLAG(QuestLineXQuestFlags);
 
 enum QuestPackageFilter
 {

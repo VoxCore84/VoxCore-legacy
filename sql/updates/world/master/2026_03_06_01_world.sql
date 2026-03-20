@@ -452,3 +452,6 @@ UPDATE `quest_template_addon` SET `RequiredMinRepFaction` = 2607, `RequiredMinRe
 UPDATE `quest_template_addon` SET `RequiredMinRepFaction` = 2607, `RequiredMinRepValue` = 0 WHERE `ID` = 83178 AND `RequiredMinRepFaction` = 0;
 UPDATE `quest_template_addon` SET `RequiredMinRepFaction` = 2601, `RequiredMinRepValue` = 0 WHERE `ID` = 83276 AND `RequiredMinRepFaction` = 0;
 UPDATE `quest_template_addon` SET `RequiredMinRepFaction` = 2601, `RequiredMinRepValue` = 0 WHERE `ID` = 83277 AND `RequiredMinRepFaction` = 0;
+DELETE FROM `spell_proc` WHERE `SpellId` IN (1253724);
+INSERT INTO `spell_proc` (`SpellId`,`SchoolMask`,`SpellFamilyName`,`SpellFamilyMask0`,`SpellFamilyMask1`,`SpellFamilyMask2`,`SpellFamilyMask3`,`ProcFlags`,`ProcFlags2`,`SpellTypeMask`,`SpellPhaseMask`,`HitMask`,`AttributesMask`,`DisableEffectsMask`,`ProcsPerMinute`,`Chance`,`Cooldown`,`Charges`) VALUES
+(1253724,0x00,6,0x00000080,0x00000000,0x00000000,0x00000000,0x0,0x0,0x0,0x2,0x0,0x0,0x0,0,0,0,0); -- Greater Smite

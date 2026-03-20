@@ -22,10 +22,12 @@
 #include "QuaternionData.h"
 #include "SharedDefines.h"
 #include "SpawnData.h"
-#include "WorldPacket.h"
 #include <array>
+#include <memory>
 #include <set>
 #include <string>
+
+class WorldPacket;
 
 enum class GameObjectChestFlags : int32
 {
@@ -883,7 +885,7 @@ struct GameObjectTemplate
     std::string AIName;
     uint32 ScriptId;
     std::string StringId;
-    WorldPacket QueryData[TOTAL_LOCALES];
+    std::unique_ptr<WorldPacket[]> QueryData;
 
     // helpers
     bool IsDespawnAtAction() const
@@ -1470,7 +1472,7 @@ struct GameObjectData : public SpawnData
     GOState goState = GO_STATE_ACTIVE;
     uint32 artKit = 0;
 	float size = 0.0f;
-    float visibility = 533.3333f;
+    float visibility = 170.0f;
 };
 
 enum class GameObjectActions : uint32

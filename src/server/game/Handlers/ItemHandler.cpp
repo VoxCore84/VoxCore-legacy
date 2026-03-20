@@ -1520,4 +1520,3 @@ void WorldSession::HandleSetBankAutosortDisabled(WorldPackets::Item::SetBankAuto
 {
     _player->SetBankAutoSortDisabled(setBankAutosortDisabled.Disable);
 }
-

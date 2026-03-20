@@ -121,6 +121,7 @@ enum DruidSpells
     SPELL_DRUID_LUNAR_BEAM_HEAL                = 204069,
     SPELL_DRUID_LUNAR_BEAM_DAMAGE              = 414613,
     SPELL_DRUID_LUNAR_INSPIRATION_OVERRIDE     = 155627,
+    SPELL_DRUID_LUNAR_WRATH                    = 1253600,
     SPELL_DRUID_MAIM_STUN                      = 203123,
     SPELL_DRUID_MANGLE                         = 33917,
     SPELL_DRUID_MANGLE_TALENT                  = 231064,
@@ -137,6 +138,7 @@ enum DruidSpells
     SPELL_DRUID_PROWL                          = 5215,
     SPELL_DRUID_PULVERIZE                      = 80313,
     SPELL_DRUID_RAKE_STUN                      = 163505,
+    SPELL_DRUID_RED_MOON                       = 1252871,
     SPELL_DRUID_REGROWTH                       = 8936,
     SPELL_DRUID_REJUVENATION                   = 774,
     SPELL_DRUID_REJUVENATION_GERMINATION       = 155777,
@@ -1174,26 +1176,55 @@ class spell_dru_galactic_guardian : public AuraScript
 {
     bool Validate(SpellInfo const* /*spellInfo*/) override
     {
-        return ValidateSpellInfo({ SPELL_DRUID_GALACTIC_GUARDIAN_AURA });
+        return ValidateSpellInfo({ SPELL_DRUID_GALACTIC_GUARDIAN_AURA, SPELL_DRUID_LUNAR_WRATH, SPELL_DRUID_RED_MOON });
     }
 
-    void HandleProc(AuraEffect* /*aurEff*/, ProcEventInfo& eventInfo)
+    static bool CheckEffectProc(AuraScript const&, AuraEffect const* aurEff, ProcEventInfo& /*eventInfo*/)
     {
-        if (DamageInfo* damageInfo = eventInfo.GetDamageInfo())
-        {
-            Unit* target = GetTarget();
+        return roll_chance_i(aurEff->GetAmount());
+    }
 
-            // free automatic moonfire on target
-            target->CastSpell(damageInfo->GetVictim(), SPELL_DRUID_MOONFIRE_DAMAGE, TRIGGERED_FULL_MASK | TRIGGERED_SUPPRESS_CASTER_ANIM);
+    static void HandleProc(AuraScript const&, AuraEffect const* /*aurEff*/, ProcEventInfo const& eventInfo)
+    {
+        Unit* caster = eventInfo.GetActor();
+        Unit* target = eventInfo.GetActionTarget();
 
-            // Cast aura
-            target->CastSpell(damageInfo->GetVictim(), SPELL_DRUID_GALACTIC_GUARDIAN_AURA, true);
-        }
+        // free automatic moonfire on target
+        caster->CastSpell(target, SPELL_DRUID_MOONFIRE_DAMAGE, TRIGGERED_FULL_MASK | TRIGGERED_SUPPRESS_CASTER_ANIM);
+
+        // Cast aura
+        caster->CastSpell(target, caster->HasSpell(SPELL_DRUID_RED_MOON) ? SPELL_DRUID_LUNAR_WRATH : SPELL_DRUID_GALACTIC_GUARDIAN_AURA, true);
     }
 
     void Register() override
     {
+        DoCheckEffectProc += AuraCheckEffectProcFn(spell_dru_galactic_guardian::CheckEffectProc, EFFECT_0, SPELL_AURA_DUMMY);
         OnEffectProc += AuraEffectProcFn(spell_dru_galactic_guardian::HandleProc, EFFECT_0, SPELL_AURA_DUMMY);
+    }
+};
+
+// 213708 - Galactic Guardian (attached to 164812 - Moonfire)
+class spell_dru_galactic_guardian_moonfire : public SpellScript
+{
+    bool Validate(SpellInfo const* /*spellInfo*/) override
+    {
+        return ValidateSpellEffect({ { SPELL_DRUID_GALACTIC_GUARDIAN_AURA, EFFECT_2 } });
+    }
+
+    bool Load() override
+    {
+        return GetCaster()->HasAuraEffect(SPELL_DRUID_GALACTIC_GUARDIAN_AURA, EFFECT_2);
+    }
+
+    void CalculateDamage(SpellEffectInfo const& /*effectInfo*/, Unit* /*victim*/, int32& /*damage*/, int32& /*flatMod*/, float& pctMod) const
+    {
+        if (AuraEffect const* galactic = GetCaster()->GetAuraEffect(SPELL_DRUID_GALACTIC_GUARDIAN_AURA, EFFECT_2))
+            AddPct(pctMod, galactic->GetAmount());
+    }
+
+    void Register() override
+    {
+        CalcDamage += SpellCalcDamageFn(spell_dru_galactic_guardian_moonfire::CalculateDamage);
     }
 };
 
@@ -1550,6 +1581,29 @@ class spell_dru_lunar_inspiration : public AuraScript
     {
         AfterEffectApply += AuraEffectApplyFn(spell_dru_lunar_inspiration::AfterApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
         AfterEffectRemove += AuraEffectRemoveFn(spell_dru_lunar_inspiration::AfterRemove, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL);
+    }
+};
+
+// 1253600 - Lunar Wrath
+class spell_dru_lunar_wrath : public AuraScript
+{
+    static bool CheckProc(AuraScript const&, ProcEventInfo const& procEvent)
+    {
+        if (procEvent.GetProcSpell()->GetPowerTypeCostAmount(POWER_RAGE) <= 0)
+            return false;
+
+        Unit* caster = procEvent.GetActor();
+        Unit* result = nullptr;
+        Trinity::UnitAuraCheck check(true, SPELL_DRUID_RED_MOON, caster->GetGUID());
+        Trinity::UnitSearcher searcher(caster, result, check);
+        Cell::VisitAllObjects(caster, searcher, 40.0f);
+
+        return result != nullptr;
+    }
+
+    void Register() override
+    {
+        DoCheckProc += AuraCheckProcFn(spell_dru_lunar_wrath::CheckProc);
     }
 };
 
@@ -2653,6 +2707,27 @@ class spell_dru_travel_form : public AuraScript
         return GetCaster()->GetTypeId() == TYPEID_PLAYER;
     }
 
+    void OnApply(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
+    {
+        Player* player = GetTarget()->ToPlayer();
+        if ((m_scriptSpellId == SPELL_DRUID_FORM_FLIGHT || m_scriptSpellId == SPELL_DRUID_FORM_SWIFT_FLIGHT) && player->HasAura(404464))
+        {
+            player->SetCanFly(true);
+            if (player->HasAura(404468))
+            {
+                player->SetCanAdvFly(false);
+            }
+            else
+            {
+                player->SetCanAdvFly(true);
+                player->SetCanDoubleJump(true);
+                player->SetFlightCapabilityID(1, true);
+                if (!player->HasAura(372773))
+                    player->CastSpell(player, 372773, true);
+            }
+        }
+    }
+
     void OnRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
     {
         // If it stays 0, it removes Travel Form dummy in AfterRemove.
@@ -2677,6 +2752,16 @@ class spell_dru_travel_form : public AuraScript
 
         Player* player = GetTarget()->ToPlayer();
 
+        if (m_scriptSpellId == SPELL_DRUID_FORM_FLIGHT || m_scriptSpellId == SPELL_DRUID_FORM_SWIFT_FLIGHT)
+        {
+            player->SetCanFly(false);
+            player->SetCanAdvFly(false);
+            player->SetCanDoubleJump(false);
+            player->SetFlightCapabilityID(0, true);
+            player->RemoveAura(372773);
+            player->RemoveUnitFlag(UNIT_FLAG_MOUNT);
+        }
+
         if (triggeredSpellId) // Apply new form
             player->CastSpell(player, triggeredSpellId, aurEff);
         else // If not set, simply remove Travel Form dummy
@@ -2685,6 +2770,7 @@ class spell_dru_travel_form : public AuraScript
 
     void Register() override
     {
+        OnEffectApply += AuraEffectApplyFn(spell_dru_travel_form::OnApply, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
         OnEffectRemove += AuraEffectRemoveFn(spell_dru_travel_form::OnRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
         AfterEffectRemove += AuraEffectRemoveFn(spell_dru_travel_form::AfterRemove, EFFECT_0, SPELL_AURA_MOD_SHAPESHIFT, AURA_EFFECT_HANDLE_REAL);
     }
@@ -2765,10 +2851,40 @@ class spell_dru_travel_form_dummy_aura : public AuraScript
         uint32 triggeredSpellId = spell_dru_travel_form::GetFormSpellId(player, GetCastDifficulty(), false);
 
         player->CastSpell(player, triggeredSpellId, aurEff);
+
+        if ((triggeredSpellId == SPELL_DRUID_FORM_FLIGHT || triggeredSpellId == SPELL_DRUID_FORM_SWIFT_FLIGHT) && player->HasAura(404464))
+        {
+            player->SetCanFly(true);
+            if (player->HasAura(404468))
+            {
+                player->SetCanAdvFly(false);
+            }
+            else
+            {
+                player->SetUnitFlag(UNIT_FLAG_MOUNT);
+                player->SetCanAdvFly(true);
+                player->SetCanDoubleJump(true);
+                player->SetFlightCapabilityID(1, true);
+                if (!player->HasAura(372773))
+                    player->CastSpell(player, 372773, true);
+            }
+        }
     }
 
     void AfterRemove(AuraEffect const* /*aurEff*/, AuraEffectHandleModes /*mode*/)
     {
+        Player* player = GetTarget()->ToPlayer();
+
+        if (player && player->HasAura(404464))
+        {
+            player->SetCanFly(false);
+            player->SetCanAdvFly(false);
+            player->SetCanDoubleJump(false);
+            player->SetFlightCapabilityID(0, true);
+            player->RemoveAura(372773);
+            player->RemoveUnitFlag(UNIT_FLAG_MOUNT);
+        }
+
         // No need to check remove mode, it's safe for auras to remove each other in AfterRemove hook.
         GetTarget()->RemoveAura(SPELL_DRUID_FORM_STAG);
         GetTarget()->RemoveAura(SPELL_DRUID_FORM_AQUATIC);
@@ -3376,6 +3492,7 @@ void AddSC_druid_spell_scripts()
     RegisterSpellScript(spell_dru_flower_walk_heal);
     RegisterSpellScript(spell_dru_forms_trinket);
     RegisterSpellScript(spell_dru_galactic_guardian);
+    RegisterSpellScript(spell_dru_galactic_guardian_moonfire);
     RegisterSpellScript(spell_dru_germination);
     RegisterSpellScript(spell_dru_glyph_of_stars);
     RegisterSpellScript(spell_dru_gore);
@@ -3389,6 +3506,7 @@ void AddSC_druid_spell_scripts()
     RegisterSpellScript(spell_dru_lifebloom);
     RegisterAreaTriggerAI(at_dru_lunar_beam);
     RegisterSpellScript(spell_dru_lunar_inspiration);
+    RegisterSpellScript(spell_dru_lunar_wrath);
     RegisterSpellScript(spell_dru_luxuriant_soil);
     RegisterSpellScript(spell_dru_maim);
     RegisterSpellScript(spell_dru_mangle);

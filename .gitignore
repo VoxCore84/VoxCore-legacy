@@ -108,6 +108,7 @@ src/server/scripts/Custom/cs_custom.cpp
 src/server/scripts/Custom/custom_commandscrip.cpp
 Claude Code Prompts.txt
 build_cli.bat
+src/server/scripts/Custom/private_work.cpp
 
 # -- Claude config (local-only) -----------------------------------------------
 .claude.json

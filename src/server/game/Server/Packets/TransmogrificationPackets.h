@@ -21,14 +21,11 @@
 #include "Packet.h"
 #include "ObjectGuid.h"
 #include "PacketUtilities.h"
-#include "EquipmentSet.h"
 
 namespace WorldPackets
 {
     namespace Transmogrification
     {
-        constexpr uint8 TRANSMOG_SECONDARY_SHOULDER_SLOT = EQUIPMENT_SLOT_END + 1;
-
         struct TransmogrifyItem
         {
             int32 ItemModifiedAppearanceID = 0;
@@ -52,160 +49,6 @@ namespace WorldPackets
             ObjectGuid Npc;
             Array<TransmogrifyItem, MAX_TRANSMOGRIFY_ITEMS> Items;
             bool CurrentSpecOnly = false;
-        };
-
-        struct TransmogOutfitSituationEntry
-        {
-            uint32 SituationID = 0;
-            uint32 SpecID = 0;
-            uint32 LoadoutID = 0;
-            uint32 EquipmentSetID = 0;
-        };
-
-        struct TransmogOutfitSlotEntry
-        {
-            // Wire format (verified via WPP sniff + Wago DB2 item lookups, Feb 2026) — 16 bytes per entry:
-            //   byte[0]    = Sequential ordinal (1-30, NOT a meaningful slot identifier)
-            //   byte[1]    = Weapon option index (0 for armor, 0-8 for weapon type variants)
-            //   bytes[2-5] = AppearanceID (IMAID, uint32 LE)
-            //   bytes[6-7] = ItemAppearance.DisplayType of the IMAID (uint16 LE) — THIS is the routing key
-            //   bytes[8-15]= Reserved (zeros)
-            uint32 AppearanceID = 0;
-            uint8 Option = 0;         // byte[1] — weapon option index (0 for armor/base weapon, 1-8 for weapon type variants)
-            uint8 SlotIndex = 0;      // byte[0] — sequential ordinal (1-30)
-            uint16 WireDisplayType = 0;
-            uint8 RawBytes[16] = {};
-        };
-
-        class TransmogOutfitNew final : public ClientPacket
-        {
-        public:
-            explicit TransmogOutfitNew(WorldPacket&& packet) : ClientPacket(CMSG_TRANSMOG_OUTFIT_NEW, std::move(packet)) { }
-
-            void Read() override;
-
-            EquipmentSetInfo::EquipmentSetData Set;
-            ObjectGuid Npc;
-            uint8 MiddleType = 0;
-            uint8 MiddleFlags = 0;
-            uint32 IconFileDataID = 0;
-            bool ParseSuccess = true;
-            std::string ParseError;
-            std::string DiagnosticReadTrace;
-            size_t PayloadSize = 0;
-            std::string PayloadPreviewHex;
-        };
-
-        class TransmogOutfitUpdateInfo final : public ClientPacket
-        {
-        public:
-            explicit TransmogOutfitUpdateInfo(WorldPacket&& packet) : ClientPacket(CMSG_TRANSMOG_OUTFIT_UPDATE_INFO, std::move(packet)) { }
-
-            void Read() override;
-
-            EquipmentSetInfo::EquipmentSetData Set;
-            ObjectGuid Npc;
-            uint8 MiddleType = 0;
-            uint8 MiddleFlags = 0;
-            uint32 IconFileDataID = 0;
-            bool ParseSuccess = true;
-            std::string ParseError;
-            std::string DiagnosticReadTrace;
-            size_t PayloadSize = 0;
-            std::string PayloadPreviewHex;
-        };
-
-        class TransmogOutfitUpdateSlots final : public ClientPacket
-        {
-        public:
-            explicit TransmogOutfitUpdateSlots(WorldPacket&& packet) : ClientPacket(CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS, std::move(packet)) { }
-
-            void Read() override;
-
-            EquipmentSetInfo::EquipmentSetData Set;
-            ObjectGuid Npc;
-            std::vector<TransmogOutfitSlotEntry> Slots;
-            bool ParseSuccess = true;
-            std::string ParseError;
-            std::string DiagnosticReadTrace;
-            size_t PayloadSize = 0;
-            std::string PayloadPreviewHex;
-        };
-
-        class TransmogOutfitUpdateSituations final : public ClientPacket
-        {
-        public:
-            explicit TransmogOutfitUpdateSituations(WorldPacket&& packet) : ClientPacket(CMSG_TRANSMOG_OUTFIT_UPDATE_SITUATIONS, std::move(packet)) { }
-
-            void Read() override;
-
-            ObjectGuid Npc;
-            uint32 SetID = 0;
-            std::vector<TransmogOutfitSituationEntry> Situations;
-            bool ParseSuccess = true;
-            std::string ParseError;
-            std::string DiagnosticReadTrace;
-            size_t PayloadSize = 0;
-            std::string PayloadPreviewHex;
-        };
-
-        class TransmogOutfitInfoUpdated final : public ServerPacket
-        {
-        public:
-            explicit TransmogOutfitInfoUpdated() : ServerPacket(SMSG_TRANSMOG_OUTFIT_INFO_UPDATED, 0) { }
-
-            WorldPacket const* Write() override;
-
-            uint64 Guid = 0;
-            uint32 SetID = 0;
-        };
-
-        class TransmogOutfitNewEntryAdded final : public ServerPacket
-        {
-        public:
-            explicit TransmogOutfitNewEntryAdded() : ServerPacket(SMSG_TRANSMOG_OUTFIT_NEW_ENTRY_ADDED, 0) { }
-
-            WorldPacket const* Write() override;
-
-            uint64 Guid = 0;
-            uint32 SetID = 0;
-        };
-
-        class TransmogOutfitSituationsUpdated final : public ServerPacket
-        {
-        public:
-            explicit TransmogOutfitSituationsUpdated() : ServerPacket(SMSG_TRANSMOG_OUTFIT_SITUATIONS_UPDATED, 0) { }
-
-            WorldPacket const* Write() override;
-
-            uint64 Guid = 0;
-            uint32 SetID = 0;
-        };
-
-        // SMSG_TRANSMOG_OUTFIT_SLOTS_UPDATED — full 30-row slot echo (retail = 488 bytes).
-        // Wire format: SetID(4) + SlotCount(uint32=4) + N × 16-byte entries.
-        // Each entry mirrors UpdateField TransmogOutfitSlotData: Slot(int8) + SlotOption(uint8) +
-        // IMAID(uint32) + ADT(uint8) + Enchant(uint32) + IDT(uint8) + Flags(uint32).
-        struct TransmogOutfitSlotEchoEntry
-        {
-            int8 Slot = 0;
-            uint8 SlotOption = 0;
-            uint32 ItemModifiedAppearanceID = 0;
-            uint8 AppearanceDisplayType = 0;
-            uint32 SpellItemEnchantmentID = 0;
-            uint8 IllusionDisplayType = 0;
-            uint32 Flags = 0;
-        };
-
-        class TransmogOutfitSlotsUpdated final : public ServerPacket
-        {
-        public:
-            explicit TransmogOutfitSlotsUpdated() : ServerPacket(SMSG_TRANSMOG_OUTFIT_SLOTS_UPDATED, 4 + 4 + 30 * 16) { }
-
-            WorldPacket const* Write() override;
-
-            uint32 SetID = 0;
-            std::vector<TransmogOutfitSlotEchoEntry> SlotEntries;
         };
 
         class AccountTransmogUpdate final : public ServerPacket
@@ -232,6 +75,98 @@ namespace WorldPackets
             bool IsFavorite = false;
             std::vector<uint32> TransmogSetIDs;
         };
+
+        struct TransmogOutfitSlot
+        {
+            int8 Slot = 0;
+            uint8 SlotOption = 0;
+            uint32 ItemModifiedAppearanceID = 0;
+            uint8 AppearanceDisplayType = 0;
+            uint32 SpellItemEnchantmentID = 0;
+            uint8 IllusionDisplayType = 0;
+            uint32 Flags = 0;
+        };
+
+        class TransmogOutfitUpdateSlots final : public ClientPacket
+        {
+        public:
+            static constexpr uint32 MAX_OUTFIT_SLOTS = 30;
+
+            explicit TransmogOutfitUpdateSlots(WorldPacket&& packet) : ClientPacket(CMSG_TRANSMOG_OUTFIT_UPDATE_SLOTS, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 OutfitID = 0;
+            ObjectGuid Npc;
+            std::vector<TransmogOutfitSlot> Slots;
+            uint8 PaymentType = 0;
+        };
+
+        class TransmogOutfitSlotsUpdated final : public ServerPacket
+        {
+        public:
+            explicit TransmogOutfitSlotsUpdated() : ServerPacket(SMSG_TRANSMOG_OUTFIT_SLOTS_UPDATED) { }
+
+            WorldPacket const* Write() override;
+
+            uint32 OutfitID = 0;
+            std::vector<TransmogOutfitSlot> Slots;
+        };
+        class TransmogOutfitNew final : public ClientPacket
+        {
+        public:
+            explicit TransmogOutfitNew(WorldPacket&& packet) : ClientPacket(CMSG_TRANSMOG_OUTFIT_NEW, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid Npc;
+            std::string Name;
+            uint32 Icon = 0;
+        };
+
+        class TransmogOutfitUpdateInfo final : public ClientPacket
+        {
+        public:
+            explicit TransmogOutfitUpdateInfo(WorldPacket&& packet) : ClientPacket(CMSG_TRANSMOG_OUTFIT_UPDATE_INFO, std::move(packet)) { }
+
+            void Read() override;
+
+            ObjectGuid Npc;
+            uint64 OutfitID = 0;
+            std::string Name;
+            uint32 Icon = 0;
+        };
+
+        class ClearNewAppearance final : public ClientPacket
+        {
+        public:
+            explicit ClearNewAppearance(WorldPacket&& packet) : ClientPacket(CMSG_CLEAR_NEW_APPEARANCE, std::move(packet)) { }
+
+            void Read() override;
+
+            uint32 ItemModifiedAppearanceID = 0;
+        };
+
+        class TransmogOutfitNewEntryAdded final : public ServerPacket
+        {
+        public:
+            explicit TransmogOutfitNewEntryAdded() : ServerPacket(SMSG_TRANSMOG_OUTFIT_NEW_ENTRY_ADDED) { }
+
+            WorldPacket const* Write() override;
+
+            uint64 OutfitID = 0;
+        };
+
+        class TransmogOutfitInfoUpdated final : public ServerPacket
+        {
+        public:
+            TransmogOutfitInfoUpdated() : ServerPacket(SMSG_TRANSMOG_OUTFIT_INFO_UPDATED, 8) { }
+
+            WorldPacket const* Write() override;
+
+            uint64 OutfitID = 0;
+        };
+
     }
 }
 

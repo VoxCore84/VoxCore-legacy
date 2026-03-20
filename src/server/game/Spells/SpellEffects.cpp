@@ -57,6 +57,10 @@
 #include "MiscPackets.h"
 #include "MotionMaster.h"
 #include "MoveSpline.h"
+#include "CollectionMgr.h"
+#include "ConditionMgr.h"
+#include "DB2Stores.h"
+#include "EquipmentSet.h"
 #include "ObjectAccessor.h"
 #include "ObjectMgr.h"
 #include "OutdoorPvPMgr.h"
@@ -64,6 +68,7 @@
 #include "Pet.h"
 #include "PhasingHandler.h"
 #include "Player.h"
+#include "QuestMgr.h"
 #include "ReputationMgr.h"
 #ifdef ELUNA
 #include "LuaEngine.h"
@@ -377,7 +382,7 @@ NonDefaultConstructible<SpellEffectHandlerFn> SpellEffectHandlers[TOTAL_SPELL_EF
     &Spell::EffectUnused,                                   //280 SPELL_EFFECT_280
     &Spell::EffectNULL,                                     //281 SPELL_EFFECT_LEARN_SOULBIND_CONDUIT
     &Spell::EffectNULL,                                     //282 SPELL_EFFECT_CONVERT_ITEMS_TO_CURRENCY
-    &Spell::EffectNULL,                                     //283 SPELL_EFFECT_COMPLETE_CAMPAIGN
+    &Spell::EffectSkipCampaign,                             //283 SPELL_EFFECT_COMPLETE_CAMPAIGN
     &Spell::EffectSendChatMessage,                          //284 SPELL_EFFECT_SEND_CHAT_MESSAGE
     &Spell::EffectNULL,                                     //285 SPELL_EFFECT_MODIFY_KEYSTONE_2
     &Spell::EffectGrantBattlePetExperience,                 //286 SPELL_EFFECT_GRANT_BATTLEPET_EXPERIENCE
@@ -405,7 +410,7 @@ NonDefaultConstructible<SpellEffectHandlerFn> SpellEffectHandlers[TOTAL_SPELL_EF
     &Spell::EffectNULL,                                     //308 SPELL_EFFECT_CANCEL_PRELOAD_WORLD
     &Spell::EffectNULL,                                     //309 SPELL_EFFECT_PRELOAD_WORLD
     &Spell::EffectNULL,                                     //310 SPELL_EFFECT_310
-    &Spell::EffectNULL,                                     //311 SPELL_EFFECT_ENSURE_WORLD_LOADED
+    &Spell::EffectSkipQuestLine,                            //311 SPELL_EFFECT_SKIP_QUESTLINE
     &Spell::EffectNULL,                                     //312 SPELL_EFFECT_312
     &Spell::EffectNULL,                                     //313 SPELL_EFFECT_CHANGE_ITEM_BONUSES_2
     &Spell::EffectNULL,                                     //314 SPELL_EFFECT_ADD_SOCKET_BONUS
@@ -3109,11 +3114,6 @@ void Spell::EffectScriptEffect()
         {
             switch (m_spellInfo->Id)
             {
-				case 83958: ///< Mobile Banking
-                {
-                    m_caster->CastSpell(m_caster, 88304, true);
-                    break;
-                }
                 // Shadow Flame (All script effects, not just end ones to prevent player from dodging the last triggered spell)
                 case 22539:
                 case 22972:
@@ -6001,35 +6001,6 @@ void Spell::EffectLearnTransmogSet()
     unitTarget->ToPlayer()->GetSession()->GetCollectionMgr()->AddTransmogSet(effectInfo->MiscValue);
 }
 
-void Spell::EffectEquipTransmogOutfit()
-{
-    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
-        return;
-
-    if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
-        return;
-
-    Player* player = unitTarget->ToPlayer();
-    uint32 outfitEntryID = effectInfo->MiscValue;
-
-    TC_LOG_DEBUG("spells.effect", "EffectEquipTransmogOutfit [{}]: outfitEntryID={}", player->GetGUID().ToString(), outfitEntryID);
-
-    EquipmentSetInfo::EquipmentSetData const* outfit = player->GetTransmogOutfitBySetID(outfitEntryID);
-    if (!outfit)
-    {
-        TC_LOG_DEBUG("spells.effect", "EffectEquipTransmogOutfit [{}]: outfit not found for setId={}", player->GetGUID().ToString(), outfitEntryID);
-        return;
-    }
-
-    // Spell effect does not charge gold — ApplyTransmogOutfitToPlayer handles the cost
-    // check internally, but for spell-based application we skip cost via the aura check
-    // or simply accept the cost (spell effects from retail don't charge).
-    // The helper will charge gold if the player lacks SPELL_AURA_REMOVE_TRANSMOG_COST.
-    player->SetActiveTransmogOutfitID(outfit->SetID);
-    player->SetEquipmentSet(*outfit); // persist + sync ViewedOutfit UpdateFields
-    ApplyTransmogOutfitToPlayer(player, *outfit);
-}
-
 void Spell::EffectRespecAzeriteEmpoweredItem()
 {
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
@@ -6140,6 +6111,18 @@ void Spell::EffectApplyMountEquipment()
     applyMountEquipmentResult.ItemID = m_castItemEntry;
     applyMountEquipmentResult.Result = WorldPackets::Spells::ApplyMountEquipmentResult::Success;
     playerTarget->SendDirectMessage(applyMountEquipmentResult.Write());
+}
+
+void Spell::EffectSkipCampaign()
+{
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
+        return;
+
+    Player* target = Object::ToPlayer(unitTarget);
+    if (!target)
+        return;
+
+    QuestMgr::SkipCampaignForPlayer(effectInfo->MiscValue, target);
 }
 
 void Spell::EffectSendChatMessage()
@@ -6368,6 +6351,18 @@ void Spell::EffectUpdateInteractions()
     target->UpdateVisibleObjectInteractions(true, false, true, true);
 }
 
+void Spell::EffectSkipQuestLine()
+{
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
+        return;
+
+    Player* target = Object::ToPlayer(unitTarget);
+    if (!target)
+        return;
+
+    QuestMgr::SkipQuestLineForPlayer(effectInfo->MiscValue, target);
+}
+
 void Spell::EffectLearnWarbandScene()
 {
     if (effectHandleMode != SPELL_EFFECT_HANDLE_HIT_TARGET)
@@ -6426,6 +6421,143 @@ void Spell::EffectSetPlayerDataFlagCharacter()
         return;
 
     target->SetDataFlagCharacter(effectInfo->MiscValue, damage != 0);
+}
+
+enum
+{
+    SPELL_TRANSMOG_VISUAL_EFFECT = 372608
+};
+
+void Spell::EffectEquipTransmogOutfit()
+{
+    if (effectHandleMode != SPELL_EFFECT_HANDLE_LAUNCH)
+        return;
+
+    Player* player = m_caster->ToPlayer();
+    if (!player)
+        return;
+
+    // Outfit SetID comes from the client's CMSG_CAST_SPELL Misc values:
+    // m_misc.Raw.Data[0] = unknown (varies)
+    // m_misc.Raw.Data[1] = outfit SetID (matches EquipmentSetData::SetID)
+    // m_misc.Raw.Data[2] = SetType (1 = TRANSMOG)
+    uint32 outfitSetID = m_misc.Raw.Data[1];
+
+    // Find the outfit in the player's equipment sets by SetID
+    EquipmentSetInfo const* foundSet = nullptr;
+    for (auto const& [guid, eqSet] : player->GetEquipmentSets())
+    {
+        if (eqSet.Data.Type == EquipmentSetInfo::TRANSMOG && eqSet.Data.SetID == outfitSetID && eqSet.State != EQUIPMENT_SET_DELETED)
+        {
+            foundSet = &eqSet;
+            break;
+        }
+    }
+
+    if (!foundSet)
+    {
+        TC_LOG_DEBUG("spells", "Spell::EffectEquipTransmogOutfit - Player {} tried to equip transmog outfit SetID {} but it was not found.", player->GetName(), outfitSetID);
+        return;
+    }
+
+    // Apply appearances from the saved outfit to all equipment slots
+    for (uint8 slot = EQUIPMENT_SLOT_START; slot < EQUIPMENT_SLOT_END; ++slot)
+    {
+        Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, slot);
+        if (!item)
+            continue;
+
+        int32 savedAppearance = foundSet->Data.Appearances[slot];
+        if (savedAppearance > 0)
+        {
+            // Validate the appearance exists in the DB2
+            ItemModifiedAppearanceEntry const* itemModifiedAppearance = sItemModifiedAppearanceStore.LookupEntry(uint32(savedAppearance));
+            if (!itemModifiedAppearance)
+                continue;
+
+            // Validate the player has learned the appearance
+            auto [hasAppearance, isTemporary] = player->GetSession()->GetCollectionMgr()->HasItemAppearance(uint32(savedAppearance));
+            if (!hasAppearance)
+                continue;
+
+            // Apply the transmog appearance
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_ALL_SPECS, uint32(savedAppearance));
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_SPEC_1, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_SPEC_2, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_SPEC_3, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_SPEC_4, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_SPEC_5, 0);
+            player->SetVisibleItemSlot(item->GetSlot(), item);
+            item->SetNotRefundable(player);
+            item->ClearSoulboundTradeable(player);
+            item->SetState(ITEM_CHANGED, player);
+        }
+        else
+        {
+            // Reset appearance for this slot
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_ALL_SPECS, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_SPEC_1, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_SPEC_2, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_SPEC_3, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_SPEC_4, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_APPEARANCE_SPEC_5, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_SECONDARY_APPEARANCE_ALL_SPECS, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_SECONDARY_APPEARANCE_SPEC_1, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_SECONDARY_APPEARANCE_SPEC_2, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_SECONDARY_APPEARANCE_SPEC_3, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_SECONDARY_APPEARANCE_SPEC_4, 0);
+            item->SetModifier(ITEM_MODIFIER_TRANSMOG_SECONDARY_APPEARANCE_SPEC_5, 0);
+            item->SetState(ITEM_CHANGED, player);
+            player->SetVisibleItemSlot(item->GetSlot(), item);
+        }
+    }
+
+    // Apply weapon illusions (mainhand and offhand)
+    for (uint8 i = 0; i < 2; ++i)
+    {
+        uint8 weaponSlot = (i == 0) ? EQUIPMENT_SLOT_MAINHAND : EQUIPMENT_SLOT_OFFHAND;
+        Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, weaponSlot);
+        if (!item)
+            continue;
+
+        int32 savedEnchant = foundSet->Data.Enchants[i];
+        if (savedEnchant > 0)
+        {
+            // Validate the illusion
+            TransmogIllusionEntry const* illusion = sDB2Manager.GetTransmogIllusionForEnchantment(uint32(savedEnchant));
+            if (!illusion)
+                continue;
+
+            if (!ConditionMgr::IsPlayerMeetingCondition(player, illusion->UnlockConditionID))
+                continue;
+
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_ALL_SPECS, uint32(savedEnchant));
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_1, 0);
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_2, 0);
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_3, 0);
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_4, 0);
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_5, 0);
+            player->SetVisibleItemSlot(item->GetSlot(), item);
+            item->SetNotRefundable(player);
+            item->ClearSoulboundTradeable(player);
+            item->SetState(ITEM_CHANGED, player);
+        }
+        else
+        {
+            // Reset illusion
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_ALL_SPECS, 0);
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_1, 0);
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_2, 0);
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_3, 0);
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_4, 0);
+            item->SetModifier(ITEM_MODIFIER_ENCHANT_ILLUSION_SPEC_5, 0);
+            item->SetState(ITEM_CHANGED, player);
+            player->SetVisibleItemSlot(item->GetSlot(), item);
+        }
+    }
+
+    // Play the transmog visual effect
+    player->CastSpell(player, SPELL_TRANSMOG_VISUAL_EFFECT, true);
 }
 
 //NEW
@@ -6719,3 +6851,4 @@ void Spell::EffectScrapItem()
         player->AutoStoreLoot(iSL->Id, LootTemplates_Scrapping);
     }
 }
+
