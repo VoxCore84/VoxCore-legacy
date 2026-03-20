@@ -25,6 +25,7 @@
 | User asks to find evidence or verify a claim | `/evidence-xref "claim"` — trace to source |
 | User asks to search case files for a name/topic | `/case-search [term]` — search archive |
 | User asks to sort/triage/organize files | Spawn `file-sorter` agent |
+| User asks to read/ingest/analyze a folder of images | `python tools/ingest_images.py <dir>` — NEVER read images into conversation context |
 | User needs to read a .docx file | `/read-doc [path]` — extract text |
 | User asks about a specific person in the case | `/person-dossier [name]` — full mention search |
 | User preparing a filing (DD7050, AFBCMR, NPDB, etc.) | `/filing-prep [type]` — draft with evidence citations |
