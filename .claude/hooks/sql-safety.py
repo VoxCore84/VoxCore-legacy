@@ -36,8 +36,9 @@ def main():
 
     cmd = data.get("tool_input", {}).get("command", "")
 
-    # Only check commands that touch mysql
-    if "mysql" not in cmd.lower() and ".sql" not in cmd.lower():
+    # Only check commands that actually execute SQL (piping to mysql or mysql -e)
+    cmd_lower = cmd.lower()
+    if "mysql" not in cmd_lower:
         sys.exit(0)
 
     # Check for safe override patterns first

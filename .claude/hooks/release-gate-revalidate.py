@@ -17,7 +17,6 @@ STATUS_FILE = Path(__file__).resolve().parent.parent / "release-gate-status.json
 
 WATCHED_PATHS = [
     "tools/publishable/",
-    "src/server/scripts/Custom/",
 ]
 
 

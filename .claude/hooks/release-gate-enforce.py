@@ -63,6 +63,19 @@ def extract_command_line(command: str) -> str:
     return command.split("\n")[0]
 
 
+def targets_publishable(command: str) -> bool:
+    """Check if the command targets the publishable directory or release artifacts."""
+    cmd_lower = command.lower()
+    # Only gate archive commands that target tools/publishable or release paths
+    release_indicators = [
+        "tools/publishable",
+        "tools\\publishable",
+        "release-gate",
+        "release_gate",
+    ]
+    return any(ind in cmd_lower for ind in release_indicators)
+
+
 def is_release_action(command: str) -> bool:
     """Check if the command is a release-gated action."""
     cmd_line = extract_command_line(command).lower().strip()
@@ -78,6 +91,10 @@ def is_release_action(command: str) -> bool:
             # Only gate pushes to tags or release branches
             if pattern == "git push":
                 return "--tags" in cmd_line or "refs/tags" in cmd_line
+            # Archive commands (zip, 7z, tar, Compress-Archive) are only gated
+            # when targeting publishable/release paths — not personal use
+            if pattern in ("zip ", "7z ", "tar ", "Compress-Archive"):
+                return targets_publishable(command)
             return True
 
     return False
