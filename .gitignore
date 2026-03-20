@@ -142,3 +142,4 @@ tools/antigravity/watchdog.log
 .hg/
 .mailmap
 docx_extract*.txt
+sql/migration_snapshots/
