@@ -31,6 +31,14 @@
 | User preparing a filing (DD7050, AFBCMR, NPDB, etc.) | `/filing-prep [type]` — draft with evidence citations |
 | User asks "do we have evidence for X" before filing | `/evidence-gap [filing]` — requirements vs archive |
 | User asks to update or regenerate the timeline | `/case-timeline [update]` — rebuild from all sources |
+| Need to draft/send an email | `/draft-email [recipient + topic]` — plain text, no markdown disasters |
+| Session running 30+ min, major topic shift, or heavy context | `/checkpoint [label]` — snapshot state to survive compaction |
+| User needs to read ANY document (PDF, DOCX, EML, MSG) | `/read-any [path]` — unified extractor with fallbacks |
+| End of wrap-up (Step 8) or user says "what could be better" | Step 8 runs automatically; suggest `/retro` for deep analysis |
+| Same pain point logged 3+ times in `memory/improvements.md` | Auto-escalate to `todo.md` HIGH and build if low-effort |
+| Financial planning, income/expense scenarios | `python tools/scenario_calc.py` — scenario comparison tables |
+| About to search a large directory for agents | `/index-folder` first, then pass manifest to agents |
+| Launching agents that need case/file context | Pre-read `memory/` topic files and pass relevant context in prompt |
 
 **Rules:**
 - If in doubt, ask. A one-line reminder is cheap; forgetting `/wrap-up` loses work.

@@ -154,6 +154,37 @@ Then output the operational summary:
 - [ ] item 3
 ```
 
+### Step 8: Session Retrospective (unless user said "quick")
+
+Quick 5-bullet reflection on what could be improved. Takes 60 seconds and compounds across sessions.
+
+Answer these 5 questions (one concise bullet each):
+
+1. **Pain point**: What slowed you down most this session? (missing tool, manual repetition, context loss, fragile workflow, bad path)
+2. **Missed automation**: What did you do manually 2+ times that should be a skill, agent, hook, or tool?
+3. **Ownership lens**: What would you have done differently if this was YOUR project/file/case/life — not a client's?
+4. **Accuracy check**: Any internal contradictions, factual errors, or completeness gaps in what we produced this session?
+5. **What did we miss?**: Anything the user asked for that didn't get delivered, or a better approach you thought of too late?
+
+**Write results to `memory/improvements.md`** (append, don't replace):
+
+```markdown
+### Session [N] — [date]
+1. **Pain**: [one-liner]
+2. **Automate**: [one-liner]
+3. **Ownership**: [one-liner]
+4. **Accuracy**: [one-liner or "clean"]
+5. **Missed**: [one-liner or "nothing"]
+> Quick win: [if any item is <30 min to build, note it here]
+```
+
+**Escalation rule**: After writing, scan `memory/improvements.md` for patterns. If any pain point or automation suggestion appears **3+ times** across sessions:
+1. Add it to the top of `todo.md` as a HIGH priority build task
+2. If it's clearly low-effort (<30 min), **build it right now** during wrap-up and tell the user what you built
+3. If medium+ effort, note it as "ESCALATED — build next session" in todo.md
+
+For a deeper analysis with effort/impact ratings and auto-building, suggest the user run `/retro`.
+
 ### Rules
 - Never force-push
 - Never commit `.env`, credentials, or binary files

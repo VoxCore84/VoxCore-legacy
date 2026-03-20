@@ -48,6 +48,23 @@ for path in glob.glob(os.path.join(base, '**', '*.docx'), recursive=True):
 4. **Check filenames** — Glob for files containing the name
 5. **Search the QAI OCR text** — `01_APPEALS_AND_QAI/QAI_REPORT_50_PAGES_OCR.txt`
 
+## Cache Results
+
+After generating the dossier, **always save it** to a persistent file:
+```
+C:\Users\atayl\.claude\projects\C--Users-atayl-VoxCore\memory\dossier_[lastname_lowercase].md
+```
+
+**Cache rules:**
+- If a cached dossier already exists for this person, read it FIRST
+- Check file modification dates in Case_Reference vs cache date
+- If new files exist since cache date, do an incremental search (only new/modified files) and merge results
+- If no new files, return the cached version with a note: "Cached from [date]. No new files detected. Run with `--force` to re-scan."
+- Always update the cache after a fresh or incremental scan
+- Include a `Last scanned: [date]` header in the cached file
+
+This prevents re-searching 40+ files every time the same person is queried.
+
 ## Output Format
 
 ```
