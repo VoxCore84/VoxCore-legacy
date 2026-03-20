@@ -95,7 +95,6 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "GroupMgr.h"
-#include "TransmogrificationUtils.h"
 
 NonDefaultConstructible<SpellEffectHandlerFn> SpellEffectHandlers[TOTAL_SPELL_EFFECTS] =
 {
