@@ -594,60 +594,60 @@ Over 50 Python scripts, MCP servers, audit tools, and SQL generators were built 
 </details>
 
 <details>
-<summary><strong>Part 11: Final Database State</strong> &mdash; <em>Row counts and database sizes as of March 7</em></summary>
+<summary><strong>Part 11: Final Database State</strong> &mdash; <em>Row counts and database sizes as of March 21, 2026 (session 199)</em></summary>
 
-### 11.1 Table Counts (March 7, 2026)
+### 11.1 Table Counts (March 21, 2026)
 
 **World database:**
 
 | Table | Rows | Notes |
 |-------|------|-------|
-| creature_template | 225,968 | NPC definitions |
-| creature | 611,359 | NPC spawn instances |
-| creature_template_difficulty | 532,346 | Per-difficulty NPC stats (0 missing DifficultyID=0) |
-| creature_template_spell | 171,590 | NPC spell assignments |
-| creature_model_info | 109,198 | NPC model data |
-| creature_equip_template | 37,183 | NPC equipment loadouts |
-| creature_text | 52,700 | NPC dialogue/emote text |
-| smart_scripts | 286,436 | NPC AI behavior scripts |
-| gameobject_template | 83,195 | World object definitions |
-| gameobject | 188,069 | World object spawn instances |
-| npc_vendor | 174,364 | Vendor inventory entries |
-| quest_template | 47,536 | Quest definitions |
-| quest_template_addon | 47,084 | Quest chain/config data |
-| quest_poi | 133,026 | Quest map markers |
-| creature_queststarter | 30,659 | NPC quest associations |
-| creature_questender | 37,698 | NPC quest turn-in associations |
-| conditions | 25,566 | Conditional logic entries |
+| creature_template | 225,989 | NPC definitions |
+| creature | 712,283 | NPC spawn instances |
+| creature_template_difficulty | 532,376 | Per-difficulty NPC stats |
+| creature_template_spell | 157,851 | NPC spell assignments |
+| creature_model_info | 109,460 | NPC model data |
+| creature_equip_template | 42,093 | NPC equipment loadouts |
+| creature_text | 52,924 | NPC dialogue/emote text |
+| smart_scripts | 457,492 | NPC AI behavior scripts |
+| gameobject_template | 89,702 | World object definitions |
+| gameobject | 151,754 | World object spawn instances |
+| npc_vendor | 178,064 | Vendor inventory entries |
+| quest_template | 47,975 | Quest definitions |
+| quest_template_addon | 47,807 | Quest chain/config data |
+| quest_poi | 143,988 | Quest map markers |
+| creature_queststarter | 31,484 | NPC quest associations |
+| creature_questender | 38,475 | NPC quest turn-in associations |
+| conditions | 26,621 | Conditional logic entries |
 | trainer | 1,147 | Trainer definitions |
 | trainer_spell | 40,305 | Trainer spell listings |
-| spell_script_names | 5,467 | C++ spell script bindings (inc. 1,888 SpellAudit stubs) |
-| serverside_spell | 4,503 | Server-side spell definitions (inc. 114 audit stubs) |
-| spell_target_position | 3,407 | Spell teleport targets |
-| game_event_creature | 2,889 | Event-gated NPC spawns |
+| spell_script_names | 5,777 | C++ spell script bindings |
+| serverside_spell | 4,503 | Server-side spell definitions |
+| spell_target_position | 3,408 | Spell teleport targets |
+| game_event_creature | 3,263 | Event-gated NPC spawns |
 
-**Hotfixes database (post-repair, build 66263):**
+**Hotfixes database (post-repair, build 66337):**
 
 | Table | Rows | Notes |
 |-------|------|-------|
-| spell_misc | 403,631 | Spell misc data (full DB2 restore) |
-| spell_name | 400,104 | Spell name registry (full DB2 restore) |
-| broadcast_text | 234,089 | TC community + custom text entries |
-| item_sparse | 175,670 | Item data (full DB2 restore) |
-| hotfix_blob | 60,471 | Binary hotfix data |
-| hotfix_data | 22,532 | Client correction registry |
+| spell_misc | 403,796 | Spell misc data (full DB2 restore) |
+| spell_name | 400,155 | Spell name registry (full DB2 restore) |
+| broadcast_text | 235,581 | TC community + custom text entries |
+| item_sparse | 175,744 | Item data (full DB2 restore) |
+| hotfix_blob | 59,821 | Binary hotfix data |
+| hotfix_data | 237,530 | Client correction registry |
 
-> **Note**: Hotfix repair (build 66263) restored full DB2 content — 2.7M missing rows inserted, 496 zeroed columns fixed across 28 tables. Pre-repair counts were near zero for most content tables after the redundancy audit (see [Part 13](#part-13-hotfix-redundancy-audit-complete)). Current counts reflect full content + custom overrides.
+> **Note**: Hotfix repair (build 66337) restored full DB2 content — 2.7M missing rows inserted, 496 zeroed columns fixed across 28 tables. Pre-repair counts were near zero for most content tables after the redundancy audit (see [Part 13](#part-13-hotfix-redundancy-audit-complete)). Current counts reflect full content + custom overrides. hotfix_data grew significantly after the build 66337 repair cycle (104 zeroed fixes, 4,291 custom diffs preserved, 237,530 total rows).
 
 ### 11.2 Database Sizes
 
 | Database | Size |
 |----------|------|
-| world | 1,054 MB |
-| hotfixes | 273 MB |
+| world | 1,389 MB |
+| hotfixes | 1,135 MB |
 | characters | 4 MB |
-| auth | 1.2 MB |
-| roleplay | 0.1 MB |
+| auth | 3 MB |
+| roleplay | < 1 MB |
 
 </details>
 
@@ -1059,7 +1059,9 @@ All scripts version-controlled in private GitHub repositories.
 
 ---
 
-*Updated March 9, 2026 | RoleplayCore — VoxCore84/RoleplayCore*
+*Updated March 21, 2026 (session 199) | RoleplayCore — VoxCore84/RoleplayCore*
 
-**Since last DB report update (sessions 108-134):** LoreWalker TDB import v3 applied (session 118: 7 SQL files, ~502K inserts + 7.7K updates, creature delta +101,018). Transmog QA fixes applied (6 bugs). Aegis Config Phase 2 complete (runtime path migration). DraconicBot v2.1 built. Auto-Parse v3 deployed. No new hotfix repair runs — database metrics above remain accurate.
+**Database State (March 21, 2026):** world 1,389 MB (712K creature spawns, 226K templates, 457K SmartAI scripts, 178K vendor entries), hotfixes 1,135 MB (400K spells, 236K broadcast_text, 176K items, 238K hotfix_data), characters 4 MB, auth 3 MB, roleplay < 1 MB. Total: ~2.5 GB across 5 databases. Hotfix repair completed for build 66337 (70 tables, 104 zeroed fixes, 4,291 custom diffs preserved). TrinityCore upstream merge to build 66527 in progress on branch `migration/tc-66527-merge-v3`.
+
+**Since last DB report update (sessions 108-199):** LoreWalker TDB import v3 applied (session 118: 7 SQL files, ~502K inserts + 7.7K updates, creature delta +101,018). Hotfix repair re-run for build 66337 (session 143: 70 tables, 237,530 hotfix_data rows). TrinityCore upstream merge in progress (92 commits, build 66527). Multiple world SQL updates applied (creature spawns, SmartAI scripts, quest data, locale translations). Transmog QA fixes applied. DraconicBot v3.1 built. Auto-Parse v3+ deployed. CreatureCodex v3.0 released. VoxGM v1.0 released. VoxSniffer v1.0 released.
 *Tools: VoxCore84/wago-tooling, VoxCore84/tc-packet-tools, VoxCore84/code-intel, VoxCore84/trinitycore-claude-skills*

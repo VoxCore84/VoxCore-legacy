@@ -12,10 +12,8 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 - **Phase 3 NEXT**: Scanner hardening -- smarter regex for the audit tool. `auto_parse` config.py defaults still absolute (fallback OK)
 - Artifacts: `config/Aegis_Path_Contract.md`, `logs/audit/hardcoded_path_inventory_classified.csv`, `tests/aegis_smoke_pack.md`
 
-### ~~DraconicBot -- Antigravity Audit Findings~~ DONE
-- ~~**PyMySQL synchronous blocking**~~ in `cogs/lookups.py` -- fixed via Wowhead resolver rewrite.
-- ~~**Race condition**~~ in `cogs/faq.py` -- mitigated via module separation.
-- **Novice Overhaul**: `diagnose.bat` auto-fixer, 25K message NLP parser, and DM guide implemented.
+### ~~DraconicBot -- Antigravity Audit Findings~~ DONE (session 155-158)
+- All findings resolved. DraconicBot v3.1.0 ready for deploy. See memory for details.
 
 ---
 
@@ -28,49 +26,17 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
   - Priority: Enchanted Tome (mascot), Xal'atath, Alleria, Khadgar, Midnight raid journal art
 - **Phases 1â€“5**: Arcane visual refresh, animated pipeline, tool explorer, before/after slider, interactive timeline
 
-### Transmog: Fail-Open Bridge + Acceptance Test (sessions 59-130)
-**Status**: All server-side fixes committed. MINI-BRIDGE sender live. PAUSED in acceptance-test mode.
-- C++ `4f2512f29d`: fail-open finalize guard + one-update bridge grace
-- TransmogSpy MINI-BRIDGE sender (option-aware, slots 0/2/12/13)
-- **Awaiting**: in-game acceptance test per `doc/transmog_test_guide.md`
-
-### Transmog: 5-Agent Audit Action Plan (sessions 62–73)
-**Status**: Phases 1–4 IMPLEMENTED + corrective pass (session 73). Behavioral model aligned to retail packets. Awaiting in-game testing.
-- ~~**Phase 1** (server bugs)~~: **DONE** (commit `20c9a0ea23`) — per-spec appearance bootstrap, HandleTransmogOutfitNew active ID, Finalize flush, clear spell active ID reset
-- ~~**Phase 2** (Bridge cleanup)~~: **DONE** (commit `20c9a0ea23`) — diagnostic probe removed, multi-part split bail-out, dead code removed, deterministic slot ordering
-- ~~**Phase 3** (TransmogSpy v2)~~: **DONE** (commit `1dfc2eb207`) — 944→1,317 lines, 17 commands, 12 new events, displayType capture, IMA name resolution, 6 new hooks
-- ~~**Phase 4** (hardening)~~: **DONE** (commit `c8df50eddd`) — IgnoreMask baseline restore, stale partial cleanup, spec-switch resync, per-slot validation
-- **Phase 4 bonus** (commit `ab43e4823d`): EffectEquipTransmogOutfit was missing ViewedOutfit sync — last outfit-apply path fixed. Situations parser consistency
-- **Phase 5** (retail capture): outfit create/rename/delete, single-item transmog, situations — DEFERRED
-
-### Transmog: 5-Bug Investigation (sessions 36–63)
-**Status**: All 5 bugs addressed. All fixes deployed, awaiting in-game testing.
-- ~~**Bug A**: Paperdoll naked on 2nd UI open~~ — **FIXED** (session 63): Phase 4 hardening (per-slot validation, baseline restore, spec resync) + EffectEquipTransmogOutfit ViewedOutfit sync (commits `c8df50eddd`, `ab43e4823d`)
-- ~~**Bug B**: Old head/shoulder persists when outfit doesn’t define them~~ — **FIXED** (session 59, commit `289677be44`): Added `_activeTransmogOutfitID` tracking; ViewedOutfit now renders the actually-applied outfit instead of always the lowest SetID
-- ~~**Bug C**: Monster Mantle ghost appearance (item 182306)~~ — **FIXED** (session 63): Phase 4 per-slot validation zeroes invalid/uncollected appearances instead of rejecting entire outfit (commit `c8df50eddd`)
-- ~~**Bug D**: Draenei lower leg geometry loss~~ — **FIXED** (session 63): Phase 4 IgnoreMask baseline restore + per-slot validation prevents mismatched state (commit `c8df50eddd`)
-- ~~**Bug E** (root cause confirmed): Single-item transmog → SetEquipmentSet → full ViewedOutfit rebuild~~ — **FIXED** (session 59, commit `289677be44`): `HandleTransmogrifyItems` now calls `SetEquipmentSet()` after syncing changes — persists to DB, refreshes ViewedOutfit
-- **All medium bugs also fixed** (sessions 60/60c):
-  - ~~Stale detection false positive~~ — **FIXED** (commit `0cde8db70c`): Server-side source tagging (FromHook flag)
-  - ~~Outfit-loaded illusions dropped~~ — **FIXED** (commit `5d38823153`): `fillOutfitData` bootstraps weapon enchant illusions
-  - ~~IgnoreMask repair one-directional~~ — **NOT A BUG**: explicit clears render base item via DT=0
-
-### Transmog: Illusions + Clear Slot
-- MH enchant illusions (4-field payload) â€” deployed, never verified in-game
-- Clear single slot (transmogID=0) â€” deployed, never verified in-game
-
-### Transmog: PR #760 Bugs
-- **Bug F**: "Unknown set id 1" â€” SetID mapping destroyed after first apply
-- **Bug G**: Name pad byte 0x80 â€” backward ASCII scan misidentifies string boundaries
-- **Bug H**: CMSG_TRANSMOGRIFY_ITEMS never fires â€” individual slot transmog completely blocked
-
----
+### ~~Transmog System~~ ARCHIVED (session 159)
+- **Entire transmog system reimplemented externally.** All VoxCore server-side transmog work (sessions 36-130) is archived.
+- Historical docs preserved in `.claude/rules/archive/transmog.md` and `doc/transmog_*`
+- No further VoxCore transmog work planned
 
 ### Talent Spell Audit -- PIPELINE COMPLETE, STUBS REMOVED
 - **1,842 C++ stubs generated** (session 88), then **removed** (session 101) — empty handlers caused load failures
 - **SQL still applied**: 114 serverside_spell stubs, 18 spell_proc entries, 1,888 spell_script_names
-- **DB state**: 5,470 spell_script_names, 4,503 serverside_spells
+- **DB state (session 199)**: 5,777 spell_script_names (+220 new entries registered session 199), 4,503 serverside_spells
 - **13 RED / 84 YELLOW remaining** — need real C++ implementations
+- **Session 199**: 220 new spell_script_names registered, hook test harness upgraded
 - **Next**: Implement actual spell logic using SimC references (991 spells have behavioral refs)
 
 ### Companion Squad -- `companion_roster` Table Missing
@@ -106,9 +72,8 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 - **Global phase_area audit** needed after zone diffs complete
 - Plan: `doc/world_db_cleanup_plan.md`
 
-### Dead HandleTransmogrifyItems Handler
-- `TransmogrificationHandler.cpp` lines 172-567 â€” 400 lines of dead code
-- Client never sends `CMSG_TRANSMOGRIFY_ITEMS` in 12.x
+### ~~SmartAI Orphan Cleanup~~ DONE (session 199)
+- 1,196 AIName fixes, 99 orphan deletions, 546 broken link chains cleared (other tab)
 
 ### Melee First-Swing NotInRange Bug
 - First-swing `NotInRange` errors, possibly CombatReach=0 or same-tick race
@@ -129,18 +94,8 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 ### 82 Exact-Position Duplicate Creatures
 - All `[DNT] Note` (entry 176436) on map 2441 â€” dev test NPCs, harmless
 
-### Transmog: Unicode Outfit Names
-- Backward ASCII scan breaks on non-ASCII characters
-
-### Transmog: Outfit Delete Verification
-- Assumed via `CMSG_DELETE_EQUIPMENT_SET` â€” unverified
-
-### Transmog: Secondary Shoulder via Outfit Loading
-- 13/14 slots work, secondary shoulder is the known gap
-- PR #760 â€” upstream wants server-only fix without addon
-
-### Transmog: SecondaryWeaponAppearanceID
-- Not persisted â€” Legion artifact niche feature
+### ~~Transmog LOW Items~~ ARCHIVED (session 159)
+- Unicode names, outfit delete, secondary shoulder, SecondaryWeaponAppearanceID — all archived with transmog system
 
 ### Orphan Spell 1251299
 - Removed between builds but persists in hotfixes.spell_name â€” harmless
@@ -194,6 +149,22 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 
 ## Recently Completed
 
+### March 21, 2026 (session 199)
+- ~~**Spell Script Names** (session 199)~~: 220 new spell_script_names registered (5,470 -> 5,777), hook test harness upgraded
+- ~~**SmartAI Orphan Cleanup** (session 199)~~: 1,196 AIName fixes, 99 orphan deletions, 546 broken link chains cleared
+- ~~**DB Cleanup** (session 199)~~: World DB consistency pass
+
+### March 10-20, 2026 (sessions 153-168)
+- ~~**VoxSniffer v1.0.0** (session 168)~~: 14-module server data sniffer addon, 62 files, 8,881 lines, 7-round dual ChatGPT review
+- ~~**Release Gate System** (session 165)~~: 4-layer pre-ship audit deployed (`/pre-ship`, enforcement hooks, 3 adversarial agents)
+- ~~**VoxGM v1.0.0** (session 164)~~: Unified GM/admin control panel addon, 26 files, ~2,700 lines Lua, 6 tabs
+- ~~**CreatureCodex v3.0.0** (sessions 157-163)~~: Production creature spell/aura sniffer, dual-layer C++ + addon, 3 READMEs (EN/RU/DE)
+- ~~**Transmog ARCHIVED** (session 159)~~: Entire transmog system reimplemented externally, all VoxCore transmog work archived
+- ~~**Antigravity DEPRECATED** (session 159)~~: Gemini now accessed via API, Windsurf IDE no longer used
+- ~~**Triad P0 Established** (session 159-160)~~: ChatGPT/Gemini/Claude API pipeline formalized as mandatory workflow
+- ~~**DraconicBot v3.1.0** (sessions 155-158)~~: AI stress test 5%->98%, full KB rewrite, Oracle Cloud VM provisioned
+- ~~**VoxCore Daemon Phase 1** (session 153)~~: Persistent Python background process for autonomous DevOps, 15 files
+
 ### March 9, 2026 (sessions 120-134)
 - ~~**Aegis Phase 2** (session 134)~~: Hardcoded path migration -- 8 runtime scripts, 25 files, 2,293 insertions
 - ~~**Triad AI Workflow** (sessions 128-134)~~: 3-agent coordination (ChatGPT/Claude/Antigravity), Central Brain, guardrails
@@ -246,5 +217,5 @@ Prioritized list of known issues, planned work, and blocked items. Updated as it
 
 ---
 
-*Updated March 9, 2026 (session 134)*
+*Updated March 21, 2026 (session 199)*
 

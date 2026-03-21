@@ -66,17 +66,17 @@ python ~/VoxCore/tools/parse_dberrors.py
 
 ```bash
 # Quick incremental build (most common)
-cd ~/VoxCore/out/build/x64-RelWithDebInfo && ninja -j20
+cd ~/VoxCore/out/build/x64-RelWithDebInfo && ninja -j32
 
 # Scripts only (faster, for script-only changes)
-ninja -j20 scripts
+ninja -j32 scripts
 
 # Full CMake reconfigure + build
 cmake -B out/build/x64-RelWithDebInfo -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DSCRIPTS=static -DELUNA=ON -DTOOLS=ON
-cd out/build/x64-RelWithDebInfo && ninja -j20
+cd out/build/x64-RelWithDebInfo && ninja -j32
 
 # Debug build
-cd ~/VoxCore/out/build/x64-Debug && ninja -j20
+cd ~/VoxCore/out/build/x64-Debug && ninja -j32
 ```
 
 **Batch files** (in `tools/build/`): `_b.bat` (quick), `_bs.bat` (scripts only), `_b_reconfig.bat` (full reconfigure)
@@ -86,7 +86,7 @@ cd ~/VoxCore/out/build/x64-Debug && ninja -j20
 
 ## 3. Claude Skills
 
-17 slash commands available in Claude Code sessions:
+19+ slash commands available in Claude Code sessions:
 
 | Command | What it does |
 |---------|-------------|
@@ -107,6 +107,11 @@ cd ~/VoxCore/out/build/x64-Debug && ninja -j20
 | `/new-script` | Scaffold new C++ custom script + register |
 | `/new-sql-update` | Create next-numbered SQL update file |
 | `/smartai-check` | Validate SmartAI SQL against known enums |
+| `/wrap-up` | End-of-session commit/push/memory/bridge sync |
+| `/pre-ship` | Pre-ship audit for addons/tools (release gate) |
+| `/todo` | Show current task list |
+| `/status` | System dashboard |
+| `/verify` | Evidence-based completion audit |
 
 ---
 
@@ -293,6 +298,8 @@ python wowhead_scraper.py quest --ids-file ids.txt --pages-only --threads 3 --de
 **Entity types**: `npc`, `item`, `spell`, `quest`, `vendor`, `talent`, `effect`
 **Key flags**: `--resume`, `--verbose`, `--force`, `--randomize`, `--batch-size N --batch-pause N`
 
+**Primary scraper**: Tor Army v3.2 (`wago/scraper_v3.py`) — HTTP/2 multiplexed via `TorInstance` class with shared sessions per instance. Measured 230K/hr peak, 193K sustained at 400x5 (2,000 workers). Launch: `python scraper_v3.py --start-tor --workers 400 --multiplier 5 --targets <list>`. Standalone repo: `VoxCore84/tor-army`.
+
 ---
 
 ## 11. NPC/Creature Audit
@@ -473,11 +480,11 @@ python decode_dbcache.py
 | **wow.tools.local** | `~/VoxCore/ExtTools/WoW.tools/start_wtl.bat` | Web UI: DB2 browser, hotfix viewer, build diffs (`http://localhost:5000`) |
 | **WowPacketParser** | `~/VoxCore/ExtTools/WowPacketParser/WowPacketParser.exe` | Parse .pkt captures (nightly, 66263 support) |
 | **WowPacketParser-src** | `~/VoxCore/ExtTools/WowPacketParser-src/WowPacketParser.sln` | WPP C# source (custom patches) |
-| **TACTSharp** | `~/VoxCore/ExtTools/TACTSharp/` | CASC bulk extractor (C#). Used by `tact_extract.py`. Build: `dotnet build TACTTool -c Release` |
+| **TACTSharp** | `~/VoxCore/ExtTools/TACTSharp/` | CASC bulk extractor (C#). Used by `tact_extract.py`. Build 66337. Build cmd: `dotnet build TACTTool -c Release` |
 | **DBC2CSV** | `~/VoxCore/ExtTools/DBC2CSV/DBC2CSV.exe` | Convert DB2 files to CSV. 1,315 .dbd definitions. ~0.5% non-deterministic drops in large batches |
 | **DB2Query** | `~/VoxCore/ExtTools/DB2Query/` | Interactive DB2 CLI: load, search, filter, export. Run: `dotnet run -c Release` |
 | **DBCD** | `~/VoxCore/ExtTools/DBCD-2.2.0/` | C# library for reading DB2 files (WDC5). Used by DBC2CSV and DB2Query |
-| **Ymir** | `~/VoxCore/ExtTools/ymir_retail_12.0.1.66263/ymir_retail.exe` | Retail sniffer (build 66263) |
+| **Ymir** | `~/VoxCore/ExtTools/ymir_retail_12.0.1.66263/ymir_retail.exe` | Retail sniffer (now build 66337) |
 | **Lua LSP** | `~/VoxCore/ExtTools/lua-language-server/bin/lua-language-server.exe` | Lua language server for IDE |
 | **LoreWalkerTDB** | `~/VoxCore/ExtTools/LoreWalkerTDB/` | Reference SQL dumps (world 941MB, hotfixes 337MB) |
 | **ATT Database** | `~/VoxCore/ExtTools/ATT-Database/` | AllTheThings community data (git pull to update) |
@@ -496,10 +503,21 @@ python decode_dbcache.py
 | [RoleplayCore](https://github.com/VoxCore84/RoleplayCore) | Public | Main server (fork of TrinityCore) |
 | [wago-tooling](https://github.com/VoxCore84/wago-tooling) | Private | All Python data pipeline scripts (61 scripts) |
 | [tc-packet-tools](https://github.com/VoxCore84/tc-packet-tools) | Private | Server launcher + packet parsing |
-| [trinitycore-claude-skills](https://github.com/VoxCore84/trinitycore-claude-skills) | Private | 17 Claude Code slash commands |
+| [trinitycore-claude-skills](https://github.com/VoxCore84/trinitycore-claude-skills) | Private | 19+ Claude Code slash commands |
 | [code-intel](https://github.com/VoxCore84/code-intel) | Private | C++ code intelligence MCP server |
 | [TransmogBridge](https://github.com/VoxCore84/TransmogBridge) | Public | Client addon for 12.x transmog |
 | [roleplaycore-report](https://github.com/VoxCore84/roleplaycore-report) | Public | Database report |
+| [CreatureCodex](https://github.com/VoxCore84/CreatureCodex) | Public | Creature spell/aura sniffer addon + server hooks |
+| [VoxGM](https://github.com/VoxCore84/VoxGM) | Public | Unified GM control panel addon |
+| [draconic-bot](https://github.com/VoxCore84/draconic-bot) | Private | Discord support bot for DraconicWoW |
+| [claude-code-scroll-fix](https://github.com/VoxCore84/claude-code-scroll-fix) | Public | Terminal scroll jump fix |
+| [claude-code-guardrails](https://github.com/VoxCore84/claude-code-guardrails) | Public | Reliability guardrails for Claude Code |
+| [claude-code-edit-verifier](https://github.com/VoxCore84/claude-code-edit-verifier) | Public | Edit verification hook |
+| [claude-code-sql-safety](https://github.com/VoxCore84/claude-code-sql-safety) | Public | SQL safety hook |
+| [claude-code-windows-toasts](https://github.com/VoxCore84/claude-code-windows-toasts) | Public | Windows toast notifications |
+| [claude-code-hook-tester](https://github.com/VoxCore84/claude-code-hook-tester) | Public | Hook testing framework |
+| [claude-code-compaction-keeper](https://github.com/VoxCore84/claude-code-compaction-keeper) | Public | Context compaction preservation |
+| [claude-code-workflow-guard](https://github.com/VoxCore84/claude-code-workflow-guard) | Public | Workflow enforcement hook |
 
 ### Gists
 
@@ -511,6 +529,7 @@ python decode_dbcache.py
 | **Open Issues** | https://gist.github.com/VoxCore84/2b69757faa2a53172c7acb5bfa3ad3c4 |
 | **Packet Tools** | https://gist.github.com/VoxCore84/a86d3dc8 |
 | **Transmog Wiki** | https://gist.github.com/VoxCore84/88ba6320 |
+| **Style Guide** | *(source: `doc/gist_style_guide.md` — not yet published as gist)* |
 
 ---
 
@@ -549,7 +568,7 @@ cd ~/VoxCore/wago && git pull     # Our tooling
 # Via Claude: /parse-errors
 
 # === Build ===
-cd ~/VoxCore/out/build/x64-RelWithDebInfo && ninja -j20
+cd ~/VoxCore/out/build/x64-RelWithDebInfo && ninja -j32
 # Or via Claude: /build-loop
 ```
 
@@ -599,4 +618,4 @@ ROOT = find_project_root()  # Walks up from __file__ looking for AI_Studio/0_Cen
 
 ---
 
-*Last updated: Mar 9, 2026 (session 134). Source: `doc/gist_runbook.md` in RoleplayCore repo.*
+*Last updated: Mar 21, 2026 (session 199). Source: `doc/gist_runbook.md` in RoleplayCore repo.*

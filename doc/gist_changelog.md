@@ -2,6 +2,91 @@ RoleplayCore â€” Session Changelog (WoW 12.x private server)
 
 
 
+## Mar 21 2026
+
+### Session 200 -- Migration Phase 7 + DB Error Cleanup Blitz
+- **Build bump 66337→66527**: TACT+Wago+merge across 1,097 tables. Migration branch merged to master
+- **DB error cleanup**: 10.8M→407K DBErrors/boot (96.3% reduction). 8 SQL files. SmartAI orphan cleanup (1,196 AIName fixes + 99 orphan deletions + 546 broken link chains). Creature spells, NPCText, model_info fixes
+- **Spell 1247917 transmog clear fix**: Effect mismatch corrected + hotfix_blob cleanup
+- Server boots clean in 36s
+
+### Session 199 -- Spell Script Audit + Hook Test Harness
+- **220 spell_script_names registered**: Comprehensive audit found 174 C++ scripts without DB entries. Resolved via TDB 1200.26021 bulk import (176 entries) + manual Wago DB2 lookups (21). Total: 5,557→5,777
+- **5 SQL update files**: warlock Diabolist, migration scripts, orphan vendor cleanup, TDB bulk import, manual lookups
+- **Hook test harness upgraded**: 33 tests (16 health + 17 regression scenarios)
+- **GitHub community**: Defended #36851 from auto-closure, supported #36850 terminal BEL proposal
+- Commit: `4fb4e96436`
+
+### Session 198 -- Continuous Improvement Pipeline + Angel TDIU Prep
+- **5 new skills**: `/retro`, `/checkpoint`, `/draft-email`, `/read-any`, wrap-up Step 8 retro
+- **scenario_calc.py**: Financial scenario comparison table generator
+- **agent-practices.md**: 12 rules for agent quality (pre-read memory, output caps, incremental writes)
+- **Angel TDIU questionnaire**: Pre-filled 60% from case archive. Dossier cached
+- Commit: `4d99d3227b`
+
+### Session 197 -- Hook Fixes + Agent Tools + GitHub Engagement
+- **3 hook false positives fixed**: release-gate-enforce, release-gate-revalidate, sql-safety
+- **3 agent tools built**: `write_file.py`, `folder_index.py`, `bulk_extract.py`
+- **6 GitHub comments**: Substantive engagement on anthropics/claude-code issues
+- Commit: `9411a6b6c7`
+
+## Mar 20 2026
+
+### Sessions 193-196 -- Financial Planning + Case Work
+- **Full 24-month AMEX audit**: 4,034 transactions, $209K total, $8,370/mo average. Key leaks: $764/mo DoorDash, $1,033/mo Amazon, $650/mo AI subs
+- **Credit report analysis**: Clean — 18 accounts, 0 collections, 0 late payments
+- **27-source money/aid document**: Military family financial assistance guide. Angel TDIU worth +$1,738/mo. NM property tax exemption saves ~$526/mo
+- **Family Action Plan**: LES-verified income/expense gap, 6 post-separation scenarios, CRDP research (+$1,000-1,500/mo underestimated)
+- **OWF reactivated**: Found Erasmo Valles approval from Feb 13, resume never confirmed sent. Email sent with resume
+- **Finances folder organized**: 65+ files into 6 subfolders with INDEX.md
+- **Brutal Honesty Mandate**: Permanent memory rule for realistic business/financial advice
+
+## Mar 16 2026
+
+### Sessions 179-185 -- Legal Filing Sprint
+- **NPDB Subject Statement filed**: Fact-checked against archive, corrected dates, submitted to NPDB
+- **5-phase evidence audit**: 661 files inventoried, 561 images cataloged, 96/107 mapped to discrepancies
+- **5 filing packages built**: AFBCMR DD-149, NPDB dispute, HIPAA/OCR, IG supplement, congressional. All FINAL in `Submission_Packages/`
+- **47 evidence subfolders**: Master submission checklist + pre-filing action items
+
+## Mar 15 2026
+
+### Sessions 170-178 -- Review Pipeline + Published Tools
+- **Codex CLI integrated**: Device-auth, `review_cycle.py` parallel pipeline (Phase 1: Codex+Gemini+Claude → Phase 2: verify → Phase 3: seal)
+- **VoxGM v2.0 spec**: 6 iterations, 30 review rounds. Paused at R6 with ~15 remaining issues
+- **8 claude-code-* repos audited + released**: v1.0.0 for guardrails, edit-verifier, sql-safety, windows-toasts, hook-tester, compaction-keeper, scroll-fix, workflow-guard
+- **Brand expansion**: awesome-claude-code submission, Reddit outreach (26 threads, 14 comment drafts)
+- **System optimization**: Audio stack cleanup, PDF readers, case file OCR pipeline
+
+## Mar 13-14 2026
+
+### Sessions 164-168 -- Addon Releases
+- **VoxGM v1.0.0**: 26 files, ~2,700 lines Lua. 6 tabs, minimap button, SavedVariables. 9-round iterative review. Release gate PASS
+- **VoxSniffer v1.0.0**: 62 files, 8,881 lines. 14 capture modules, ring buffer, session management. 7-round dual ChatGPT review
+- **Release Gate system deployed**: 4-layer pre-ship audit (`/pre-ship`), 2 enforcement hooks, 3 adversarial agents, gate state file
+- Commits: `769fc01` (VoxGM), `db077c0afc` (VoxSniffer)
+
+### Sessions 157-163 -- CreatureCodex + DraconicBot
+- **CreatureCodex v3.0.0**: Dual-layer creature spell/aura sniffer (server C++ hooks + client addon). `.codex` GM command. Tabbed export. 3 README stress tests (EN/RU/DE)
+- **DraconicBot v3.1.0**: AI stress test 5%→98% (126 cases). KB splitting (9→89 sections). Oracle Cloud VM provisioned. Full AI KB rewrite (8 files, 20 FAQs, 51 GM commands)
+
+### Sessions 153-160 -- Infrastructure Overhaul
+- **VoxCore Daemon Phase 1**: Persistent Python background process for autonomous DevOps. APScheduler, state manager, Claude API with circuit breaker, Discord notifications. 15 files
+- **Transmog ARCHIVED** (session 159): Entire transmog system reimplemented externally. Slash commands removed, agent deleted, rules archived
+- **Antigravity DEPRECATED**: Gemini now accessed via API. Historical config archived
+- **Triad P0 directive**: Mandatory in all core files. 39 stale specs archived
+- Commits: various
+
+## Mar 10-12 2026
+
+### Sessions 135-152 -- Scraper + Lambda + Hotfix 66337
+- **Tor Army v3.2**: HTTP/2 multiplexed scraper. 230K/hr peak, 193K sustained at 400x5 workers. Standalone repo
+- **Lambda Swarm**: AWS Lambda scraper (blocked by Cloudflare for Wowhead — Tor Army is primary)
+- **Hotfix repair 66337**: 70 tables, 104 zeroed fixes, 4,291 custom diffs preserved, 237,530 hotfix_data rows
+- **Social media strategy**: 265 web searches, 20-platform strategy, Buffer recommended
+- **8 published GitHub repos**: claude-code-* tools released as v1.0.0
+- Various commits across sessions
+
 ## Mar 9 2026
 
 ### Session 134 -- Triad Guardrails + Aegis Phase 2 Closeout
@@ -623,37 +708,43 @@ Chronological log of all database, code, and infrastructure changes. Each entry 
 
 ---
 
-## Database State (March 9, 2026)
+## Database State (March 21, 2026)
 
 | Database | Size | Key Metric |
 |----------|------|------------|
-| world | 1,086 MB | 611K creatures, 226K templates, 286K SmartAI, 5.5K spell scripts |
-| hotfixes | 811 MB | 400K spell_name, 234K broadcast_text, 176K item_sparse (full 66263 restore) |
+| world | 1,389 MB | 712K creatures, 226K templates, 457K SmartAI, 5.8K spell scripts |
+| hotfixes | 1,135 MB | 400K spell_name, 234K broadcast_text, 176K item_sparse (full 66337 restore) |
 | characters | 4 MB | 5 characters, transmog outfits table ready |
-| auth | 2.8 MB | 2 accounts |
+| auth | 3 MB | 2 accounts, build 66527 registered |
 | roleplay | 0.1 MB | 4 tables (creature_extra, template_extra, custom_npcs, server_settings) |
 
 ## Repositories
 
 | Repo | Latest Commit | Purpose |
 |------|--------------|---------|
-| VoxCore84/RoleplayCore | `c0de05d950` | Main server |
+| VoxCore84/RoleplayCore | `98ba6d1fc2` | Main server (TC fork, 12.x/Midnight) |
 | VoxCore84/wago-tooling | `2351879` | Wago/LW/hotfix tools |
 | VoxCore84/tc-packet-tools | `821e74f` | WPP + packet analysis |
 | VoxCore84/code-intel | -- | C++ MCP server (416K symbols) |
-| VoxCore84/trinitycore-claude-skills | `25967f7` | Claude Code skills |
-| VoxCore84/roleplaycore-report | `9ead780` | GitHub Pages documentation site |
+| VoxCore84/CreatureCodex | v3.0.0 | Creature spell/aura sniffer addon + server hooks |
+| VoxCore84/VoxGM | v1.0.0 | Unified GM control panel addon |
+| VoxCore84/draconic-bot | -- | Discord support bot for DraconicWoW |
+| VoxCore84/claude-code-scroll-fix | v1.0.0 | Terminal scroll jump fix |
+| VoxCore84/claude-code-* (7 repos) | v1.0.0 | guardrails, edit-verifier, sql-safety, windows-toasts, hook-tester, compaction-keeper, workflow-guard |
 
-## AI Infrastructure (NEW -- March 9, 2026)
+## AI Infrastructure (March 21, 2026)
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| Triad Workflow | ACTIVE | ChatGPT=Architect, Claude Code=Implementer, Antigravity=QA-QC |
+| Triad Workflow | ACTIVE | ChatGPT API=Architect, Claude Code=Implementer, Gemini API=Auditor |
 | Central Brain | `AI_Studio/0_Central_Brain.md` | Cross-agent coordination blackboard |
-| Aegis Config | Phase 2 COMPLETE | Hardcoded paths removed from runtime. Phase 3 (scanner hardening) next |
-| DraconicBot | v2.1 BUILT | 14 cogs, 16 commands. Awaiting deploy authorization |
+| 5-Round Review Cycle | OPERATIONAL | Parallel Phase 1 (3 reviewers) → verify → seal. `review_cycle.py` |
+| VoxCore Daemon | Phase 1 COMPLETE | APScheduler, state mgr, Claude API, Discord notify. Phase 2 next |
+| DraconicBot | v3.1.0 READY | AI stress test 98%. Oracle Cloud VM provisioned, not yet deployed |
+| Release Gate | DEPLOYED | `/pre-ship` audit + 2 enforcement hooks + 3 adversarial agents |
 | Auto-Parse | v3+ DEPLOYED | 19-module pipeline, headless via `start_all.bat` |
 | DevOps Pipeline | DEPLOYED | 6-step boot, graceful shutdown, SQL pending queue, handover agent |
+| Antigravity IDE | DEPRECATED | Gemini accessed via API now |
 
-*Updated March 9, 2026 (session 134)*
+*Updated March 21, 2026 (session 200)*
 
