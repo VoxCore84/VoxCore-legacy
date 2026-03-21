@@ -3,7 +3,7 @@
 **Read this FIRST in any new Claude Code tab.**
 This is the single source of truth for what all tabs are doing, what's done, what's blocked, and what to pick up next. Updated by whichever tab finishes work.
 
-**Last updated**: March 16, 2026 -- Session 185: All 5 filing packages FINAL and submission-ready in `Desktop/files 23/Submission_Packages/`. 47 evidence subfolders built. Master submission checklist + pre-filing action items complete. Next: resolve PRE_FILING_ACTION_ITEMS.md, then submit NPDB first
+**Last updated**: March 21, 2026 -- Session 199: 220 spell_script_names registered (5 SQL files applied). Hook test harness upgraded (33 tests). DB cleanup done. Next: restart server to verify spell scripts fire at runtime
 
 ---
 

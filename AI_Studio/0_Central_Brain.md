@@ -8,7 +8,7 @@
 
 ## Triad Coordination — READ FIRST (all agents)
 
-**Last updated**: 2026-03-20 -- Session 198: Continuous improvement pipeline built. 5 new skills (/retro, /checkpoint, /draft-email, /read-any + wrap-up Step 8 retro). scenario_calc.py tool. agent-practices.md rules (12 rules). Person-dossier caching. Angel TDIU questionnaire pre-filled 60%. Angel dossier cached. improvements.md tracker seeded. Next: Erasmo follow-up (Mar 23), Angel TDIU questionnaire answers, Gmail Takeout parse, cancel $132/mo subscriptions
+**Last updated**: 2026-03-21 -- Session 199: Spell script audit — 220 new spell_script_names registered (5 SQL files). Hook test harness upgraded to 33 tests. DB cleanup (orphan vendors + invalid model). TDB 1200.26021 used as reference. ~1,400 SmartAI mismatches catalogued (deferred). Next: restart server + verify spell scripts, SmartAI orphan cleanup, 13 RED spell C++ implementations
 
 ### Architecture (as of session 160)
 
