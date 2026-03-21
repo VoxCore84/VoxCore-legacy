@@ -8,7 +8,7 @@
 
 ## Triad Coordination — READ FIRST (all agents)
 
-**Last updated**: 2026-03-20 -- Session 195: Family financial planning + OWF activation. Erasmo email SENT with resume (federal job pipeline active after 5-week gap). CRDP confirmed for Chapter 61 <20yr TIS at 50%+ VA — archive was underestimating post-sep income by $1,000-1,500/mo. Family Action Plan built with 6 scenarios. Finances folder organized (65+ files → 6 subfolders). Brutal Honesty Mandate added to memory. Next: follow up Erasmo, Angel TDIU filing, E2I application, engage DAV for VA rating side
+**Last updated**: 2026-03-20 -- Session 198: Continuous improvement pipeline built. 5 new skills (/retro, /checkpoint, /draft-email, /read-any + wrap-up Step 8 retro). scenario_calc.py tool. agent-practices.md rules (12 rules). Person-dossier caching. Angel TDIU questionnaire pre-filled 60%. Angel dossier cached. improvements.md tracker seeded. Next: Erasmo follow-up (Mar 23), Angel TDIU questionnaire answers, Gmail Takeout parse, cancel $132/mo subscriptions
 
 ### Architecture (as of session 160)
 
