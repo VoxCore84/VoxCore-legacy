@@ -18,6 +18,20 @@ Issues:  #32658 (blind edits), part of #32650 taxonomy
 import json
 import os
 import sys
+import unicodedata
+
+# Extensions where edit failures are low-risk (documentation, config)
+# and false positives from special characters are frequent.
+# For these, verification is advisory-only (no blocking).
+ADVISORY_ONLY_EXTENSIONS = {".md", ".txt", ".json", ".toml", ".yml", ".yaml"}
+
+
+def normalize_text(text: str) -> str:
+    """Normalize text for comparison: line endings + Unicode NFC."""
+    if not text:
+        return ""
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    return unicodedata.normalize("NFC", text)
 
 
 def main():
@@ -36,6 +50,10 @@ def main():
     old_string = tool_input.get("old_string", "")
     new_string = tool_input.get("new_string", "")
     replace_all = tool_input.get("replace_all", False)
+
+    # Determine if this file type only gets advisory (non-blocking) checks
+    _, ext = os.path.splitext(file_path)
+    advisory_only = ext.lower() in ADVISORY_ONLY_EXTENSIONS
 
     # Skip if no file path or both strings are empty
     if not file_path:
@@ -86,11 +104,13 @@ def main():
         json.dump(result, sys.stdout)
         sys.exit(0)
 
-    # Normalize line endings for comparison (Windows \r\n vs Unix \n)
-    # This is the #1 cause of false positives on Windows
-    content_norm = content.replace("\r\n", "\n").replace("\r", "\n")
-    new_norm = new_string.replace("\r\n", "\n").replace("\r", "\n") if new_string else ""
-    old_norm = old_string.replace("\r\n", "\n").replace("\r", "\n") if old_string else ""
+    # Normalize line endings AND Unicode (NFC) for comparison.
+    # Line endings: Windows \r\n vs Unix \n is the #1 cause of false positives.
+    # Unicode NFC: em dashes, smart quotes, etc. can differ between
+    # tool_input strings and what's actually written to disk.
+    content_norm = normalize_text(content)
+    new_norm = normalize_text(new_string)
+    old_norm = normalize_text(old_string)
 
     problems = []
 
@@ -126,15 +146,30 @@ def main():
         # succeeded on one occurrence — this is normal, not a problem.
 
     if problems:
-        result = {
-            "decision": "block",
-            "reason": (
-                "Edit verification FAILED:\n"
-                + "\n".join(f"  - {p}" for p in problems)
-                + "\n\nPlease read the file to verify the edit applied correctly "
-                + "before proceeding."
-            ),
-        }
+        if advisory_only:
+            # For documentation/config files, report but don't block.
+            # False positives from special characters are frequent and
+            # real edit failures on these files are low-risk.
+            result = {
+                "decision": "warn",
+                "reason": (
+                    "Edit verification WARNING (advisory-only for "
+                    + f"{ext} files):\n"
+                    + "\n".join(f"  - {p}" for p in problems)
+                    + "\n\nThis is informational — the edit likely applied. "
+                    + "Read the file if you want to confirm."
+                ),
+            }
+        else:
+            result = {
+                "decision": "block",
+                "reason": (
+                    "Edit verification FAILED:\n"
+                    + "\n".join(f"  - {p}" for p in problems)
+                    + "\n\nPlease read the file to verify the edit applied "
+                    + "correctly before proceeding."
+                ),
+            }
         json.dump(result, sys.stdout)
     # else: silent success — no output needed
 
