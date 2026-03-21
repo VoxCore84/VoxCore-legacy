@@ -147,19 +147,13 @@ def main():
 
     if problems:
         if advisory_only:
-            # For documentation/config files, report but don't block.
-            # False positives from special characters are frequent and
-            # real edit failures on these files are low-risk.
-            result = {
-                "decision": "warn",
-                "reason": (
-                    "Edit verification WARNING (advisory-only for "
-                    + f"{ext} files):\n"
-                    + "\n".join(f"  - {p}" for p in problems)
-                    + "\n\nThis is informational — the edit likely applied. "
-                    + "Read the file if you want to confirm."
-                ),
-            }
+            # For documentation/config files, skip entirely.
+            # Claude Code hooks don't support "warn" — any JSON output
+            # is treated as blocking. False positives on .md files are
+            # ~95%+ due to markdown tables, code blocks, and special
+            # characters. The verification cost (forced Read + context
+            # burn) far exceeds the value for low-risk file types.
+            sys.exit(0)
         else:
             result = {
                 "decision": "block",
