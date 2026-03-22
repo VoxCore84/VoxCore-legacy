@@ -76,10 +76,10 @@ enum Races
     //RACE_ROSTRUM_FAERIE_DRAGON      = 83,
     RACE_EARTHEN_DWARF_HORDE          = 84, // TITLE Earthen DESCRIPTION Earthen (Horde) (RaceMask bit 17)
     RACE_EARTHEN_DWARF_ALLIANCE       = 85, // TITLE Earthen DESCRIPTION Earthen (Alliance) (RaceMask bit 18)
-    RACE_HARANIR_ALLIANCE             = 86, // TITLE Haranir DESCRIPTION Haranir (Alliance) (RaceMask bit 20)
+    RACE_HARANIR_HORDE                = 86, // TITLE Haranir DESCRIPTION Haranir (Horde) (RaceMask bit 20)
     //RACE_ROSTRUM_AIRSHIP_SEASON_1   = 87,
     //RACE_ROSTRUM_AIRSHIP_SEASON_2   = 90,
-    RACE_HARANIR_HORDE                = 91, // TITLE Haranir DESCRIPTION Haranir (Horde) (RaceMask bit 19)
+    RACE_HARANIR_ALLIANCE             = 91, // TITLE Haranir DESCRIPTION Haranir (Alliance) (RaceMask bit 19)
     //RACE_ROSTRUM_AIRSHIP_SEASON_3   = 92,
 };
 
@@ -140,9 +140,9 @@ struct RaceMask
             case RACE_EARTHEN_DWARF_ALLIANCE:
                 return 18;
             case RACE_HARANIR_HORDE:
-                return 19;
-            case RACE_HARANIR_ALLIANCE:
                 return 20;
+            case RACE_HARANIR_ALLIANCE:
+                return 19;
             default:
                 break;
         }

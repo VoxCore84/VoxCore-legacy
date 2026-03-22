@@ -484,6 +484,11 @@ void WorldSession::HandleCharEnum(CharacterDatabaseQueryHolder const& holder)
         charEnum.RaceUnlockData.push_back(raceUnlock);
     }
 
+    // DIAGNOSTIC: WarbandGroups disabled to test if they cause character creation hang.
+    // TC upstream sends 0 WarbandGroups. Our code was sending 1 ("Favorites").
+    // If character creation works with this commented out, WarbandGroups are the problem.
+    // Re-enable once serialization is verified correct.
+#if 0
     LoginDatabasePreparedStatement* stmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_WARBAND_GROUPS);
     stmt->setUInt32(0, GetAccountId());
     stmt->setUInt32(1, sConfigMgr->GetIntDefault("RealmID", 1));
@@ -577,6 +582,7 @@ void WorldSession::HandleCharEnum(CharacterDatabaseQueryHolder const& holder)
         insertStmt->setUInt32(6, 1);
         LoginDatabase.Execute(insertStmt);
     }
+#endif
 
     SendPacket(charEnum.Write());
 
