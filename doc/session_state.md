@@ -3,7 +3,7 @@
 **Read this FIRST in any new Claude Code tab.**
 This is the single source of truth for what all tabs are doing, what's done, what's blocked, and what to pick up next. Updated by whichever tab finishes work.
 
-**Last updated**: March 21, 2026 -- Session 199: 220 spell_script_names registered (5 SQL files applied). Hook test harness upgraded (33 tests). DB cleanup done. Next: restart server to verify spell scripts fire at runtime
+**Last updated**: March 21, 2026 -- Session 199 (cont.): All 4 gists refreshed + published (sessions 135-200). GitHub engagement (6 issues). Migration Phase 7 complete (session 200, other tab). Next: runtime test, 13 RED spells, Phase 9 eval
 
 ---
 
@@ -252,7 +252,7 @@ Each zone produces a SQL file in `sql/exports/` and findings for review.
 
 ---
 
-## GitHub Gists (synced March 8)
+## GitHub Gists (synced March 21 — session 199)
 
 - DB Report: https://gist.github.com/528e801b53f6c62ce2e5c2ffe7e63e29
 - Changelog: https://gist.github.com/4c63baf8154753d2a89475d9a4f5b2cc
