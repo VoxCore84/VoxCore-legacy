@@ -40,7 +40,7 @@ namespace Noblegarden
             bool IsPlayer = false;
             bool IsCreature = false;
             uint64 Key = 0;
-            Unit* UnitPtr = nullptr;
+            ObjectGuid UnitGuid;
             EffectStore* Store = nullptr;
         };
 

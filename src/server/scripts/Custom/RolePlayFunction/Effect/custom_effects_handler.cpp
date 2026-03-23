@@ -1,6 +1,7 @@
 #include "Chat.h"
 #include "custom_effects_handler.h"
 #include "GameTime.h"
+#include "ObjectAccessor.h"
 #include "Player.h"
 #include "ScriptMgr.h"
 
@@ -206,7 +207,7 @@ namespace Noblegarden
                 m_player_stores.emplace(key, new EffectStore);
 
             result->Key         = key;
-            result->UnitPtr     = unit;
+            result->UnitGuid    = unit->GetGUID();
             result->Store       = m_player_stores.at(key);
             result->IsPlayer    = true;
         }
@@ -220,7 +221,7 @@ namespace Noblegarden
                 m_creature_stores.emplace(key, new EffectStore);
 
             result->Key         = key;
-            result->UnitPtr     = unit;
+            result->UnitGuid    = unit->GetGUID();
             result->Store       = m_creature_stores.at(key);
             result->IsCreature  = true;
         }
@@ -246,12 +247,13 @@ namespace Noblegarden
 
     bool EffectsHandler::SyncEvent::Execute(uint64, uint32)
     {
-        for (auto& data : m_unit_info->Store->Effects)
+        Unit* unit = ObjectAccessor::GetUnit(*m_observer, m_unit_info->UnitGuid);
+        if (unit)
         {
-            if (m_unit_info->UnitPtr)
+            for (auto& data : m_unit_info->Store->Effects)
             {
                 WorldPackets::Spells::PlaySpellVisualKit packet;
-                packet.Unit = m_unit_info->UnitPtr->GetGUID();
+                packet.Unit = unit->GetGUID();
                 packet.KitRecID = data.second->ID;
                 packet.KitType = data.second->Mode;
                 packet.Duration = 0.0f;
@@ -259,8 +261,6 @@ namespace Noblegarden
             }
         }
 
-        delete m_unit_info;
-        m_unit_info = nullptr;
         return true;
     }
 

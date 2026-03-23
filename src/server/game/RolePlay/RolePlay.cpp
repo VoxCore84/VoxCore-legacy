@@ -1085,10 +1085,9 @@ void Roleplay::SetCustomNpcTameable(std::string const& key, bool tameable)
 {
     uint32 templateId = _customNpcStore[key].templateId;
     CreatureTemplate& cTemplate = sObjectMgr->_creatureTemplateStore[templateId];
-    cTemplate.type = tameable ? 1 : 0;
+    cTemplate.type = tameable ? CREATURE_TYPE_BEAST : CREATURE_TYPE_HUMANOID;
     cTemplate.family = tameable ? CREATURE_FAMILY_GORILLA : CREATURE_FAMILY_NONE;
 
-    sObjectMgr->_creatureTemplateStore[cTemplate.Entry] = std::move(cTemplate);
     SaveNpcCreatureTemplateToDb(cTemplate);
     ReloadSpawnedCustomNpcs(key);
 }
@@ -1099,7 +1098,6 @@ void Roleplay::SetCustomNpcName(std::string const& key, std::string const& displ
     CreatureTemplate& cTemplate = sObjectMgr->_creatureTemplateStore[templateId];
     cTemplate.Name = displayName;
 
-    sObjectMgr->_creatureTemplateStore[cTemplate.Entry] = std::move(cTemplate);
     SaveNpcCreatureTemplateToDb(cTemplate);
     ReloadSpawnedCustomNpcs(key);
 }
@@ -1110,7 +1108,6 @@ void Roleplay::SetCustomNpcSubName(std::string const& key, std::string const& su
     CreatureTemplate& cTemplate = sObjectMgr->_creatureTemplateStore[templateId];
     cTemplate.SubName = subName;
 
-    sObjectMgr->_creatureTemplateStore[cTemplate.Entry] = std::move(cTemplate);
     SaveNpcCreatureTemplateToDb(cTemplate);
     ReloadSpawnedCustomNpcs(key);
 }
@@ -1246,7 +1243,11 @@ void Roleplay::SaveNpcCreatureTemplateToDb(CreatureTemplate& cTemplate)
     SessionMap const& smap = sWorld->GetAllSessions();
     for (SessionMap::const_iterator iter = smap.begin(); iter != smap.end(); ++iter)
     {
-        TC_LOG_DEBUG("roleplay", "ROLEPLAY: Sending query packet for creatureTemplate '%s' to '%s'.", cTemplate.Name.c_str(), iter->second->GetPlayer()->GetName().c_str());
+        Player* player = iter->second->GetPlayer();
+        if (!player)
+            continue;
+
+        TC_LOG_DEBUG("roleplay", "ROLEPLAY: Sending query packet for creatureTemplate '%s' to '%s'.", cTemplate.Name.c_str(), player->GetName().c_str());
         if (sWorld->getBoolConfig(CONFIG_CACHE_DATA_QUERIES)) {
             iter->second->SendPacket(&cTemplate.QueryData[static_cast<uint32>(iter->second->GetSessionDbLocaleIndex())]);
         }

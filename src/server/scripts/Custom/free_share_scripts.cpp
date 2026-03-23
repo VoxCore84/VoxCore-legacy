@@ -400,6 +400,8 @@ public:
         float z2 = Trinity::StringTo<float>(tokens[3]).value_or(0.0f);
 
         char* cId = handler->extractKeyFromLink(guidStr.data(), "Hcreature");
+        if (!cId)
+            return false;
 
         ObjectGuid::LowType lowguid = Trinity::StringTo<ObjectGuid::LowType>(cId).value_or(UI64LIT(0));
 
@@ -443,6 +445,8 @@ public:
         }
 
         char* cId = handler->extractKeyFromLink(guidStr.data(), "Hcreature");
+        if (!cId)
+            return false;
 
         ObjectGuid::LowType lowguid = Trinity::StringTo<ObjectGuid::LowType>(cId).value_or(UI64LIT(0));
 
@@ -496,6 +500,8 @@ public:
         }
 
         char* cId = handler->extractKeyFromLink(guidStr.data(), "Hcreature");
+        if (!cId)
+            return false;
 
         ObjectGuid::LowType lowguid = Trinity::StringTo<ObjectGuid::LowType>(cId).value_or(UI64LIT(0));
 

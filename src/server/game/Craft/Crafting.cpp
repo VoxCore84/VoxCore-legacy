@@ -43,6 +43,8 @@ SpellCastResult Crafting::DoCraft(uint32 craftingDataId)
         bonusTreeIds.push_back(_craftingData->ItemBonusTreeID);
 
     uint32 craftingDifficulty = _craftingData->CraftingDifficulty;
+    if (craftingDifficulty == 0)
+        return SpellCastResult::SPELL_FAILED_ERROR;
 
     // List all reagent "slots" for this craft, with ReagentSlotID & ReagentCount
     for (ModifiedCraftingSpellSlotEntry const* spellSlot : spellSlots)
@@ -151,6 +153,8 @@ uint32 Crafting::GetSkillLevelForCraft()
     uint32 skillValue = _player->GetSkillValue(skillId);
 
     uint32 totalReagentWeigth = CalculateTotalReagentWeights();
+    if (totalReagentWeigth == 0)
+        return skillValue;
 
     CraftingDifficultyEntry const* craftingDifficultyEntry = sCraftingDifficultyStore.LookupEntry(_craftingData->CraftingDifficultyID);
     if (!craftingDifficultyEntry)
@@ -232,6 +236,9 @@ uint32 Crafting::GetCraftedItemIdForQuality(uint32 qualityTier)
     // If it's a reagent with quality, get id from CraftingDataItem
     if (!newItemId)
     {
+        if (qualityTier == 0)
+            return 0;
+
         std::vector<uint32> craftedItemList = sDB2Manager.GetCraftingDataItemIDByCraftingData(_craftingData->ID);
         if (craftedItemList.size() < qualityTier)
             return 0;

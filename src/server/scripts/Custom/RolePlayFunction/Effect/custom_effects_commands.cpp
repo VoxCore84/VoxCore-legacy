@@ -14,20 +14,20 @@ namespace Noblegarden
         {
             static ChatCommandTable effectSelfCommandTable =
             {
-                { "add",       HandleSelfAdd,       rbac::RBAC_ROLE_PLAYER,  Console::Yes },
-                { "cast",      HandleSelfCast,      rbac::RBAC_ROLE_PLAYER,  Console::Yes },
-                { "channel",   HandleSelfChannel,   rbac::RBAC_ROLE_PLAYER,  Console::Yes },
-                { "toggle",    HandleSelfToggle,    rbac::RBAC_ROLE_PLAYER,  Console::Yes },
-                { "remove",    HandleSelfRemove,    rbac::RBAC_ROLE_PLAYER,  Console::Yes },
-                { "reset",     HandleSelfReset,     rbac::RBAC_ROLE_PLAYER,  Console::Yes },
+                { "add",       HandleSelfAdd,       rbac::RBAC_ROLE_PLAYER,  Console::No },
+                { "cast",      HandleSelfCast,      rbac::RBAC_ROLE_PLAYER,  Console::No },
+                { "channel",   HandleSelfChannel,   rbac::RBAC_ROLE_PLAYER,  Console::No },
+                { "toggle",    HandleSelfToggle,    rbac::RBAC_ROLE_PLAYER,  Console::No },
+                { "remove",    HandleSelfRemove,    rbac::RBAC_ROLE_PLAYER,  Console::No },
+                { "reset",     HandleSelfReset,     rbac::RBAC_ROLE_PLAYER,  Console::No },
             };
 
             static ChatCommandTable effectTargetCommandTable =
             {
-                { "add",       HandleTargetAdd,     rbac::RBAC_ROLE_PLAYER,  Console::Yes },
-                { "toggle",    HandleTargetToggle,  rbac::RBAC_ROLE_PLAYER,  Console::Yes },
-                { "remove",    HandleTargetRemove,  rbac::RBAC_ROLE_PLAYER,  Console::Yes },
-                { "reset",     HandleTargetReset,   rbac::RBAC_ROLE_PLAYER,  Console::Yes },
+                { "add",       HandleTargetAdd,     rbac::RBAC_ROLE_PLAYER,  Console::No },
+                { "toggle",    HandleTargetToggle,  rbac::RBAC_ROLE_PLAYER,  Console::No },
+                { "remove",    HandleTargetRemove,  rbac::RBAC_ROLE_PLAYER,  Console::No },
+                { "reset",     HandleTargetReset,   rbac::RBAC_ROLE_PLAYER,  Console::No },
             };
 
             static ChatCommandTable effectCommandTable =

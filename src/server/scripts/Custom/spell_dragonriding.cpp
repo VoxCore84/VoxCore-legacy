@@ -72,7 +72,10 @@ class spell_af_skyward_ascent : public SpellScript
 {
     void HandleDummy(SpellEffIndex /*effIndex*/)
     {
-        Player* caster = GetCaster()->ToPlayer();
+        Unit* rawCaster = GetCaster();
+        if (!rawCaster)
+            return;
+        Player* caster = rawCaster->ToPlayer();
         if (!caster)
             return;
 
@@ -94,7 +97,10 @@ class spell_af_surge_forward : public SpellScript
 {
     void HandleDummy(SpellEffIndex /*effIndex*/)
     {
-        Player* caster = GetCaster()->ToPlayer();
+        Unit* rawCaster = GetCaster();
+        if (!rawCaster)
+            return;
+        Player* caster = rawCaster->ToPlayer();
         if (!caster)
             return;
 
@@ -120,7 +126,10 @@ class spell_af_whirling_surge : public SpellScript
 {
     void HandleDummy()
     {
-        Player* caster = GetCaster()->ToPlayer();
+        Unit* rawCaster = GetCaster();
+        if (!rawCaster)
+            return;
+        Player* caster = rawCaster->ToPlayer();
         if (!caster)
             return;
 

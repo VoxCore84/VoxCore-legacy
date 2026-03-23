@@ -222,11 +222,13 @@ void CompanionAI::UpdateRangedBehavior(Unit* target, Companion::RosterEntry cons
         }
     }
 
+    // Ensure we have a victim set
+    if (me->GetVictim() != target)
+        AttackStart(target);
+
     // Keep at range
     if (me->GetDistance(target) < 20.0f)
         me->GetMotionMaster()->MoveChase(target, ChaseRange(25.0f));
-    else
-        AttackStart(target);
 }
 
 void CompanionAI::UpdateCasterBehavior(Unit* target, Companion::RosterEntry const* roster)
@@ -245,11 +247,13 @@ void CompanionAI::UpdateCasterBehavior(Unit* target, Companion::RosterEntry cons
         }
     }
 
+    // Ensure we have a victim set
+    if (me->GetVictim() != target)
+        AttackStart(target);
+
     // Keep at range
     if (me->GetDistance(target) < 25.0f)
         me->GetMotionMaster()->MoveChase(target, ChaseRange(30.0f));
-    else
-        AttackStart(target);
 }
 
 void CompanionAI::UpdateHealerAI(Companion::RosterEntry const* roster)
@@ -367,8 +371,8 @@ void CompanionAI::UpdateAI(uint32 diff)
         // Healers don't initiate melee — if attacked, kite
         if (me->IsInCombat() && me->GetVictim())
         {
-            if (me->GetDistance(me->GetVictim()) < 10.0f)
-                me->GetMotionMaster()->MoveFollow(owner, 5.0f);
+            if (me->GetDistance(me->GetVictim()) < 10.0f && !me->HasUnitState(UNIT_STATE_FOLLOW))
+                me->GetMotionMaster()->MoveFollow(owner, 5.0f, ChaseAngle(float(M_PI)));
         }
         return;
     }
