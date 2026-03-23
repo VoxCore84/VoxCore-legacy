@@ -7,7 +7,8 @@
 | "I'm done", wrapping up, conversation winding down | `/wrap-up` — ask or run |
 | Server restart, crash, debugging begins | `/check-logs` — just run it |
 | Build error pasted | `/parse-errors` — just run it |
-| C++ file edited, work complete | Remind: "Ready to build in VS" |
+| C++ file edited, work complete | Remind: "Ready to build" — use `_build_ps.ps1` or VS |
+| User asks to audit code quality, find bugs, review custom systems | `/code-audit [dir]` — fan out parallel agents |
 | SQL file created/edited | `/smartai-check` (if SmartAI) or `/apply-sql` |
 | Writing new SQL update | `/new-sql-update` — run for filename |
 | Multiple tasks / scope expanding | Suggest tab split (see multi-tab rules) |
@@ -39,6 +40,12 @@
 | Financial planning, income/expense scenarios | `python tools/scenario_calc.py` — scenario comparison tables |
 | About to search a large directory for agents | `/index-folder` first, then pass manifest to agents |
 | Launching agents that need case/file context | Pre-read `memory/` topic files and pass relevant context in prompt |
+| Fresh TDB import or migration completed | `mysql -u root -padmin < sql/RoleplayCore/custom_tables.sql` — recreate custom tables |
+| Memory files seem stale, MEMORY.md over 200 lines | `/memory-audit` — check health, find orphans, flag issues |
+| End of session, gists may be stale | `/publish-gists` — check and update changed gists |
+| Handing off to another tab or ending complex session | `/handoff [label]` — auto-generate context for next tab |
+| DB errors, orphan references, data quality concerns | `/db-lint [db]` — scan for common issues, generate fix SQL |
+| Comparing local DB against upstream TrinityCore | `/tdb-diff <table>` — download TDB, diff, generate update SQL |
 
 **Rules:**
 - If in doubt, ask. A one-line reminder is cheap; forgetting `/wrap-up` loses work.

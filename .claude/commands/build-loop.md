@@ -1,5 +1,5 @@
 ---
-allowed-tools: Bash(ninja:*), Bash(cd:*), Read, Edit, Grep, Glob
+allowed-tools: Bash(powershell*), Bash(ninja:*), Bash(cd:*), Read, Edit, Grep, Glob
 description: Iteratively build the project and fix compilation errors until the build succeeds
 ---
 
@@ -10,14 +10,30 @@ description: Iteratively build the project and fix compilation errors until the 
 Run an iterative build-fix cycle on the VoxCore project.
 
 ### Build preset selection
-Parse the user's argument (if any) to pick the build directory:
-- `debug`, `d`, or no argument → `out/build/x64-Debug/`
-- `rel`, `r`, `relwithdebinfo` → `out/build/x64-RelWithDebInfo/`
-- `scripts`, `s` → same as debug but use `ninja -j32 scripts` (scripts-only)
+Parse the user's argument (if any) to pick the preset:
+- `debug`, `d`, or no argument → `debug`
+- `rel`, `r`, `relwithdebinfo` → `rel`
+- `scripts`, `s` → `debug` with target `scripts`
+
+### How to build
+
+**ALWAYS use the PowerShell build script.** Never use cmd.exe batch files from bash — they fail silently.
+
+```bash
+powershell.exe -ExecutionPolicy Bypass -File "C:\\Users\\atayl\\VoxCore\\_build_ps.ps1" [preset] [target] 2>&1
+```
+
+Examples:
+- Full debug build: `powershell.exe -ExecutionPolicy Bypass -File "C:\\Users\\atayl\\VoxCore\\_build_ps.ps1" debug 2>&1`
+- Scripts only: `powershell.exe -ExecutionPolicy Bypass -File "C:\\Users\\atayl\\VoxCore\\_build_ps.ps1" debug scripts 2>&1`
+- RelWithDebInfo: `powershell.exe -ExecutionPolicy Bypass -File "C:\\Users\\atayl\\VoxCore\\_build_ps.ps1" rel 2>&1`
+- Configure only: `powershell.exe -ExecutionPolicy Bypass -File "C:\\Users\\atayl\\VoxCore\\_build_ps.ps1" debug configure 2>&1`
+
+The script handles MSVC environment setup (vcvarsall.bat), CMake configuration (auto-detects if needed), and the ninja build. It outputs `BUILD_SUCCESS` or `BUILD_FAILED`.
 
 ### Loop procedure
 
-1. **Build**: Run `cd /c/Users/atayl/VoxCore/<build-dir> && ninja -j32 2>&1` (or `ninja -j32 scripts` for scripts-only)
+1. **Build**: Run the PowerShell build script with the selected preset
 2. **Parse**: Extract compiler errors from the output. Ignore warnings unless the user asked to fix them.
 3. **Fix**: For each error:
    - Read the source file at the reported line

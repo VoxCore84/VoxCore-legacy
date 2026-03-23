@@ -7,9 +7,12 @@
 | `x64-Debug` | `out/build/x64-Debug/` | Compilation, debugging |
 | **`x64-RelWithDebInfo`** | `out/build/x64-RelWithDebInfo/` | **Primary runtime** (17s startup vs 60s Debug) |
 
-- **Build**: `cd ~/VoxCore/out/build/x64-Debug && ninja -j32 2>&1`
-- **Scripts only**: `cd ~/VoxCore/out/build/x64-Debug && ninja -j32 scripts 2>&1`
-- **CMake reconfigure**: `cmake -B out/build/x64-Debug -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`
+- **Build (preferred)**: `powershell.exe -ExecutionPolicy Bypass -File "_build_ps.ps1" debug 2>&1`
+- **Scripts only**: `powershell.exe -ExecutionPolicy Bypass -File "_build_ps.ps1" debug scripts 2>&1`
+- **RelWithDebInfo**: `powershell.exe -ExecutionPolicy Bypass -File "_build_ps.ps1" rel 2>&1`
+- **Configure only**: `powershell.exe -ExecutionPolicy Bypass -File "_build_ps.ps1" debug configure 2>&1`
+- **IMPORTANT**: Never use cmd.exe batch files from bash — they fail silently. Always use `_build_ps.ps1`
+- **CMake presets**: Defined in `CMakePresets.json`. Use `--preset x64-Debug` or `--preset x64-RelWithDebInfo`
 - **Key CMake options**: `SCRIPTS=static`, `ELUNA=ON`, `TOOLS=ON`
 - **Compiler**: MSVC (VS 2026), Generator: Ninja, C++20
 - **MySQL**: `C:/Program Files/MySQL/MySQL Server 8.0/bin/mysql.exe` — root/admin
