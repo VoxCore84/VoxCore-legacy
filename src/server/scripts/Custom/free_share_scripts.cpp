@@ -34,6 +34,7 @@
 #include "WorldPacket.h"
 #include "GameTime.h"
 #include "RoleplayDatabase.h"
+#include "RolePlay.h"
 
 class StaticTimeManager
 {
@@ -169,10 +170,10 @@ public:
         SendTimeSync();
     }
 
-    static void SendTimeSync()
+    static WorldPacket const* BuildTimeSyncPacket()
     {
+        static WorldPackets::Misc::LoginSetTimeSpeed timePacket;
         WowTime custom;
-        WorldPackets::Misc::LoginSetTimeSpeed timePacket;
 
         time_t nowYM = time(nullptr);
         struct tm* localTimeYM = localtime(&nowYM);
@@ -191,7 +192,18 @@ public:
         static float const TimeSpeed = 0.01666667f;
         timePacket.NewSpeed = TimeSpeed;
 
-        sWorld->SendGlobalMessage(timePacket.Write());
+        return timePacket.Write();
+    }
+
+    static void SendTimeSync()
+    {
+        sWorld->SendGlobalMessage(BuildTimeSyncPacket());
+    }
+
+    static void SendTimeSyncToPlayer(Player* player)
+    {
+        if (player)
+            player->SendDirectMessage(BuildTimeSyncPacket());
     }
 
     static void Update(uint32 diff)
@@ -297,7 +309,7 @@ public:
         if (WorldSession* session = handler->GetSession())
         {
             WorldPackets::Misc::EnableBarberShop enableBarberShop;
-            enableBarberShop.CustomizationFeatureMask = 0;
+            enableBarberShop.CustomizationFeatureMask = *featureMask;
             session->GetPlayer()->SendDirectMessage(enableBarberShop.Write());
             return true;
         }
@@ -569,9 +581,14 @@ class PlayerScript_TimeSync : public PlayerScript
 public:
     PlayerScript_TimeSync() : PlayerScript("PlayerScript_TimeSync") {}
 
-    void OnLogin(Player* /*player*/, bool /*firstLogin*/) override
+    void OnLogin(Player* player, bool /*firstLogin*/) override
     {
-        StaticTimeManager::LoadStaticTimeFromDB();
+        StaticTimeManager::SendTimeSyncToPlayer(player);
+    }
+
+    void OnLogout(Player* player) override
+    {
+        sRoleplay->RemovePlayerExtraData(player->GetGUID().GetCounter());
     }
 };
 
@@ -579,6 +596,11 @@ class WorldScript_TimeSync : public WorldScript
 {
 public:
     WorldScript_TimeSync() : WorldScript("WorldScript_TimeSync") {}
+
+    void OnStartup() override
+    {
+        StaticTimeManager::LoadStaticTimeFromDB();
+    }
 
     void OnUpdate(uint32 diff) override
     {

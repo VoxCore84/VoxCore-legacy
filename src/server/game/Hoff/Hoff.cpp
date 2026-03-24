@@ -6,6 +6,9 @@
 
 Position Hoff::GetTargetFollowPosition(Unit* ParentUnit, EFollowAngle Angle, float Distance)
 {
+    if (!ParentUnit)
+        return {};
+
     float FollowAngle = 0.f;
     switch (Angle) {
     default:

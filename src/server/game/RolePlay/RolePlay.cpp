@@ -315,11 +315,10 @@ void Roleplay::CreatureSetModifyHistory(Creature* creature, Player* modifier)
     if (!creature || !modifier)
         return;
 
-    CreatureExtraData data = _creatureExtraStore[creature->GetSpawnId()];
+    CreatureExtraData& data = _creatureExtraStore[creature->GetSpawnId()];
     data.modifierBnetAccId = modifier->GetSession()->GetBattlenetAccountId();
     data.modifierPlayerId = modifier->GetGUID().GetCounter();
     data.modified = time(NULL);
-    _creatureExtraStore[creature->GetSpawnId()] = data;
 }
 
 void Roleplay::CreatureMove(Creature* creature, float x, float y, float z, float o)
@@ -696,12 +695,11 @@ std::string Roleplay::ToDateString(time_t t)
 #pragma region npcappearance
 void Roleplay::LoadCustomNpcSpawn(uint32 templateId, ObjectGuid::LowType spawn)
 {
-    for (auto it : _customNpcStore)
+    for (auto& [key, data] : _customNpcStore)
     {
-        if (it.second.templateId == templateId) {
-            TC_LOG_DEBUG("roleplay", "ROLEPLAY: Identified custom npc key '%s' for entry id '%u', adding spawn '%lu'", it.second.key, templateId, spawn);
-            it.second.spawns.push_back(spawn);
-            _customNpcStore[it.first] = it.second;
+        if (data.templateId == templateId) {
+            TC_LOG_DEBUG("roleplay", "ROLEPLAY: Identified custom npc key '{}' for entry id '{}', adding spawn '{}'", data.key, templateId, spawn);
+            data.spawns.push_back(spawn);
             break;
         }
     }
@@ -780,13 +778,8 @@ void Roleplay::CreateCustomNpcFromPlayer(Player* player, std::string const& key)
             int32 displayId = pItem->GetDisplayId(player);
             if (displayId == 0) {
                 // weird case with items that don't have appearancemod of 0, just pick first appearance in the list
-                for (ItemModifiedAppearanceEntry const* appearanceMod : sItemModifiedAppearanceStore)
-                {
-                    if ((uint32)appearanceMod->ItemID == pItem->GetEntry() && appearanceMod->OrderIndex == 0) {
-                        displayId = sDB2Manager.GetItemDisplayId(pItem->GetEntry(), appearanceMod->ItemAppearanceModifierID);
-                        break;
-                    }
-                }
+                if (ItemModifiedAppearanceEntry const* appearanceMod = sDB2Manager.GetItemModifiedAppearance(pItem->GetEntry(), 0))
+                    displayId = sDB2Manager.GetItemDisplayId(pItem->GetEntry(), appearanceMod->ItemAppearanceModifierID);
             }
             co->outfitdisplays[slot] = displayId;
         }

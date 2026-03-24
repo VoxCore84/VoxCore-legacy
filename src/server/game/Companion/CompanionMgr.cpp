@@ -176,6 +176,11 @@ bool CompanionMgr::SetSquadSlot(Player* player, uint8 slot, uint32 rosterEntry)
     ObjectGuid::LowType guid = player->GetGUID().GetCounter();
     Companion::PlayerSquadState& state = _playerStates[guid];
 
+    // Prevent assigning the same companion to multiple slots
+    for (uint8 i = 0; i < Companion::MAX_SQUAD_SLOTS; ++i)
+        if (i != slot && state.squad[i].rosterEntry && state.squad[i].rosterEntry->entry == rosterEntry)
+            return false;
+
     state.squad[slot].slot = slot;
     state.squad[slot].rosterEntry = roster;
     return true;

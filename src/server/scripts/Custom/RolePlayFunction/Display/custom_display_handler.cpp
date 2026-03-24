@@ -65,7 +65,13 @@ namespace RoleplayCore
         if (!handler || !handler->GetPlayer())
             return;
 
-        auto itemSlot = m_item_slots.at(type);
+        auto slotIt = m_item_slots.find(type);
+        if (slotIt == m_item_slots.end())
+        {
+            handler->SendSysMessage("Unknown display type.");
+            return;
+        }
+        auto itemSlot = slotIt->second;
         auto player = handler->GetPlayer();
         auto item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, itemSlot);
 

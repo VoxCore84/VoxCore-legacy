@@ -119,7 +119,7 @@ public:
     std::string ToDateString(time_t t);
 
     // Custom NPCs
-    CustomNpcDataContainer GetCustomNpcContainer() { return _customNpcStore; }
+    CustomNpcDataContainer const& GetCustomNpcContainer() const { return _customNpcStore; }
     bool CustomNpcNameExists(std::string const& key) { return _customNpcStore.count(key) > 0; }
     uint32 GetEntryIdForNpc(std::string const& key) { return _customNpcStore[key].templateId; }
     uint8 GetModelVariationCountForNpc(std::string const& key);
@@ -148,9 +148,10 @@ public:
     void SetNpcRightHand(uint32 templateId, uint8 variationId, int32 itemId, int32 appearanceModId);
     void SetNpcRanged(uint32 templateId, uint8 variationId, int32 itemId, int32 appearanceModId);
 
-    // Marker
+    // Player extra data
     void StoreMarkerLocationForPlayer(Player* player, const WorldLocation* marker);
     WorldLocation* GetMarketLocationForPlayer(Player* player) { return &_playerExtraDataStore[player->GetGUID().GetCounter()].markerLocation; }
+    void RemovePlayerExtraData(ObjectGuid::LowType playerId) { _playerExtraDataStore.erase(playerId); }
 
 protected:
     PlayerExtraDataContainer _playerExtraDataStore;

@@ -322,13 +322,8 @@ public:
         }
 
         if (!modAppearanceId.has_value()) {
-            for (ItemModifiedAppearanceEntry const* appearanceMod : sItemModifiedAppearanceStore)
-            {
-                if ((uint32)appearanceMod->ItemID == item->GetId() && appearanceMod->OrderIndex == 0) {
-                    modAppearanceId = appearanceMod->ItemAppearanceModifierID;
-                    break;
-                }
-            }
+            if (ItemModifiedAppearanceEntry const* appearanceMod = sDB2Manager.GetItemModifiedAppearance(item->GetId(), 0))
+                modAppearanceId = appearanceMod->ItemAppearanceModifierID;
         }
 
         uint32 displayId = sDB2Manager.GetItemDisplayId(item->GetId(), modAppearanceId.value_or(0));

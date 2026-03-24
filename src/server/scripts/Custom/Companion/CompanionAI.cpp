@@ -102,7 +102,8 @@ Unit* CompanionAI::SelectAssistTarget()
     // Trust the owner's combat choice — bypasses faction/neutral checks that reject
     // training dummies and other edge-case targets the owner is intentionally engaging
     Unit* ownerVictim = owner->GetVictim();
-    if (ownerVictim && !IsFriendlyTarget(ownerVictim))
+    if (ownerVictim && ownerVictim->IsAlive() && !IsFriendlyTarget(ownerVictim)
+        && me->IsValidAttackTarget(ownerVictim))
     {
         TC_LOG_DEBUG("misc", "CompanionAI::SelectAssist [{}] victim={} alive={} inCombat={} melee={}",
             me->GetEntry(), ownerVictim->GetName(),
@@ -124,7 +125,8 @@ Unit* CompanionAI::SelectAssistTarget()
     if (!targetGuid.IsEmpty())
     {
         if (Unit* selected = ObjectAccessor::GetUnit(*me, targetGuid))
-            if (selected->IsAlive() && !IsFriendlyTarget(selected))
+            if (selected->IsAlive() && !IsFriendlyTarget(selected)
+                && me->IsValidAttackTarget(selected))
                 return selected;
     }
 
@@ -187,8 +189,11 @@ void CompanionAI::UpdateTankBehavior(Unit* target, Companion::RosterEntry const*
         }
     }
 
-    me->GetMotionMaster()->MoveChase(target);
-    AttackStart(target);
+    if (me->GetVictim() != target)
+    {
+        me->GetMotionMaster()->MoveChase(target);
+        AttackStart(target);
+    }
 }
 
 void CompanionAI::UpdateMeleeBehavior(Unit* target, Companion::RosterEntry const* roster)
@@ -202,8 +207,11 @@ void CompanionAI::UpdateMeleeBehavior(Unit* target, Companion::RosterEntry const
         }
     }
 
-    me->GetMotionMaster()->MoveChase(target);
-    AttackStart(target);
+    if (me->GetVictim() != target)
+    {
+        me->GetMotionMaster()->MoveChase(target);
+        AttackStart(target);
+    }
 }
 
 void CompanionAI::UpdateRangedBehavior(Unit* target, Companion::RosterEntry const* roster)
