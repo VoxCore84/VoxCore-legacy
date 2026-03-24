@@ -47,8 +47,6 @@ public:
     Companion::FormationOffset GetFormationOffset(Companion::Role role, uint8 slotIndex, uint8 totalInRole) const;
 
 private:
-    void UpdateFormationPositions(Player* player);
-
     std::vector<Companion::RosterEntry>                                     _roster;
     std::unordered_map<uint32, size_t>                                      _rosterIndex;   // entry -> index in _roster
     std::unordered_map<ObjectGuid::LowType, Companion::PlayerSquadState>    _playerStates;

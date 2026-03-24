@@ -14,7 +14,6 @@
 #include "Transport.h"
 #include "World.h"
 #include "Unit.h"
-#include "Log.h"
 
 #include "RolePlay.h"
 #include <boost/algorithm/string.hpp>
@@ -234,9 +233,10 @@ void Roleplay::CreatureSetAnimKitId(Creature* creature, uint16 animKitId)
 void Roleplay::CreatureSetModel(Creature* creature, uint32 displayId) {
     creature->SetDisplayId(displayId);
 
-    _creatureExtraStore[creature->GetSpawnId()].displayLock = true;
-    _creatureExtraStore[creature->GetSpawnId()].displayId = displayId;
-    _creatureExtraStore[creature->GetSpawnId()].nativeDisplayId = displayId;
+    CreatureExtraData& data = _creatureExtraStore[creature->GetSpawnId()];
+    data.displayLock = true;
+    data.displayId = displayId;
+    data.nativeDisplayId = displayId;
 }
 
 bool Roleplay::CreatureCanSwim(Creature const* creature)
@@ -267,7 +267,7 @@ void Roleplay::SetCreatureTemplateExtraDisabledFlag(uint32 entryId, bool disable
     if (it == _creatureTemplateExtraStore.end())
         return;
 
-    _creatureTemplateExtraStore[entryId].disabled = disabled;
+    it->second.disabled = disabled;
 
     // DB update
     RoleplayDatabasePreparedStatement* stmt = RoleplayDatabase.GetPreparedStatement(Roleplay_UPD_CREATUREEXTRA_TEMPLATE);

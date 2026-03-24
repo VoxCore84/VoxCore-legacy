@@ -424,31 +424,3 @@ Companion::FormationOffset CompanionMgr::GetFormationOffset(Companion::Role role
 
     return { baseDist, baseAngle };
 }
-
-void CompanionMgr::UpdateFormationPositions(Player* player)
-{
-    ObjectGuid::LowType guid = player->GetGUID().GetCounter();
-    Companion::PlayerSquadState* state = GetPlayerState(guid);
-    if (!state || !state->summoned || !state->control.following)
-        return;
-
-    uint8 roleCount[Companion::ROLE_MAX] = {};
-    uint8 roleIndex[Companion::ROLE_MAX] = {};
-
-    for (auto const& ac : state->active)
-        if (ac.rosterEntry)
-            roleCount[ac.rosterEntry->role]++;
-
-    for (auto const& ac : state->active)
-    {
-        Creature* creature = ObjectAccessor::GetCreature(*player, ac.creatureGuid);
-        if (!creature || !ac.rosterEntry)
-            continue;
-
-        Companion::Role role = ac.rosterEntry->role;
-        Companion::FormationOffset offset = GetFormationOffset(role, roleIndex[role], roleCount[role]);
-        roleIndex[role]++;
-
-        creature->GetMotionMaster()->MoveFollow(player, offset.dist, ChaseAngle(offset.angle + float(M_PI)));
-    }
-}

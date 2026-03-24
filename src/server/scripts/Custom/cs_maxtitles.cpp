@@ -12,6 +12,7 @@ namespace
         int16 category = achievement->Category;
         while (true)
         {
+            // Main Reputation root (201), FoS Reputation (15273), or Argent Tournament (14941)
             if (category == 201 || category == 15273 || category == 14941)
                 return true;
 

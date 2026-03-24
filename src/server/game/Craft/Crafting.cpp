@@ -152,8 +152,8 @@ uint32 Crafting::GetSkillLevelForCraft()
     uint32 skillId = GetSkillIdForSpell(_spell->GetSpellInfo()->Id);
     uint32 skillValue = _player->GetSkillValue(skillId);
 
-    uint32 totalReagentWeigth = CalculateTotalReagentWeights();
-    if (totalReagentWeigth == 0)
+    uint32 totalReagentWeight = CalculateTotalReagentWeights();
+    if (totalReagentWeight == 0)
         return skillValue;
 
     CraftingDifficultyEntry const* craftingDifficultyEntry = sCraftingDifficultyStore.LookupEntry(_craftingData->CraftingDifficultyID);
@@ -174,7 +174,7 @@ uint32 Crafting::GetSkillLevelForCraft()
                     if (CraftingReagentQualityEntry const* reagentQuality = sDB2Manager.GetCraftingReagentQualityByItem(providedReagentForSlot.Slot))
                     {
                         float reagentWeight = float(category->MatQualityWeight) * float(providedReagentForSlot.Quantity) / 2.0f * float(reagentQuality->OrderIndex);
-                        uint32 addedSkillByReagent = round(maximumReagentBonus * reagentWeight / float(totalReagentWeigth));
+                        uint32 addedSkillByReagent = round(maximumReagentBonus * reagentWeight / float(totalReagentWeight));
                         skillValue += addedSkillByReagent;
                     }
                 }
