@@ -40,8 +40,8 @@ Write-Output "VS: $vsPath"
 
 Set-Location C:\Users\atayl\VoxCore
 
-# Configure if needed
-if (-not (Test-Path "$buildDir/build.ninja")) {
+# Configure if needed (always reconfigure when target is "configure")
+if ($target -eq "configure" -or -not (Test-Path "$buildDir/build.ninja")) {
     Write-Output "=== CMAKE CONFIGURE ($cmakePreset) ==="
     & cmake --preset $cmakePreset 2>&1
     if ($LASTEXITCODE -ne 0) { Write-Output "CMAKE_CONFIGURE_FAILED"; exit 1 }
